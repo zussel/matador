@@ -8,6 +8,7 @@
 #include "matador/query/manual_pk_generator.hpp"
 #include "matador/query/sequence_pk_generator.hpp"
 #include "matador/query/table_pk_generator.hpp"
+#include "matador/query/table_generator.hpp"
 
 #include <memory>
 
@@ -51,6 +52,11 @@ public:
   [[nodiscard]] const basic_table_info& info() const;
 
   void update_name(const std::string& name);
+
+  template <typename Type>
+  [[nodiscard]] table_info<Type>& info() {
+      return static_cast<table_info<Type>&>(*info_);
+  }
 
   template <typename Type>
   [[nodiscard]] object_info_ref<Type> info() const {
@@ -122,7 +128,7 @@ std::unique_ptr<schema_node> schema_node::make_node(basic_schema &repo,
 
   node->info_ = std::make_unique<table_info<Type>>(
     *node,
-    std::make_shared<table>(),
+    table_generator::generate<Type>(repo, name),
     std::move(pk_generator),
     std::move(observers),
     std::move(creator)
@@ -143,10 +149,9 @@ std::unique_ptr<schema_node> schema_node::make_relation_node(basic_schema &repo,
 
   internal::observer_list_creator<Type, Observers...>::create_missing(observers);
 
-  // auto obj = object_generator::generate<Type>(creator(), repo, name, join_column, inverse_join_column);
   node->info_ = std::make_unique<table_info<Type>>(
     *node,
-    std::make_shared<table>(),
+    table_generator::generate(std::make_unique<Type>(join_column, inverse_join_column), repo, name, join_column, inverse_join_column),
     nullptr,
     std::move(observers),
     std::move(creator)

@@ -1,7 +1,8 @@
 #ifndef MATADOR_PRODUCER_CREATOR_HPP
 #define MATADOR_PRODUCER_CREATOR_HPP
 
-#include "matador/query/internal/select_query_builder.hpp"
+#include "matador/query/query.hpp"
+#include "matador/query/criteria/criteria_operators.hpp"
 
 #include "matador/query/resolver/query_object_resolver.hpp"
 #include "matador/query/resolver/resolver_producer.hpp"
@@ -10,12 +11,48 @@
 namespace matador::query {
 class dialect;
 class statement;
+
+class resolver_producer_registry final {
+public:
+  using joined_object_producer_map =
+      std::unordered_map<collection_composite_key, std::unique_ptr<abstract_joined_object_resolver_producer>,
+                         collection_composite_key_hash>;
+  using collection_producer_map =
+      std::unordered_map<collection_composite_key, std::unique_ptr<joined_collection_resolver_producer>,
+                         collection_composite_key_hash>;
+
+  void register_joined_object_producer(
+      const collection_composite_key &key,
+      std::unique_ptr<abstract_joined_object_resolver_producer> &&producer) {
+    joined_object_producers_[key] = std::move(producer);
+  }
+
+  void register_collection_producer(
+      const collection_composite_key &key,
+      std::unique_ptr<joined_collection_resolver_producer> &&producer) {
+    collection_producers_[key] = std::move(producer);
+  }
+
+  [[nodiscard]] const joined_object_producer_map &joined_object_producers() const {
+    return joined_object_producers_;
+  }
+
+  [[nodiscard]] const collection_producer_map &collection_producers() const {
+    return collection_producers_;
+  }
+
+private:
+  joined_object_producer_map joined_object_producers_;
+  collection_producer_map collection_producers_;
+};
+
 template <typename Type>
 class object_resolver_producer final : public abstract_object_resolver_producer {
 public:
-  object_resolver_producer(basic_schema &repo, const table &tab, std::string pk_name)
+  object_resolver_producer(const basic_schema &repo, const table &tab, std::string pk_name)
       : abstract_object_resolver_producer(typeid(Type)), repo_(repo), table_(tab),
         pk_name_(std::move(pk_name)) {}
+  void create_relation_producers(resolver_producer_registry &registry) const override;
   utils::result<query_context, utils::error> build_query(const dialect &d) override;
 
   std::shared_ptr<abstract_resolver> produce(statement &&stmt) const override {
@@ -23,7 +60,7 @@ public:
   }
 
 private:
-  basic_schema &repo_;
+  const basic_schema &repo_;
   const table &table_;
   std::string pk_name_;
 };
@@ -31,7 +68,7 @@ private:
 template <typename Type>
 class joined_object_resolver_producer final : public abstract_joined_object_resolver_producer {
 public:
-  joined_object_resolver_producer(basic_schema &repo, const table &tab, std::string pk_name,
+  joined_object_resolver_producer(const basic_schema &repo, const table &tab, std::string pk_name,
                                   const std::type_index &root_type, const std::string &join_column)
       : abstract_joined_object_resolver_producer(root_type, typeid(Type), join_column), repo_(repo),
         table_(tab), pk_name_(std::move(pk_name)) {}
@@ -43,7 +80,7 @@ public:
   }
 
 private:
-  basic_schema &repo_;
+  const basic_schema &repo_;
   const table &table_;
   std::string pk_name_;
 };
@@ -85,7 +122,8 @@ public:
   utils::result<query_context, utils::error> build_query(const dialect& d) override;
 
   std::shared_ptr<abstract_joined_resolver> produce(statement&& stmt, const resolver_service& /*rs*/) const override {
-    return std::make_shared<query_collection_primitive_resolver<Type>>(std::move(stmt), root_type(), join_column_name()/*, object_resolver*/);
+    return std::make_shared<query_collection_primitive_resolver<Type>>(
+        std::move(stmt), root_type(), join_column_name());
   }
 
 private:
@@ -99,8 +137,9 @@ class foreign_key_options;
 class column_options;
 class producer_creator final {
 public:
-  producer_creator(basic_schema &schema, const std::type_index &root_type)
-      : schema_(schema), root_type_(root_type) {}
+  producer_creator(const basic_schema &schema, const std::type_index &root_type,
+                   resolver_producer_registry &registry)
+      : schema_(schema), root_type_(root_type), registry_(registry) {}
 
   template <typename BaseType> static void on_base(const BaseType &) {}
   template <typename ValueType>
@@ -125,10 +164,10 @@ public:
     }
 
     auto producer = std::make_unique<joined_object_resolver_producer<typename Pointer::value_type>>(
-        schema_, it->info().table(), it->info().primary_key_attribute()->name(), root_type_,
+        schema_, *it->info().table(), it->info().primary_key_attribute()->name(), root_type_,
         join_column);
     const collection_composite_key key{root_type_, typeid(Pointer), join_column};
-    schema_.joined_object_resolver_producers_[key] = std::move(producer);
+    registry_.register_joined_object_producer(key, std::move(producer));
   }
 
   template <class CollectionType>
@@ -146,11 +185,11 @@ public:
 
     auto producer = std::make_unique<
         query_joined_collection_resolver_producer<typename CollectionType::value_type>>(
-        schema_, it->info().table(), it->info().primary_key_attribute()->name(), root_type_,
+        schema_, *it->info().table(), it->info().primary_key_attribute()->name(), root_type_,
         join_column);
     const collection_composite_key key{root_type_, typeid(typename CollectionType::value_type),
                                        join_column};
-    schema_.collection_resolver_producers_[key] = std::move(producer);
+    registry_.register_collection_producer(key, std::move(producer));
   }
 
   template <class CollectionType>
@@ -164,10 +203,10 @@ public:
     }
     auto producer = std::make_unique<
         query_joined_collection_primitive_resolver_producer<typename CollectionType::value_type>>(
-        schema_, it->info().table(), "value", root_type_, join_column);
+        schema_, *it->info().table(), "value", root_type_, join_column);
     const collection_composite_key key{root_type_, typeid(typename CollectionType::value_type),
                                        join_column};
-    schema_.collection_resolver_producers_[key] = std::move(producer);
+    registry_.register_collection_producer(key, std::move(producer));
   }
 
   template <class CollectionType>
@@ -180,10 +219,10 @@ public:
 
     auto producer = std::make_unique<
         query_joined_collection_resolver_producer<typename CollectionType::value_type>>(
-        schema_, it->info().table(), inverse_join_column, root_type_, join_column);
+        schema_, *it->info().table(), inverse_join_column, root_type_, join_column);
     const collection_composite_key key{root_type_, typeid(typename CollectionType::value_type),
                                        inverse_join_column};
-    schema_.collection_resolver_producers_[key] = std::move(producer);
+    registry_.register_collection_producer(key, std::move(producer));
   }
 
   template <class CollectionType>
@@ -198,45 +237,45 @@ public:
 
     auto producer = std::make_unique<
         query_joined_collection_resolver_producer<typename CollectionType::value_type>>(
-        schema_, it->info().table(), jc.join_column, root_type_, jc.inverse_join_column);
+        schema_, *it->info().table(), jc.join_column, root_type_, jc.inverse_join_column);
     const collection_composite_key key{root_type_, typeid(typename CollectionType::value_type),
                                        jc.join_column};
-    schema_.collection_resolver_producers_[key] = std::move(producer);
+    registry_.register_collection_producer(key, std::move(producer));
   }
 
 private:
-  basic_schema &schema_;
+  const basic_schema &schema_;
   const std::type_index root_type_;
+  resolver_producer_registry &registry_;
 };
+
+template <typename Type>
+void object_resolver_producer<Type>::create_relation_producers(resolver_producer_registry &registry) const {
+  producer_creator pc(repo_, typeid(Type), registry);
+  Type obj;
+  access::process(pc, obj);
+}
 
 template <typename Type>
 utils::result<query_context, utils::error>
 object_resolver_producer<Type>::build_query(const dialect &d) {
-  producer_creator pc(repo_, typeid(Type));
-  Type obj;
-  access::process(pc, obj);
-
-  select_query_builder qb(repo_);
   const auto *pk_column = table_[pk_name_];
-  const auto result = qb.build<Type>(*pk_column == _);
-  if (!result) {
-    return utils::failure(result.err());
-  }
-
-  return utils::ok(result->compile(d));
+  const auto statement = select(table_.columns())
+      .from(table_)
+      .where(*pk_column == _)
+      .compile(d);
+  return utils::ok(statement);
 }
 
 template <typename Type>
 utils::result<query_context, utils::error>
 joined_object_resolver_producer<Type>::build_query(const dialect &d) {
-  select_query_builder qb(repo_);
   const auto *join_column = table_[collection_name()];
-  const auto result = qb.build<Type>(*join_column == _);
-  if (!result) {
-    return utils::failure(result.err());
-  }
-
-  return utils::ok(result->compile(d));
+  const auto statement = select(table_.columns())
+      .from(table_)
+      .where(*join_column == _)
+      .compile(d);
+  return utils::ok(statement);
 }
 template <typename Type>
 utils::result<query_context, utils::error>

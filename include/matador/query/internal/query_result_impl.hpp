@@ -17,6 +17,7 @@
 #include "matador/query/record.hpp"
 
 #include "matador/query/column.hpp"
+#include "matador/query/collection.hpp"
 #include "matador/query/object_proxy.hpp"
 #include "matador/query/object_ptr.hpp"
 #include "matador/query/collection_proxy.hpp"
@@ -26,6 +27,7 @@
 #include <memory>
 #include <stack>
 #include <string>
+#include <type_traits>
 #include <typeindex>
 #include <unordered_map>
 #include <unordered_set>
@@ -190,20 +192,29 @@ void query_result_impl::on_has_many(const char *, CollectionType &cont, const ch
 template <class CollectionType>
 void query_result_impl::on_has_many(const char *id, CollectionType &cont, const char *join_column, const foreign_key_options &attr, std::enable_if_t<!is_object_ptr<typename CollectionType::value_type>::value> *) {
   using value_type = typename CollectionType::value_type;
-  auto object_resolver = resolver_->resolver<value_type>();
-  auto resolver = resolver_->joined_collection_resolver<value_type>(result_type_, join_column);
+  if constexpr (std::is_same_v<CollectionType, collection<value_type>>) {
+    auto resolver = resolver_->joined_collection_resolver<value_type>(result_type_, join_column);
 
-  if (attr.fetch() == fetch_type::Lazy) {
-    cont.reset(std::make_shared<collection_proxy<value_type>>(resolver, current_pk_));
-  } else {
-    if (initialized_collections_.insert({result_type_, typeid(value_type), std::string{id}}).second) {
-      cont.reset(std::make_shared<collection_proxy<value_type>>(resolver, std::vector<value_type>()));
+    if (attr.fetch() == fetch_type::Lazy) {
+      cont.reset(std::make_shared<collection_proxy<value_type>>(resolver, current_pk_));
+    } else {
+      if (initialized_collections_.insert({result_type_, typeid(value_type), std::string{id}}).second) {
+        cont.reset(std::make_shared<collection_proxy<value_type>>(resolver, std::vector<value_type>()));
+      }
+
+      value_type value;
+      data_type_traits<value_type>::read_value(*reader_, id, column_index_++, value, sizeof(value_type));
+      cont.push_back(value);
+    }
+  } else if (attr.fetch() == fetch_type::Eager) {
+    const collection_composite_key key{result_type_, typeid(value_type), id};
+    if (initialized_collections_.insert(key).second) {
+      cont.clear();
     }
 
-    // read a single value
     value_type value;
     data_type_traits<value_type>::read_value(*reader_, id, column_index_++, value, sizeof(value_type));
-    cont.push_back(value);
+    cont.push_back(std::move(value));
   }
 }
 

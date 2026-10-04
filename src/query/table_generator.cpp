@@ -1,7 +1,7 @@
 #include "matador/query/table_generator.hpp"
 
 #include "matador/query/access.hpp"
-#include "matador/query/schema.hpp"
+#include "matador/query/basic_schema.hpp"
 
 #include <algorithm>
 
@@ -11,15 +11,26 @@ table_generator::table_generator(basic_schema &repo, const std::shared_ptr<table
 , table_(t) {
 }
 
-std::shared_ptr<table> table_generator::acquire_object(basic_schema &repo, const std::type_index &ti, const std::string &name) {
+std::shared_ptr<table> table_generator::acquire_table(basic_schema &repo, const std::type_index &ti, const std::string &name) {
   if (repo.has_table_for_type(ti)) {
     auto obj = repo.table_for_type(ti);
     repo.remove_table_for_type(ti);
-    // obj->update_name(name);
+    obj->update_name(name);
     return obj;
   }
 
   return repo.provide_table_in_advance(ti, std::make_shared<table>(name));
+}
+std::shared_ptr<table> table_generator::acquire_foreign_table(basic_schema &repo, const std::type_index &ti) {
+  if (const auto result = repo.basic_info(ti)) {
+    return result->get().table();
+  }
+
+  if (repo.has_table_for_type(ti)) {
+    return repo.table_for_type(ti);
+  }
+
+  return repo.provide_table_in_advance(ti, std::make_shared<table>(""));
 }
 
 void table_generator::on_revision(const char *id, uint64_t &rev) {

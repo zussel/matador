@@ -5,6 +5,7 @@
 #include "matador/query/object_ptr.hpp"
 #include "matador/query/schema.hpp"
 #include "matador/query/relation_endpoint.hpp"
+#include "matador/query/resolver/producer_creator.hpp"
 #include "matador/query/access.hpp"
 
 #include <string>
@@ -291,6 +292,30 @@ TEST_CASE("relation_completer links has_many to belongs_to", "[relation_complete
   REQUIRE(employee_endpoint->field_name() == "department_id");
 
   require_linked_pair(department_endpoint, employee_endpoint);
+}
+
+TEST_CASE("schema keeps relation resolver producers session-local", "[schema][resolver][lazy]") {
+  schema repo;
+
+  auto result = repo.attach<department>("departments")
+    .and_then([&repo] {
+      return repo.attach<employee>("employees");
+    });
+
+  REQUIRE(result.is_ok());
+  REQUIRE(repo.resolver_producers().size() == 2);
+  REQUIRE(repo.joined_object_resolver_producers().empty());
+  REQUIRE(repo.collection_resolver_producers().empty());
+
+  matador::query::resolver_producer_registry registry;
+  for (const auto &producer : repo.resolver_producers()) {
+    producer.second->create_relation_producers(registry);
+  }
+
+  REQUIRE(registry.joined_object_producers().empty());
+  REQUIRE(registry.collection_producers().size() == 1);
+  REQUIRE(repo.joined_object_resolver_producers().empty());
+  REQUIRE(repo.collection_resolver_producers().empty());
 }
 
 TEST_CASE("relation_completer links has_many to belongs_to with reversed attach", "[relation_completer][has_many][belongs_to][reverse]") {

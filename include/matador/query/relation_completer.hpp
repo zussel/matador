@@ -492,7 +492,6 @@ void relation_completer<Type, Observers...>::attach_relation_node(const std::str
   }
 
   auto *attached_node = result.value();
-
   const auto local_endpoint = std::make_shared<relation_endpoint>(name, relation_type::HasMany, *attached_node);
   const auto join_endpoint = std::make_shared<relation_endpoint>(join_column, relation_type::BelongsTo, *current_node_);
   const auto inverse_join_endpoint = std::make_shared<relation_endpoint>(inverse_join_column, relation_type::BelongsTo, foreign_node);

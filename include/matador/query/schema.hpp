@@ -317,10 +317,13 @@ public:
       }
 
       schema_node* attached_node = result.value();
-      const auto info = attached_node->template info<Type>();
-      auto completer_result = relation_completer<Type, Observers...>::complete(attached_node, info.get().observers());
+      auto &info = attached_node->template info<Type>();
+      auto completer_result = relation_completer<Type, Observers...>::complete(attached_node, info.observers());
       if (!completer_result) {
         return failure<error>(completer_result.err());
+      }
+      if (info.has_primary_key()) {
+        resolver_producers_[ti] = std::make_unique<object_resolver_producer<Type>>(*this, *info.table(), info.primary_key_attribute()->name());
       }
     } else if (!has_node(name)) {
       const auto old_name = it->second->name();
@@ -336,10 +339,13 @@ public:
       nodes_by_name_.erase(old_name);
       nodes_by_name_[name] = it->second;
 
-      const auto info = it->second->info<Type>();
-      auto completer_result = relation_completer<Type, Observers...>::complete(it->second, info.get().observers());
+      auto &info = it->second->info<Type>();
+      auto completer_result = relation_completer<Type, Observers...>::complete(it->second, info.observers());
       if (!completer_result) {
         return failure<error>(completer_result.err());
+      }
+      if (info.has_primary_key()) {
+        resolver_producers_[ti] = std::make_unique<object_resolver_producer<Type>>(*this, *info.table(), info.primary_key_attribute()->name());
       }
       // log_.info("attach: update node name to '%s' (type: %s)", it->second->name().c_str(), it->second->type_index().name());
     } else {

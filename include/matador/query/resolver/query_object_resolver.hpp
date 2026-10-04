@@ -5,6 +5,9 @@
 #include "matador/query/statement.hpp"
 
 #include "matador/query/object_resolver.hpp"
+#include "matador/utils/error_exception.hpp"
+
+#include <mutex>
 
 namespace matador::query {
 class executor;
@@ -17,6 +20,7 @@ public:
   std::shared_ptr<Type> resolve(const identifier &id) override;
 protected:
   statement stmt_;
+  std::mutex mutex_;
 };
 
 template<typename Type>
@@ -29,28 +33,31 @@ public:
   std::shared_ptr<Type> resolve(const identifier &id) override;
 protected:
   statement stmt_;
+  std::mutex mutex_;
 };
 
 template<typename Type>
 std::shared_ptr<Type> query_object_resolver<Type>::resolve(const identifier &id) {
+  std::lock_guard lock(mutex_);
   identifier_statement_binder binder(stmt_);
   binder.bind(id);
 
   auto result = stmt_.template fetch_one_raw<Type>();
   if (!result) {
-    return nullptr;
+    throw error_exception(result.release_error());
   }
   return *result;
 }
 
 template<typename Type>
 std::shared_ptr<Type> query_joined_object_resolver<Type>::resolve(const identifier &id) {
+  std::lock_guard lock(mutex_);
   identifier_statement_binder binder(stmt_);
   binder.bind(id);
 
   auto result = stmt_.template fetch_one_raw<Type>();
   if (!result) {
-    return nullptr;
+    throw error_exception(result.release_error());
   }
   return *result;
 }

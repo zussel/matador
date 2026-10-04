@@ -5,6 +5,9 @@
 #include "matador/query/object_resolver.hpp"
 #include "matador/query/internal/identifier_statement_binder.hpp"
 #include "matador/query/statement.hpp"
+#include "matador/utils/error_exception.hpp"
+
+#include <mutex>
 
 namespace matador::query {
 class executor;
@@ -25,6 +28,7 @@ public:
   std::vector<value_type> resolve(const identifier &id) override;
 protected:
   statement stmt_;
+  std::mutex mutex_;
   std::type_index index{typeid(Type)};
   std::shared_ptr<object_resolver<typename Type::value_type>> resolver_;
 };
@@ -35,17 +39,19 @@ public:
   using value_type = typename collection_resolver<Type>::value_type;
 
   explicit query_collection_primitive_resolver(statement &&stmt,
+                                               const std::type_index& root_type,
                                                std::string join_column)
-  : collection_resolver<Type>(join_column)
+  : collection_resolver<Type>(root_type, std::move(join_column))
   , stmt_(std::move(stmt)) {}
 
   std::vector<value_type> resolve(const identifier &id) override {
+    std::lock_guard lock(mutex_);
     identifier_statement_binder binder(stmt_);
     binder.bind(id);
 
     auto result = stmt_.fetch();
     if (!result) {
-      return {};
+      throw error_exception(result.release_error());
     }
     std::vector<Type> out;
     for (auto &r : *result) {
@@ -54,13 +60,14 @@ public:
       }
       auto val = r.at<Type>(0);
       if (val.has_value()) {
-        out.push_back({this->owner_, *val});
+        out.push_back(*val);
       }
     }
     return out;
   }
 protected:
   statement stmt_;
+  std::mutex mutex_;
   std::type_index index{typeid(Type)};
 };
 
@@ -98,12 +105,13 @@ struct identifier_creator {
 
 template<typename Type>
 std::vector<typename query_collection_resolver<Type>::value_type> query_collection_resolver<Type>::resolve(const identifier &id) {
+  std::lock_guard lock(mutex_);
   identifier_statement_binder binder(stmt_);
   binder.bind(id);
 
   auto result = stmt_.fetch();
   if (!result) {
-    return {};
+    throw error_exception(result.release_error());
   }
   std::vector<value_type> out;
   for (auto &r : *result) {

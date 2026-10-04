@@ -7,7 +7,9 @@
 #include "matador/query/interface/connection_impl.hpp"
 #include "matador/query/interface/statement_impl.hpp"
 #include "matador/query/query_context.hpp"
+#include "matador/query/resolver/query_object_resolver.hpp"
 #include "matador/query/value_writer.hpp"
+#include "matador/utils/error_exception.hpp"
 
 #include <memory>
 #include <string>
@@ -51,6 +53,11 @@ struct fake_backend_state {
   std::string last_exists_table;
   std::string last_sequence_schema;
   std::string last_sequence_name;
+};
+
+struct resolver_test_object {
+  template<class Operator>
+  void process(Operator &) {}
 };
 
 fake_backend_state &state() {
@@ -126,6 +133,10 @@ public:
   }
 
   utils::result<std::unique_ptr<query_result_impl>, utils::error> fetch(const value_writer &) override {
+    ++state().fetch_count;
+    if (state().fail_fetch) {
+      return utils::failure(test_error("fetch failed"));
+    }
     return ok<std::unique_ptr<query_result_impl>>();
   }
 
@@ -518,6 +529,26 @@ TEST_CASE("connection prepare propagates backend errors", "[connection]") {
 
   REQUIRE(result.is_error());
   REQUIRE(state().prepare_count == 1);
+}
+
+TEST_CASE("lazy object resolver propagates statement fetch errors", "[connection][resolver]") {
+  ensure_backend_registered();
+  reset_state();
+
+  connection conn(make_connection_info());
+  auto prepared = conn.prepare(make_context("SELECT * FROM person WHERE id = ?"));
+  REQUIRE(prepared.is_ok());
+
+  state().fail_fetch = true;
+  query_object_resolver<resolver_test_object> resolver(prepared.release());
+
+  try {
+    static_cast<void>(resolver.resolve(identifier{int32_t{1}}));
+    FAIL("Expected the lazy resolver to propagate the fetch error");
+  } catch (const error_exception &error) {
+    REQUIRE(error.error().ec() == error_code::Failure);
+    REQUIRE(error.error().message() == "fetch failed");
+  }
 }
 
 TEST_CASE("connection transaction helpers execute dialect transaction statements", "[connection]") {

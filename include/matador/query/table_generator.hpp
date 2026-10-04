@@ -2,15 +2,16 @@
 #define MATADOR_OBJECT_GENERATOR_HPP
 
 #include "matador/query/access.hpp"
-#include "matador/query/basic_schema.hpp"
+#include "matador/query/identifier.hpp"
 #include "matador/query/primary_key_options.hpp"
 #include "matador/query/table.hpp"
-
-#include "default_type_traits.hpp"
+#include "matador/query/default_type_traits.hpp"
 
 #include <memory>
+#include <typeindex>
 
 namespace matador::query {
+class basic_schema;
 enum class null_option_type : uint8_t {
   Nullable, NotNull
 };
@@ -35,8 +36,8 @@ public:
     }
     static void on_revision(const char * /*id*/, uint64_t &/*rev*/) {}
     template < class Type >
-    static void on_column(const char * /*id*/, Type &/*x*/, const column_options& /*attr*/) {}
-    static void on_column(const char * /*id*/, char * /*x*/, const column_options& /*attr*/) {}
+    static void on_attribute(const char * /*id*/, Type &/*x*/, const column_options& /*attr*/) {}
+    static void on_attribute(const char * /*id*/, char * /*x*/, const column_options& /*attr*/) {}
     template<class Pointer>
     static void on_belongs_to(const char * /*id*/, Pointer &/*x*/, const foreign_key_options& /*attr*/) {}
     template<class Pointer>
@@ -69,15 +70,7 @@ public:
                                             const std::string &join_column = "",
                                             const std::string &inverse_join_column = "") {
         const std::type_index ti(typeid(Type));
-        if (repo.has_table_for_type(ti)) {
-            auto obj = repo.table_for_type(ti);
-            repo.remove_table_for_type(ti);
-            obj->update_name(name);
-            return obj;
-        }
-
-        auto obj = std::make_shared<table>(name);
-        std::ignore = repo.provide_table_in_advance(ti, obj);
+        auto obj = acquire_table(repo, ti, name);
         table_generator gen(repo, obj);
         access::process(gen, *t);
         if (!join_column.empty() && !inverse_join_column.empty()) {
@@ -111,8 +104,8 @@ public:
         const auto type = pk_type_determinator::determine<typename Pointer::value_type>();
         column_constraints cs = column_constraint::ForeignKey;
         cs |= column_constraint::NotNull;
-        auto &ref = table_->columns_.emplace_back(*table_, id, type, cs);
-        ref.index_ = table_->columns_.size() - 1;
+        auto &ref = table_->columns_.emplace_back(column::make_plain(
+            table_.get(), id, "", type, column_options{cs}, table_->columns_.size()));
     }
     template<class ContainerType>
     static void on_has_many(const char * /*id*/, ContainerType &, const char *, const foreign_key_options& /*attr*/) {}
@@ -147,7 +140,9 @@ private:
     template<typename Type>
     [[nodiscard]] std::shared_ptr<table> foreign_table() const;
 
-    static std::shared_ptr<table> acquire_object(basic_schema &repo, const std::type_index &ti, const std::string& name);
+    static std::shared_ptr<table> acquire_table(basic_schema &repo, const std::type_index &ti, const std::string& name);
+    static std::shared_ptr<table> acquire_foreign_table(basic_schema &repo,
+                                                        const std::type_index &ti);
 private:
     basic_schema &repo_;
     std::shared_ptr<table> table_;
@@ -181,21 +176,14 @@ void table_generator::create_fk_constraint(const std::string& name) const {
         return;
     }
     const auto obj = foreign_table<Type>();
-    constraint pk_constraint = constraint::make_fk_constraint(*table_, pk_attr->index(), obj.get());
+    constraint pk_constraint = constraint::make_fk_constraint(*table_, pk_attr->index(), *obj);
     table_->constraints_.emplace_back(pk_constraint);
 }
 
 template<typename Type>
 std::shared_ptr<table> table_generator::foreign_table() const {
     const auto ti = std::type_index(typeid(Type));
-    if (const auto result = repo_.basic_info(ti)) {
-        return result->get().table();
-    }
-
-    if (repo_.has_table_for_type(ti)) {
-        return repo_.table_for_type(ti);
-    }
-    const auto obj = repo_.provide_table_in_advance(ti, std::make_shared<table>(""));
+    const auto obj = acquire_foreign_table(repo_, ti);
     table_generator gen(repo_, obj);
     Type t;
     access::process(gen, t);

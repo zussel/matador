@@ -5,6 +5,7 @@
 
 #include "matador/query/basic_schema.hpp"
 #include "matador/query/internal/schema_utils.hpp"
+#include "matador/query/resolver/producer_creator.hpp"
 
 #include <stdexcept>
 
@@ -17,6 +18,7 @@ session::session(session_context&& ctx, const basic_schema &scm)
 , schema_(scm)
 , resolver_service_(ctx.resolver) {
   using namespace matador::utils;
+  resolver_producer_registry relation_producers;
   for (const auto &node : schema_) {
     query_contexts queries = to_query_contexts(node, dialect_);
 
@@ -29,6 +31,8 @@ session::session(session_context&& ctx, const basic_schema &scm)
   }
 
   for (const auto &pair : schema_.resolver_producers()) {
+    pair.second->create_relation_producers(relation_producers);
+
     auto res = pair.second->build_query(dialect_).and_then([this](query_context&& query_ctx) -> matador::result<statement, error> {
       query_ctx.resolver = resolver_service_;
       return cache_.acquire(query_ctx);
@@ -45,7 +49,7 @@ session::session(session_context&& ctx, const basic_schema &scm)
     }
   }
 
-  for (const auto &pair : schema_.joined_object_resolver_producers()) {
+  for (const auto &pair : relation_producers.joined_object_producers()) {
     auto res = pair.second->build_query(dialect_)
                    .and_then([this](query_context &&query_ctx) -> utils::result<statement, error> {
                      query_ctx.resolver = resolver_service_;
@@ -65,7 +69,7 @@ session::session(session_context&& ctx, const basic_schema &scm)
     }
   }
 
-  for (const auto &pair : schema_.collection_resolver_producers()) {
+  for (const auto &pair : relation_producers.collection_producers()) {
     auto res = pair.second->build_query(dialect_)
                    .and_then([this](query_context &&query_ctx) -> utils::result<statement, error> {
                      query_ctx.resolver = resolver_service_;
