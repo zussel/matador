@@ -46,21 +46,21 @@ TEST_CASE("Column: table ownership qualifies the name", "[query][column]") {
   REQUIRE(id.result_name() == "id");
   REQUIRE(id.type() == basic_type::Int32);
 
-  table archived_customers{"archived_customers"};
+  auto archived_customers = table::make_plain("archived_customers");
   id.table(&archived_customers);
   REQUIRE(id.table() == &archived_customers);
   REQUIRE(id.name() == "archived_customers.id");
 
-  archived_customers = table{"former_customers"};
+  archived_customers = table::make_plain("former_customers");
   REQUIRE(id.name() == "former_customers.id");
 
-  const table order{"order", {column::make_plain("number")}};
+  const auto order = table::make_plain("order", {column::make_plain("number")});
   REQUIRE(order.columns().front().table() == &order);
   REQUIRE(order.columns().front().name() == "order.number");
 }
 
 TEST_CASE("Column: as preserves its value and replaces its alias", "[query][column]") {
-  const table customers{"customers"};
+  const table customers = table::make_plain("customers");
   const auto original = column::make_plain(&customers, "id", "", basic_type::Int64);
   const column aliased = original.as("customer_id");
 
@@ -74,8 +74,8 @@ TEST_CASE("Column: as preserves its value and replaces its alias", "[query][colu
 }
 
 TEST_CASE("Column: equality includes table-bound column identity and aliases", "[query][column]") {
-  const table customers{"customers"};
-  const table orders{"orders"};
+  const table customers = table::make_plain("customers");
+  const table orders = table::make_plain("orders");
 
   const auto customer_id = column::make_plain(&customers, "id");
   REQUIRE(customer_id.equals(column::make_plain(&customers, "id")));
@@ -129,11 +129,11 @@ TEST_CASE("Column: function and expression columns retain their active value", "
   REQUIRE(aliased.result_name() == "calculated_id");
 
   auto table_expression= column::make_expression(expression);
-  const table customers{"customers"};
+  const table customers = table::make_plain("customers");
   REQUIRE_THROWS_AS(table_expression.table(&customers), std::logic_error);
 
-  const std::vector<column> schema{table_expression};
-  REQUIRE_THROWS_AS((table{"calculated", schema}), std::logic_error);
+  const std::vector schema{table_expression};
+  REQUIRE_THROWS_AS(table::make_primary_key_table("calculated", schema), std::logic_error);
 }
 
 TEST_CASE("Column: literal accepts only unqualified column names", "[query][column]") {

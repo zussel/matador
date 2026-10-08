@@ -5,7 +5,6 @@
 #include "matador/query/intermediates/intermediate.hpp"
 #include "matador/query/column.hpp"
 #include "matador/query/constraint.hpp"
-#include "matador/query/table.hpp"
 
 namespace matador::query {
 class add_primary_key_constraint_intermediate final : public executable_query {
@@ -19,7 +18,6 @@ public:
     executable_query references(const table& tab, const std::vector<column>& columns = {});
 
 private:
-    table table_;
     std::vector<column> columns_;
 };
 

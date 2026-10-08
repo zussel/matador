@@ -53,6 +53,18 @@ table::table(std::string schema_name, std::string name, std::string alias, std::
     make_primary_key_table(index);
   }
 }
+table::table(std::string schema_name, std::string name, std::string alias,
+             std::vector<column> columns, std::size_t join_column_index,
+             std::size_t inverse_join_column_index)
+: name_(std::move(name))
+, alias_(std::move(alias))
+, schema_name_(std::move(schema_name))
+, columns_(std::move(columns))
+, value_(relation_table{join_column_index, inverse_join_column_index}) {
+  rebind_columns();
+  rebind_constraints();
+
+}
 
 table::table(const table &other)
 : name_(other.name_)

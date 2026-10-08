@@ -17,10 +17,12 @@ namespace matador::query {
 // ReSharper disable CppNonExplicitConvertingConstructor
 class table {
 public:
-  table() = default;
-  explicit table(const char *name);
-  explicit table(std::string name);
+  // table() = default;
+  // explicit table(const char *name);
+  // explicit table(std::string name);
   // table(std::string name, std::vector<column> columns);
+  table(std::string schema_name, std::string name, std::string alias, std::vector<column> columns);
+  table(std::string schema_name, std::string name, std::string alias, std::vector<column> columns, std::size_t join_column_index, std::size_t inverse_join_column_index);
 
   static table make_plain(std::string name, std::string schema_name = "");
   static table make_primary_key_table(std::string name, std::vector<column> columns, std::string schema_name = "");
@@ -71,9 +73,6 @@ public:
   [[nodiscard]] const column* primary_key_column() const;
   [[nodiscard]] const column* join_column() const;
   [[nodiscard]] const column* inverse_join_column() const;
-
-private:
-  table(std::string schema_name, std::string name, std::string alias, std::vector<column> columns);
 
 private:
   friend class table_generator;
