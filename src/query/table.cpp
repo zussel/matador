@@ -6,16 +6,18 @@
 #include <utility>
 
 namespace matador::query {
-table table::make_plain(std::string name, std::string schema_name) {
-  return {std::move(schema_name), std::move(name), "", {}};
-}
-
 table table::make_primary_key_table(std::string name, std::vector<column> columns, std::string schema_name) {
-  return {std::move(schema_name), std::move(name), "", std::move(columns)};
+  return {std::move(name), std::move(columns), {
+    .schema_name = std::move(schema_name)
+  }};
 }
 
 table table::make_relation_table(std::string name, std::vector<column> columns, std::size_t join_column_index, std::size_t inverse_join_column_index, std::string schema_name) {
-  return {std::move(schema_name), std::move(name), "", std::move(columns)};
+  return {std::move(name), std::move(columns), {
+    .schema_name = std::move(schema_name),
+    .join_column_index = join_column_index,
+    .inverse_join_column_index = inverse_join_column_index
+  }};
 }
 
 // table::table(const char* name)
@@ -23,8 +25,47 @@ table table::make_relation_table(std::string name, std::vector<column> columns, 
                            // std::string(name))
 // {}
 
-// table::table(std::string name)
-// : table("", std::move(name), "", {}) {}
+table::table(std::string name)
+  : table(std::move(name), {}, {})
+{}
+
+table::table(std::string name, std::vector<column> columns)
+  : table(std::move(name), std::move(columns), {})
+{}
+
+table::table(std::string name, std::vector<column> columns, options opts)
+  : name_(std::move(name))
+  , alias_(std::move(opts.alias))
+  , schema_name_(std::move(opts.schema_name))
+  , columns_(std::move(columns))
+{
+  validate_schema(columns_);
+
+  const bool has_join = opts.join_column_index.has_value();
+  const bool has_inverse_join = opts.inverse_join_column_index.has_value();
+
+  if (has_join != has_inverse_join) {
+    throw std::invalid_argument{
+      "join_column_index and inverse_join_column_index must either both be set or both be empty"
+    };
+  }
+
+  if (opts.primary_key_column_index && has_join) {
+    throw std::invalid_argument{
+      "table cannot be both a primary-key table and a relation table"
+    };
+  }
+
+  if (has_join) {
+    make_relation_table(*opts.join_column_index, *opts.inverse_join_column_index);
+  } else {
+    make_primary_key_table(opts.primary_key_column_index);
+  }
+
+  rebind_columns();
+  create_constraints();
+  rebind_constraints();
+}
 
 // table::table(std::string name, std::vector<column> columns)
 // : table("", std::move(name), "", std::move(columns)) {
@@ -33,38 +74,38 @@ table table::make_relation_table(std::string name, std::vector<column> columns, 
 // table::table(std::string schema_name, std::string name, std::vector<column> columns)
 // : table(std::move(schema_name), std::move(name), "", std::move(columns)) {}
 
-table::table(std::string schema_name, std::string name, std::string alias, std::vector<column> columns)
-: name_(std::move(name))
-, alias_(std::move(alias))
-, schema_name_(std::move(schema_name))
-, columns_(std::move(columns)) {
-  rebind_columns();
-  create_constraints();
-
-  for (std::size_t index = 0; index < columns_.size(); ++index) {
-    if (!columns_[index].is_primary_key()) {
-      continue;
-    }
-
-    if (has_primary_key()) {
-      throw std::invalid_argument("Table schemas cannot contain multiple primary keys");
-    }
-
-    make_primary_key_table(index);
-  }
-}
-table::table(std::string schema_name, std::string name, std::string alias,
-             std::vector<column> columns, std::size_t join_column_index,
-             std::size_t inverse_join_column_index)
-: name_(std::move(name))
-, alias_(std::move(alias))
-, schema_name_(std::move(schema_name))
-, columns_(std::move(columns))
-, value_(relation_table{join_column_index, inverse_join_column_index}) {
-  rebind_columns();
-  rebind_constraints();
-
-}
+// table::table(std::string schema_name, std::string name, std::string alias, std::vector<column> columns)
+// : name_(std::move(name))
+// , alias_(std::move(alias))
+// , schema_name_(std::move(schema_name))
+// , columns_(std::move(columns)) {
+//   rebind_columns();
+//   create_constraints();
+//
+//   for (std::size_t index = 0; index < columns_.size(); ++index) {
+//     if (!columns_[index].is_primary_key()) {
+//       continue;
+//     }
+//
+//     if (has_primary_key()) {
+//       throw std::invalid_argument("Table schemas cannot contain multiple primary keys");
+//     }
+//
+//     make_primary_key_table(index);
+//   }
+// }
+// table::table(std::string schema_name, std::string name, std::string alias,
+//              std::vector<column> columns, std::size_t join_column_index,
+//              std::size_t inverse_join_column_index)
+// : name_(std::move(name))
+// , alias_(std::move(alias))
+// , schema_name_(std::move(schema_name))
+// , columns_(std::move(columns))
+// , value_(relation_table{join_column_index, inverse_join_column_index}) {
+//   rebind_columns();
+//   rebind_constraints();
+//
+// }
 
 table::table(const table &other)
 : name_(other.name_)
@@ -132,6 +173,11 @@ bool table::operator==(const table& x) const {
 }
 
 table table::as(const std::string &alias) const {
+  return {name_, columns_, {
+    .schema_name = schema_name_,
+    .alias = alias,
+    .join_column_index = join_column()
+  }};
   return {schema_name_, name_, alias, columns_};
 }
 

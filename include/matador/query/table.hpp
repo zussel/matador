@@ -17,14 +17,26 @@ namespace matador::query {
 // ReSharper disable CppNonExplicitConvertingConstructor
 class table {
 public:
+  struct options {
+    std::string schema_name;
+    std::string alias;
+
+    std::optional<std::size_t> primary_key_column_index;
+
+    std::optional<std::size_t> join_column_index;
+    std::optional<std::size_t> inverse_join_column_index;
+  };
+
   // table() = default;
   // explicit table(const char *name);
-  // explicit table(std::string name);
+  explicit table(std::string name);
+  table(std::string name, std::vector<column> columns);
+  table(std::string name, std::vector<column> columns, options opts);
   // table(std::string name, std::vector<column> columns);
-  table(std::string schema_name, std::string name, std::string alias, std::vector<column> columns);
-  table(std::string schema_name, std::string name, std::string alias, std::vector<column> columns, std::size_t join_column_index, std::size_t inverse_join_column_index);
+  // table(std::string schema_name, std::string name, std::string alias, std::vector<column> columns);
+  // table(std::string schema_name, std::string name, std::string alias, std::vector<column> columns, std::size_t join_column_index, std::size_t inverse_join_column_index);
 
-  static table make_plain(std::string name, std::string schema_name = "");
+  // static table make_simple(std::string name, std::string schema_name = "");
   static table make_primary_key_table(std::string name, std::vector<column> columns, std::string schema_name = "");
   static table make_relation_table(std::string name, std::vector<column> columns, std::size_t join_column_index, std::size_t inverse_join_column_index, std::string schema_name = "");
 

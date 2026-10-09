@@ -188,7 +188,7 @@ TEST_CASE("Table: copy and move rebind column owners", "[query][table]") {
   REQUIRE(copied.columns().front().table() == &copied);
   REQUIRE(copied.columns().back().table() == &copied);
 
-  table assigned = table::make_plain("placeholder");
+  table assigned = table("placeholder");
   assigned = original;
   REQUIRE(assigned.columns().front().table() == &assigned);
   REQUIRE(assigned.columns().back().table() == &assigned);
@@ -197,7 +197,7 @@ TEST_CASE("Table: copy and move rebind column owners", "[query][table]") {
   REQUIRE(moved.columns().front().table() == &moved);
   REQUIRE(moved.columns().back().table() == &moved);
 
-  table move_assigned = table::make_plain("placeholder");
+  table move_assigned = table("placeholder");
   move_assigned = std::move(assigned);
   REQUIRE(move_assigned.columns().front().table() == &move_assigned);
   REQUIRE(move_assigned.columns().back().table() == &move_assigned);
@@ -211,7 +211,9 @@ TEST_CASE("Table: schemas reject expression columns and null names", "[query][ta
 }
 
 TEST_CASE("Table: typed aliases retain table state", "[query][table]") {
-  const typed_orders orders{"sales", "orders", "", {column::make_plain("id", "", basic_type::Int64)}};
+  const typed_orders orders{"orders",{column::make_plain("id", "", basic_type::Int64)}, {
+    .schema_name = "sales"
+  }};
 
   const typed_orders alias = orders.as("o");
   REQUIRE(alias.schema_name() == "sales");
