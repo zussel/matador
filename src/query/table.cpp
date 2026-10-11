@@ -8,22 +8,24 @@
 namespace matador::query {
 table table::make_primary_key_table(std::string name, std::vector<column> columns, std::string schema_name) {
   return {std::move(name), std::move(columns), {
-    .schema_name = std::move(schema_name)
+    std::move(schema_name)
   }};
 }
 
-table table::make_relation_table(std::string name, std::vector<column> columns, std::size_t join_column_index, std::size_t inverse_join_column_index, std::string schema_name) {
+table table::make_relation_table(std::string name, std::vector<column> columns,
+                                 const std::size_t join_column_index,
+                                 const std::size_t inverse_join_column_index,
+                                 std::string schema_name) {
   return {std::move(name), std::move(columns), {
-    .schema_name = std::move(schema_name),
-    .join_column_index = join_column_index,
-    .inverse_join_column_index = inverse_join_column_index
+    std::move(schema_name),
+    {},
+    {},
+    join_column_info{
+      join_column_index,
+      inverse_join_column_index
+    }
   }};
 }
-
-// table::table(const char* name)
-// : table(name == nullptr ? throw std::invalid_argument("Table name must not be null") :
-                           // std::string(name))
-// {}
 
 table::table(std::string name)
   : table(std::move(name), {}, {})
@@ -41,26 +43,8 @@ table::table(std::string name, std::vector<column> columns, options opts)
 {
   validate_schema(columns_);
 
-  const bool has_join = opts.join_column_index.has_value();
-  const bool has_inverse_join = opts.inverse_join_column_index.has_value();
-
-  if (has_join != has_inverse_join) {
-    throw std::invalid_argument{
-      "join_column_index and inverse_join_column_index must either both be set or both be empty"
-    };
-  }
-
-  if (opts.primary_key_column_index && has_join) {
-    throw std::invalid_argument{
-      "table cannot be both a primary-key table and a relation table"
-    };
-  }
-
-  if (has_join) {
-    make_relation_table(*opts.join_column_index, *opts.inverse_join_column_index);
-  } else {
-    make_primary_key_table(opts.primary_key_column_index);
-  }
+  join_column_info_ = opts.join_info;
+  pk_column_index_ = opts.primary_key_column_index;
 
   rebind_columns();
   create_constraints();
@@ -113,7 +97,8 @@ table::table(const table &other)
 , schema_name_(other.schema_name_)
 , columns_(other.columns_)
 , constraints_(other.constraints_)
-, value_(other.value_) {
+, pk_column_index_(other.pk_column_index_)
+, join_column_info_(other.join_column_info_) {
   rebind_columns();
   rebind_constraints();
 }
@@ -131,7 +116,8 @@ table::table(table &&other) noexcept
 , schema_name_(std::move(other.schema_name_))
 , columns_(std::move(other.columns_))
 , constraints_(std::move(other.constraints_))
-, value_(other.value_) {
+, pk_column_index_(other.pk_column_index_)
+, join_column_info_(other.join_column_info_) {
   for (std::size_t index = 0; index < columns_.size(); ++index) {
     if (auto *plain = columns_[index].plain(); plain != nullptr) {
       plain->table = this;
@@ -141,7 +127,8 @@ table::table(table &&other) noexcept
   rebind_constraints();
   other.constraints_.clear();
   other.columns_.clear();
-  other.value_ = primary_key_table{};
+  other.pk_column_index_ = std::nullopt;
+  other.join_column_info_ = {};
 }
 
 table & table::operator=(table &&other) noexcept {
@@ -154,7 +141,8 @@ table & table::operator=(table &&other) noexcept {
   schema_name_ = std::move(other.schema_name_);
   columns_ = std::move(other.columns_);
   constraints_ = std::move(other.constraints_);
-  value_ = other.value_;
+  pk_column_index_ = other.pk_column_index_;
+  join_column_info_ = other.join_column_info_;
   for (std::size_t index = 0; index < columns_.size(); ++index) {
     if (auto *plain = columns_[index].plain(); plain != nullptr) {
       plain->table = this;
@@ -164,7 +152,8 @@ table & table::operator=(table &&other) noexcept {
   rebind_constraints();
   other.constraints_.clear();
   other.columns_.clear();
-  other.value_ = primary_key_table{};
+  other.pk_column_index_ = std::nullopt;
+  other.join_column_info_ = {};
   return *this;
 }
 
@@ -174,11 +163,11 @@ bool table::operator==(const table& x) const {
 
 table table::as(const std::string &alias) const {
   return {name_, columns_, {
-    .schema_name = schema_name_,
-    .alias = alias,
-    .join_column_index = join_column()
+    schema_name_,
+    alias,
+    pk_column_index_,
+    join_column_info_
   }};
-  return {schema_name_, name_, alias, columns_};
 }
 
 const std::string & table::table_name() const {
@@ -240,6 +229,14 @@ const column &table::column_ref_by_name(const table &tab, const std::string &col
   return tab.at_column(column_name);
 }
 
+bool table::is_primary_key_table() const {
+  return pk_column_index_.has_value();
+}
+
+bool table::is_relation_table() const {
+  return join_column_info_.has_value();
+}
+
 const std::string& table::schema_name() const {
   return schema_name_;
 }
@@ -248,26 +245,12 @@ std::string table::qualified_name() const {
   return schema_name_.empty() ? name_ : schema_name_ + "." + name_;
 }
 
-bool table::is_primary_key_table() const {
-  return std::holds_alternative<primary_key_table>(value_);
-}
-
-bool table::is_relation_table() const {
-  return std::holds_alternative<relation_table>(value_);
-}
-
-bool table::has_primary_key() const {
-  const auto *data = primary_key_data();
-  return data && data->pk_column_index.has_value();
-}
-
 const column* table::primary_key_column() const {
-  const auto *data = primary_key_data();
-  if (!data || !data->pk_column_index.has_value()) {
+  if (!pk_column_index_.has_value()) {
     return nullptr;
   }
 
-  const auto index = *data->pk_column_index;
+  const auto index = *pk_column_index_;
   if (index >= columns_.size()) {
     return nullptr;
   }
@@ -276,21 +259,19 @@ const column* table::primary_key_column() const {
 }
 
 const column* table::join_column() const {
-  const auto *data = relation_data();
-  if (!data || data->join_column_index >= columns_.size()) {
+  if (!join_column_info_.has_value() || join_column_info_->index > columns_.size()) {
     return nullptr;
   }
 
-  return &columns_[data->join_column_index];
+  return &columns_[join_column_info_->index];
 }
 
 const column* table::inverse_join_column() const {
-  const auto *data = relation_data();
-  if (!data || data->inverse_join_column_index >= columns_.size()) {
+  if (!join_column_info_.has_value() || join_column_info_->inverse_index > columns_.size()) {
     return nullptr;
   }
 
-  return &columns_[data->inverse_join_column_index];
+  return &columns_[join_column_info_->inverse_index];
 }
 
 void table::validate_schema(const std::vector<column>& columns) {
@@ -352,44 +333,5 @@ void table::create_constraints() {
       }
     }
   }
-}
-
-const table::primary_key_table* table::primary_key_data() const {
-  return std::get_if<primary_key_table>(&value_);
-}
-
-table::primary_key_table* table::primary_key_data() {
-  return std::get_if<primary_key_table>(&value_);
-}
-
-const table::relation_table* table::relation_data() const {
-  return std::get_if<relation_table>(&value_);
-}
-
-table::relation_table* table::relation_data() {
-  return std::get_if<relation_table>(&value_);
-}
-
-void table::make_primary_key_table(const std::optional<std::size_t> pk_column_index) {
-  if (pk_column_index && *pk_column_index >= columns_.size()) {
-    throw std::out_of_range("primary key column index is out of range");
-  }
-
-  value_ = primary_key_table{pk_column_index};
-}
-
-void table::make_relation_table(const std::size_t join_column_index, const std::size_t inverse_join_column_index) {
-  if (join_column_index >= columns_.size()) {
-    throw std::out_of_range("join column index is out of range");
-  }
-
-  if (inverse_join_column_index >= columns_.size()) {
-    throw std::out_of_range("inverse join column index is out of range");
-  }
-
-  value_ = relation_table{
-    join_column_index,
-    inverse_join_column_index
-  };
 }
 }

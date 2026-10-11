@@ -35,7 +35,7 @@ abstract_pk_generator &basic_table_info::pk_generator() const {
 }
 
 bool basic_table_info::has_primary_key() const {
-  return table_->has_primary_key();
+  return table_->is_primary_key_table();
 }
 
 // const identifier& basic_table_info::primary_key() const {

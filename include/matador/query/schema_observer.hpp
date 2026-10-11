@@ -34,7 +34,7 @@ private:
 template <typename Type>
 void schema_observer<Type>::on_attach(const schema_node &node, const Type &/*prototype*/) const {
   const std::type_index ti(typeid(Type));
-  if (const auto &info = node.info<Type>().get(); info.has_primary_key()) {
+  if (const auto &info = node.info<Type>().get(); info.is_primary_key_table()) {
     // internal::primary_key_generator_finder finder;
     // const auto generator_type = finder.find(info);
     // const auto it = schema_.insert_table(typeid(Type), node, generator_type);

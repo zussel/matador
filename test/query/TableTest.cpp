@@ -58,7 +58,7 @@ TEST_CASE("Table: primary-key metadata is validated and preserved", "[query][tab
                      {column::make_plain("id", "", basic_type::Int64, {column_constraint::PrimaryKey}),
                       column::make_plain("total", "", basic_type::Double, {column_constraint::NotNull})});
 
-  REQUIRE(orders.has_primary_key());
+  REQUIRE(orders.is_primary_key_table());
   REQUIRE(orders.primary_key_column() == &orders.columns().front());
   REQUIRE(orders.primary_key_column()->column_name() == "id");
   REQUIRE(orders.primary_key_column()->is_primary_key());
@@ -74,11 +74,11 @@ TEST_CASE("Table: primary-key metadata is validated and preserved", "[query][tab
 
   table move_source{orders};
   const table moved{std::move(move_source)};
-  REQUIRE(moved.has_primary_key());
-  REQUIRE_FALSE(move_source.has_primary_key());
+  REQUIRE(moved.is_primary_key_table());
+  REQUIRE_FALSE(move_source.is_primary_key_table());
   REQUIRE(move_source.primary_key_column() == nullptr);
 
-  REQUIRE_FALSE(table::make_primary_key_table("audit", {column::make_plain("event_id")}).has_primary_key());
+  REQUIRE_FALSE(table::make_primary_key_table("audit", {column::make_plain("event_id")}).is_primary_key_table());
   REQUIRE(table::make_primary_key_table("audit", {column::make_plain("event_id")}).primary_key_column() == nullptr);
 
   REQUIRE_THROWS_AS(

@@ -16,7 +16,7 @@ query_contexts to_query_contexts(const schema_node& node, const dialect &d) {
   queries.select_all = select(tab)
     .from(tab)
     .compile(d);
-  if (tab.has_primary_key()) {
+  if (tab.is_primary_key_table()) {
     // SELECT one
     queries.select_one = select(tab)
       .from(tab)
@@ -48,7 +48,7 @@ query_contexts to_query_contexts(const schema_node& node, const dialect &d) {
     }
     columns.push_back(col);
   }
-  if (tab.has_primary_key() && node.info().pk_generator().type() == generator_type::Identity) {
+  if (tab.is_primary_key_table() && node.info().pk_generator().type() == generator_type::Identity) {
     queries.insert = query::insert()
       .into(tab, columns)
       .values(placeholders(columns.size()))

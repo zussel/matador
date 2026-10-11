@@ -62,7 +62,7 @@ std::vector<column>::iterator table_generator::find_column_by_name(const std::st
 }
 
 void table_generator::prepare_primary_key(const column &ref, identifier &&pk) const {
-  table_->make_primary_key_table(ref.index());
+  // table_->make_primary_key_table(ref.index());
   // table_->pk_identifier_ = std::move(pk);
 }
 
