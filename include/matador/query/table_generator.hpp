@@ -134,7 +134,7 @@ private:
 
     [[nodiscard]] std::vector<column>::iterator find_column_by_name(const std::string &name) const;
 
-    void prepare_primary_key(const column &ref, identifier &&pk) const;
+    void prepare_primary_key(const column &col, identifier &&pk) const;
     void prepare_relation_table(const std::string &join_column, const std::string &inverse_join_column) const;
 
     template<typename Type>

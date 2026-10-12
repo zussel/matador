@@ -101,7 +101,7 @@ TEST_CASE("Table: constraints retain their table and column identity", "[query][
      column::make_plain("status", "", basic_type::Varchar, {column_constraint::Default})}
   );
 
-  const auto constraints = orders.constraints();
+  const auto& constraints = orders.constraints();
   REQUIRE(constraints.size() == 7);
 
   const auto& primary_key = constraints[0];
@@ -212,7 +212,7 @@ TEST_CASE("Table: schemas reject expression columns and null names", "[query][ta
 
 TEST_CASE("Table: typed aliases retain table state", "[query][table]") {
   const typed_orders orders{"orders",{column::make_plain("id", "", basic_type::Int64)}, {
-    .schema_name = "sales"
+    "sales"
   }};
 
   const typed_orders alias = orders.as("o");

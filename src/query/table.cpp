@@ -46,50 +46,24 @@ table::table(std::string name, std::vector<column> columns, options opts)
   join_column_info_ = opts.join_info;
   pk_column_index_ = opts.primary_key_column_index;
 
+  if (!is_primary_key_table()) {
+    for (std::size_t index = 0; index < columns_.size(); ++index) {
+      if (!columns_[index].is_primary_key()) {
+        continue;
+      }
+
+      if (is_primary_key_table()) {
+        throw std::invalid_argument("Table schemas cannot contain multiple primary keys");
+      }
+
+      update_primary_key_index(index);
+    }
+  }
+
   rebind_columns();
   create_constraints();
   rebind_constraints();
 }
-
-// table::table(std::string name, std::vector<column> columns)
-// : table("", std::move(name), "", std::move(columns)) {
-// }
-
-// table::table(std::string schema_name, std::string name, std::vector<column> columns)
-// : table(std::move(schema_name), std::move(name), "", std::move(columns)) {}
-
-// table::table(std::string schema_name, std::string name, std::string alias, std::vector<column> columns)
-// : name_(std::move(name))
-// , alias_(std::move(alias))
-// , schema_name_(std::move(schema_name))
-// , columns_(std::move(columns)) {
-//   rebind_columns();
-//   create_constraints();
-//
-//   for (std::size_t index = 0; index < columns_.size(); ++index) {
-//     if (!columns_[index].is_primary_key()) {
-//       continue;
-//     }
-//
-//     if (has_primary_key()) {
-//       throw std::invalid_argument("Table schemas cannot contain multiple primary keys");
-//     }
-//
-//     make_primary_key_table(index);
-//   }
-// }
-// table::table(std::string schema_name, std::string name, std::string alias,
-//              std::vector<column> columns, std::size_t join_column_index,
-//              std::size_t inverse_join_column_index)
-// : name_(std::move(name))
-// , alias_(std::move(alias))
-// , schema_name_(std::move(schema_name))
-// , columns_(std::move(columns))
-// , value_(relation_table{join_column_index, inverse_join_column_index}) {
-//   rebind_columns();
-//   rebind_constraints();
-//
-// }
 
 table::table(const table &other)
 : name_(other.name_)
@@ -184,6 +158,17 @@ const std::vector<column>& table::columns() const {
 
 void table::update_name(const std::string& name) {
   name_ = name;
+}
+
+void table::update_primary_key_index(size_t index) {
+  pk_column_index_ = index;
+}
+
+void table::update_relation_columns(const size_t join_column_index, const size_t inverse_join_column_index) {
+  join_column_info_ = {
+    join_column_index,
+    inverse_join_column_index
+  };
 }
 
 const std::vector<constraint>& table::constraints() const {

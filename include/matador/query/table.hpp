@@ -66,6 +66,8 @@ public:
   [[nodiscard]] const std::vector<constraint>& constraints() const;
 
   void update_name(const std::string& name);
+  void update_primary_key_index(size_t index);
+  void update_relation_columns(size_t join_column_index, size_t inverse_join_column_index);
 
   [[nodiscard]] bool has_alias() const;
 
