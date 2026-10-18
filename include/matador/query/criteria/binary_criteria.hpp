@@ -38,8 +38,10 @@ public:
     void accept(criteria_visitor& visitor) const override;
 
     [[nodiscard]] const column& left_column() const;
+    [[nodiscard]] column& left_column();
     [[nodiscard]] binary_operator operand() const;
     [[nodiscard]] const column& right_column() const;
+    [[nodiscard]] column& right_column();
 
 private:
     column left_column_;

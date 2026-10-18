@@ -13,6 +13,7 @@ public:
     explicit abstract_column_criteria(const column& col);
 
     [[nodiscard]] const column& col() const;
+    [[nodiscard]] column& col();
 
 protected:
     column column_;

@@ -36,11 +36,19 @@ const column& binary_column_criteria::left_column() const {
   return left_column_;
 }
 
+column& binary_column_criteria::left_column() {
+  return left_column_;
+}
+
 binary_operator binary_column_criteria::operand() const {
   return operator_;
 }
 
 const column& binary_column_criteria::right_column() const {
+  return right_column_;
+}
+
+column& binary_column_criteria::right_column() {
   return right_column_;
 }
 }

@@ -84,6 +84,7 @@ add_library(matador
     query/internal/basic_type_to_string_visitor.cpp
     query/internal/collection_utils.cpp
     query/internal/column_value_pair.cpp
+    query/internal/criteria_transformer.cpp
     query/internal/identifier_discover_service.cpp
     query/internal/identifier_statement_binder.cpp
     query/internal/object_binder.cpp
@@ -91,6 +92,7 @@ add_library(matador
     query/internal/query_parts.cpp
     query/internal/query_result_impl.cpp
     query/internal/result_binder.cpp
+    query/internal/select_query_builder.cpp
     query/internal/schema_utils.cpp
     query/internal/string_builder_utils.cpp
     query/internal/value_extractor.cpp

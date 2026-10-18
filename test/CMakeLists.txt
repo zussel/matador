@@ -33,6 +33,7 @@ add_executable(MatadorTests
     query/SchemaTest.cpp
     query/InsertIntermediateTest.cpp
     query/SelectIntermediateTest.cpp
+    query/SelectQueryBuilderTest.cpp
     query/StatementCacheTest.cpp
     query/TableTest.cpp
     query/UpdateIntermediateTest.cpp

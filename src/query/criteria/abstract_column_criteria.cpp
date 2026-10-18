@@ -7,4 +7,8 @@ abstract_column_criteria::abstract_column_criteria(const column& col)
 const column& abstract_column_criteria::col() const {
   return column_;
 }
+
+column& abstract_column_criteria::col() {
+  return column_;
+}
 }
