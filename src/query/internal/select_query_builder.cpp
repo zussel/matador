@@ -86,8 +86,8 @@ bool select_query_builder::is_processed(const basic_schema::const_iterator &node
 }
 
 const table &select_query_builder::add_table(const basic_table_info &info, const std::string &key) {
-  state_.tables.push_back(info.table()->as(build_alias('t', ++state_.table_index)));
-  const table &tab = state_.tables.back();
+  tables_.push_back(info.table()->as(build_alias('t', ++state_.table_index)));
+  const table &tab = tables_.back();
   state_.processed.insert_or_assign(key, &tab);
   return tab;
 }

@@ -148,7 +148,6 @@ private:
   };
 
   struct build_state {
-    std::deque<table> tables{};
     std::unordered_map<std::string, const table *> processed{};
     std::vector<scope> scopes{};
     select_query_data data{};
@@ -236,6 +235,7 @@ private:
 
 private:
   const basic_schema &schema_;
+  std::deque<table> tables_{};
   build_state state_{};
 };
 }
