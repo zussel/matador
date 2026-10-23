@@ -21,9 +21,8 @@ struct person {
 struct student final : person {};
 
 struct teacher final : person {};
-}
 
-struct names {
+  struct names {
   unsigned int id{};
   std::vector<std::string> names_list;
 
@@ -33,6 +32,7 @@ struct names {
     query::access::has_many(op, "name_list", names_list, "names_id", query::fetch_type::Eager);
   }
 };
+}
 
 TEST_CASE("Test empty prototype tree", "[schema_node][empty]") {
   const query::schema repo;
