@@ -275,6 +275,8 @@ private:
       throw error_exception(error_code::UnknownType, "Unknown type for relation " + std::string{id});
     }
 
+    const auto n1 = std::type_index(typeid(LocalType)).name();
+    const auto n2 = it->info().type_index().name();
     if (std::type_index(typeid(LocalType)) != it->info().type_index()) {
       throw error_exception(error_code::InvalidRelationType, "Invalid relation type for " + std::string{id});
     }
