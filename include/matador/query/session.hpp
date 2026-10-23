@@ -48,20 +48,58 @@ public:
    *
    * @tparam Type Type of object to insert
    * @param obj Object to insert
-   * @return Inserted object
+   * @return Inserted object or error on failure
    */
   template<typename Type>
   utils::result<object_ptr<Type>, utils::error> insert(object_ptr<Type> obj);
+
+  /**
+   * Updates the given object in the session.
+   *
+   * @tparam Type Type of object to update
+   * @param obj Object to update
+   * @return Updated object or error on failure
+   */
   template<typename Type>
   utils::result<object_ptr<Type>, utils::error> update(const object_ptr<Type> &obj);
+
+  /**
+   * Deletes the given object from the session.
+   *
+   * @tparam Type Type of object to delete
+   * @param obj Object to delete
+   * @return Error on failure
+   */
   template<typename Type>
   utils::result<void, utils::error> remove(const object_ptr<Type> &obj);
 
+  /**
+   * Finds the given object in the session by
+   * its type and primary key.
+   *
+   * @tparam Type Type of object to find
+   * @tparam PrimaryKeyType Type of primary key
+   * @param pk Primary key of object to find
+   * @return Found object or error on failure
+   */
   template<typename Type, typename PrimaryKeyType>
   utils::result<object_ptr<Type>, utils::error> find(const PrimaryKeyType &pk);
-  template<typename Type>
-  utils::result<query_result<Type>, utils::error> find(query::criteria_ptr clause = {});
 
+  /**
+   * Finds objects in the session that match the given criteria.
+   *
+   * @tparam Type Type of object to find
+   * @param clause Criteria to match objects against
+   * @return Query result containing found objects or error on failure
+   */
+  template<typename Type>
+  utils::result<query_result<Type>, utils::error> find(criteria_ptr clause = {});
+
+  /**
+   * Returns the schema associated with the session.
+   *
+   * @return Reference to the basic_schema object
+   */
   [[nodiscard]] const basic_schema &schema() const;
 
 private:
