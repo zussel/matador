@@ -11,7 +11,7 @@
 #include <utility>
 
 namespace matador::query {
-class foreign_kay_options;
+class foreign_key_options;
 namespace detail {
 class primary_key_setter {
 public:
@@ -36,15 +36,15 @@ public:
   template<typename T>
   static void on_attribute(const char * /*id*/, T &, const column_options & = NullAttributes) {}
   template<class P>
-  static void on_belongs_to(const char * /*id*/, P &, const foreign_kay_options & ) {}
+  static void on_belongs_to(const char * /*id*/, P &, const foreign_key_options & ) {}
   template<class P>
-  static void on_has_one(const char * /*id*/, P &, const char * /*join_column*/, const foreign_kay_options & ) {}
+  static void on_has_one(const char * /*id*/, P &, const char * /*join_column*/, const foreign_key_options & ) {}
   template<class C>
-  static void on_has_many(const char * /*id*/, C &, const char * /*join_column*/, const foreign_kay_options & ) {}
+  static void on_has_many(const char * /*id*/, C &, const char * /*join_column*/, const foreign_key_options & ) {}
   template<class C>
-  static void on_has_many_to_many(const char * /*id*/, C &, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_kay_options & ) {}
+  static void on_has_many_to_many(const char * /*id*/, C &, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_key_options & ) {}
   template<class C>
-  static void on_has_many_to_many(const char * /*id*/, C &, const foreign_kay_options & ) {}
+  static void on_has_many_to_many(const char * /*id*/, C &, const foreign_key_options & ) {}
 
 private:
   identifier pk_{};
@@ -63,15 +63,15 @@ struct pk_unset_checker {
   template<typename T>
   static void on_attribute(const char * /*id*/, T &, const column_options & = NullAttributes) {}
   template<class P>
-  static void on_belongs_to(const char * /*id*/, P &, const foreign_kay_options & ) {}
+  static void on_belongs_to(const char * /*id*/, P &, const foreign_key_options & ) {}
   template<class P>
-  static void on_has_one(const char * /*id*/, P &, const char * /*join_column*/, const foreign_kay_options & ) {}
+  static void on_has_one(const char * /*id*/, P &, const char * /*join_column*/, const foreign_key_options & ) {}
   template<class C>
-  static void on_has_many(const char * /*id*/, C &, const char * /*join_column*/, const foreign_kay_options & ) {}
+  static void on_has_many(const char * /*id*/, C &, const char * /*join_column*/, const foreign_key_options & ) {}
   template<class C>
-  static void on_has_many_to_many(const char * /*id*/, C &, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_kay_options & ) {}
+  static void on_has_many_to_many(const char * /*id*/, C &, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_key_options & ) {}
   template<class C>
-  static void on_has_many_to_many(const char * /*id*/, C &, const foreign_kay_options & ) {}
+  static void on_has_many_to_many(const char * /*id*/, C &, const foreign_key_options & ) {}
 };
 
 struct primary_key_getter {
@@ -87,15 +87,15 @@ struct primary_key_getter {
   template<typename T>
   static void on_attribute(const char * /*id*/, T &, const column_options & = NullAttributes) {}
   template<class P>
-  static void on_belongs_to(const char * /*id*/, P &, const foreign_kay_options & ) {}
+  static void on_belongs_to(const char * /*id*/, P &, const foreign_key_options & ) {}
   template<class P>
-  static void on_has_one(const char * /*id*/, P &, const char * /*join_column*/, const foreign_kay_options & ) {}
+  static void on_has_one(const char * /*id*/, P &, const char * /*join_column*/, const foreign_key_options & ) {}
   template<class C>
-  static void on_has_many(const char * /*id*/, C &, const char * /*join_column*/, const foreign_kay_options & ) {}
+  static void on_has_many(const char * /*id*/, C &, const char * /*join_column*/, const foreign_key_options & ) {}
   template<class C>
-  static void on_has_many_to_many(const char * /*id*/, C &, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_kay_options & ) {}
+  static void on_has_many_to_many(const char * /*id*/, C &, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_key_options & ) {}
   template<class C>
-  static void on_has_many_to_many(const char * /*id*/, C &, const foreign_kay_options & ) {}
+  static void on_has_many_to_many(const char * /*id*/, C &, const foreign_key_options & ) {}
 
   identifier pk_;
 };
