@@ -465,10 +465,7 @@ void relation_completer<Type, Observers...>::attach_relation_node(const std::str
   using relation_value_type = many_to_many_relation<Type, NodeType>;
   using value_type = NodeType;
 
-  auto &foreign_node = require_node(
-    typeid(value_type),
-    "relation completer: foreign node not found"
-  );
+  auto &foreign_node = require_node(typeid(value_type), "relation completer: foreign node not found");
 
   if (const auto it = repo_.find_node(name); it != repo_.end()) {
     return;
