@@ -5,7 +5,7 @@
 #include <functional>
 #include <type_traits>
 
-namespace matador::utils {
+namespace matador {
 
 template < typename ValueType, typename ErrorType >
 class [[nodiscard]] result;
@@ -188,7 +188,7 @@ public:
   template <typename Func,
             typename ReturnResult = typename detail::and_then_result_type<ValueType, Func>::type>
   ReturnResult and_then(Func &&f) {
-    static_assert(is_result<ReturnResult>::value, "and_then() callback must return matador::utils::result");
+    static_assert(is_result<ReturnResult>::value, "and_then() callback must return matador::result");
 
     if (is_ok()) {
       if constexpr (std::is_void_v<ValueType>) {
@@ -221,13 +221,5 @@ public:
 private:
   std::variant<ok<value_type>, failure<error_type>> result_;
 };
-}
-namespace matador {
-template < typename ValueType, typename ErrorType >
-using result = utils::result<ValueType, ErrorType>;
-template < typename ValueType >
-using ok = utils::ok<ValueType>;
-template < typename ErrorType >
-using failure = utils::failure<ErrorType>;
 }
 #endif //QUERY_RESULT_HPP

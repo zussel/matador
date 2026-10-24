@@ -7,11 +7,11 @@ manual_pk_generator::manual_pk_generator()
 : abstract_pk_generator(generator_type::Manual){
 }
 
-utils::result<int64_t, utils::error> manual_pk_generator::next_id(const executor &/*exec*/) {
+result<int64_t, error> manual_pk_generator::next_id(const executor &/*exec*/) {
   return failure<error>(error(error_code::Failure, "Manual PK generator not implemented"));
 }
 
-utils::result<int64_t, utils::error> manual_pk_generator::current_id(const executor& /*exec*/) {
+result<int64_t, error> manual_pk_generator::current_id(const executor& /*exec*/) {
   return failure<error>(error(error_code::Failure, "Manual PK generator not implemented"));
 }
 }

@@ -51,7 +51,7 @@ public:
    * @return Inserted object or error on failure
    */
   template<typename Type>
-  utils::result<object_ptr<Type>, utils::error> insert(object_ptr<Type> obj);
+  result<object_ptr<Type>, error> insert(object_ptr<Type> obj);
 
   /**
    * Updates the given object in the session.
@@ -61,7 +61,7 @@ public:
    * @return Updated object or error on failure
    */
   template<typename Type>
-  utils::result<object_ptr<Type>, utils::error> update(const object_ptr<Type> &obj);
+  result<object_ptr<Type>, error> update(const object_ptr<Type> &obj);
 
   /**
    * Deletes the given object from the session.
@@ -71,7 +71,7 @@ public:
    * @return Error on failure
    */
   template<typename Type>
-  utils::result<void, utils::error> remove(const object_ptr<Type> &obj);
+  result<void, error> remove(const object_ptr<Type> &obj);
 
   /**
    * Finds the given object in the session by
@@ -83,7 +83,7 @@ public:
    * @return Found object or error on failure
    */
   template<typename Type, typename PrimaryKeyType>
-  utils::result<object_ptr<Type>, utils::error> find(const PrimaryKeyType &pk);
+  result<object_ptr<Type>, error> find(const PrimaryKeyType &pk);
 
   /**
    * Finds objects in the session that match the given criteria.
@@ -93,7 +93,7 @@ public:
    * @return Query result containing found objects or error on failure
    */
   template<typename Type>
-  utils::result<query_result<Type>, utils::error> find(criteria_ptr clause = {});
+  result<query_result<Type>, error> find(criteria_ptr clause = {});
 
   /**
    * Returns the schema associated with the session.
@@ -116,52 +116,52 @@ private:
 };
 
 template<typename Type>
-utils::result<object_ptr<Type>, utils::error> session::insert(object_ptr<Type> obj) {
+result<object_ptr<Type>, error> session::insert(object_ptr<Type> obj) {
   if (obj.is_persistent()) {
-    return utils::ok(obj);
+    return ok(obj);
   }
 
   if (const auto it = schema_.find(typeid(Type)); it == schema_.end()) {
-    return utils::failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
+    return failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
   }
 
   // Build dependency-ordered insert steps (deps first, root last)
   insert_query_builder<Type> iqb(schema_, contexts_by_type_);
   auto steps = iqb.build(obj);
   if (!steps.is_ok()) {
-    return utils::failure(make_error(error_code::FailedToBuildQuery, "Failed to build insert dependency queries."));
+    return failure(make_error(error_code::FailedToBuildQuery, "Failed to build insert dependency queries."));
   }
 
   // Execute all steps; for Identity steps read RETURNING and write pk back into the object
   for (auto &step : *steps) {
     const auto conn = pool_.acquire();
     if (!conn.valid()) {
-      return utils::failure(make_error(error_code::FailedToAcquirePool, "Failed to acquire connection pool for primary key generation."));
+      return failure(make_error(error_code::FailedToAcquirePool, "Failed to acquire connection pool for primary key generation."));
     }
 
     if (const auto result = step->prepare(*conn); !result.is_ok()) {
-      return utils::failure(result.err());
+      return failure(result.err());
     }
     conn.release();
 
     auto stmt = cache_.acquire(step->ctx());
     if (!stmt.is_ok()) {
-      return utils::failure(stmt.err());
+      return failure(stmt.err());
     }
 
     if (const auto result = step->execute(*stmt); !result.is_ok()) {
-      return utils::failure(result.err());
+      return failure(result.err());
     }
   }
 
   // After successfully executed all inserts, add them to the object cache
   for (auto &step : *steps) {
     if (const auto result = step->finalize(object_cache_, resolver_service_); !result.is_ok()) {
-      return utils::failure(result.err());
+      return failure(result.err());
     }
   }
 
-  return utils::ok(obj);
+  return ok(obj);
 }
 
 class pk_object_binder final {
@@ -217,76 +217,76 @@ private:
 };
 
 template<typename Type>
-utils::result<object_ptr<Type>, utils::error> session::update(const object_ptr<Type> &obj) {
+result<object_ptr<Type>, error> session::update(const object_ptr<Type> &obj) {
   const auto it = schema_.find(typeid(Type));
   if (it == schema_.end()) {
-    return utils::failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
+    return failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
   }
   using namespace matador::utils;
   using namespace matador::query;
 
   const auto cit = contexts_by_type_.find(it->info().type_index());
   if (cit == contexts_by_type_.end()) {
-    return utils::failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
+    return failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
   }
   auto stmt = cache_.acquire(cit->second.update_one);
   if (!stmt.is_ok()) {
-    return utils::failure(stmt.err());
+    return failure(stmt.err());
   }
 
   stmt->bind(*obj);
   pk_object_binder binder(stmt.value(), stmt->bind_pos());
   if (const auto update_result = binder.bind(*obj).execute(); !update_result.is_ok()) {
-    return utils::failure(update_result.err());
+    return failure(update_result.err());
   }
-  return utils::ok(object_ptr{obj});
+  return ok(object_ptr{obj});
 }
 
 template<typename Type>
-utils::result<void, utils::error> session::remove(const object_ptr<Type> &obj) {
+result<void, error> session::remove(const object_ptr<Type> &obj) {
   if (!obj.is_persistent()) {
-    return utils::ok<void>();
+    return ok<void>();
   }
 
   if (const auto it = schema_.find(typeid(Type)); it == schema_.end()) {
-    return utils::failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
+    return failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
   }
 
   delete_query_builder<Type> dqb(schema_, contexts_by_type_);
   auto steps = dqb.build(obj);
   if (!steps.is_ok()) {
-    return utils::failure(make_error(error_code::FailedToBuildQuery, "Failed to build delete dependency queries."));
+    return failure(make_error(error_code::FailedToBuildQuery, "Failed to build delete dependency queries."));
   }
 
   for (auto &step : *steps) {
     const auto conn = pool_.acquire();
     if (!conn.valid()) {
-      return utils::failure(make_error(error_code::FailedToAcquirePool, "Failed to acquire connection pool for primary key generation."));
+      return failure(make_error(error_code::FailedToAcquirePool, "Failed to acquire connection pool for primary key generation."));
     }
 
     if (const auto result = step->prepare(*conn); !result.is_ok()) {
-      return utils::failure(result.err());
+      return failure(result.err());
     }
     conn.release();
 
     auto stmt = cache_.acquire(step->ctx());
     if (!stmt.is_ok()) {
-      return utils::failure(stmt.err());
+      return failure(stmt.err());
     }
 
     if (const auto result = step->execute(*stmt); !result.is_ok()) {
-      return utils::failure(result.err());
+      return failure(result.err());
     }
   }
 
   // After successfully executed all deletes, add them to the object cache
   for (auto &step : *steps) {
     if (const auto result = step->finalize(object_cache_, resolver_service_); !result.is_ok()) {
-      return utils::failure(result.err());
+      return failure(result.err());
     }
   }
 
-  return utils::ok<void>();
+  return ok<void>();
   // using namespace matador::utils;
   // using namespace matador::query;
   //
@@ -302,58 +302,58 @@ utils::result<void, utils::error> session::remove(const object_ptr<Type> &obj) {
   //
   // pk_object_binder binder(*stmt, stmt->bind_pos());
   // if (const auto update_result = binder.bind(*obj).execute(); !update_result.is_ok()) {
-  //   return utils::failure(update_result.err());
+  //   return failure(update_result.err());
   // }
-  // return utils::ok<void>();
+  // return ok<void>();
 }
 
 template<typename Type, typename PrimaryKeyType>
-utils::result<object_ptr<Type>, utils::error> session::find(const PrimaryKeyType &pk) {
+result<object_ptr<Type>, error> session::find(const PrimaryKeyType &pk) {
   const auto it = schema_.find(typeid(Type));
   if (it == schema_.end()) {
-    return utils::failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
+    return failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
   }
 
   if (const auto &info = it->info(); !info.has_primary_key()) {
-    return utils::failure(make_error(error_code::FailedToFindPrimaryKey, "Type hasn't primary key."));
+    return failure(make_error(error_code::FailedToFindPrimaryKey, "Type hasn't primary key."));
   }
 
   auto resolver = resolver_service_->template resolver<Type>();
   if (!resolver) {
-    return utils::failure(utils::error(error_code::UnknownType, "Missing object resolver for inserted type."));
+    return failure(error(error_code::UnknownType, "Missing object resolver for inserted type."));
   }
 
   if (object_cache_.is_loaded<Type>(identifier{pk})) {
-    return utils::ok(object_ptr(object_cache_.acquire_proxy<Type>(identifier{pk}, resolver)));
+    return ok(object_ptr(object_cache_.acquire_proxy<Type>(identifier{pk}, resolver)));
   }
 
   select_query_builder eqb(schema_);
   auto data = eqb.build<Type>(*it->info().table()->primary_key_column() == pk);
   if (!data.is_ok()) {
-    return utils::failure(make_error(error_code::FailedToBuildQuery, "Failed to build query for type " + it->name() + "."));
+    return failure(make_error(error_code::FailedToBuildQuery, "Failed to build query for type " + it->name() + "."));
   }
 
   auto ctx = data->compile(dialect_);
   ctx.resolver = resolver_service_;
   auto stmt = cache_.acquire(ctx);
   if (!stmt.is_ok()) {
-    return utils::failure(stmt.err());
+    return failure(stmt.err());
   }
 
   return stmt->template fetch_one<Type>();
 }
 
 template<typename Type>
-utils::result<query_result<Type>, utils::error> session::find(criteria_ptr clause) {
+result<query_result<Type>, error> session::find(criteria_ptr clause) {
   const auto it = schema_.find(typeid(Type));
   if (it == schema_.end()) {
-    return utils::failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
+    return failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
   }
 
   query::select_query_builder eqb(schema_);
   auto data = eqb.build<Type>(std::move(clause));
   if (!data.is_ok()) {
-    return utils::failure(make_error(error_code::FailedToBuildQuery,
+    return failure(make_error(error_code::FailedToBuildQuery,
                                      "Failed to build query for type " + it->name() + "."));
   }
 
@@ -361,7 +361,7 @@ utils::result<query_result<Type>, utils::error> session::find(criteria_ptr claus
   ctx.resolver = resolver_service_;
   auto stmt = cache_.acquire(ctx);
   if (!stmt.is_ok()) {
-    return utils::failure(stmt.err());
+    return failure(stmt.err());
   }
 
   return stmt->template fetch<Type>();

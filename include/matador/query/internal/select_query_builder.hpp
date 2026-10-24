@@ -46,7 +46,7 @@ public:
   : schema_(scm) {}
 
   template<class EntityType>
-  utils::result<fetchable_query, utils::error> build(criteria_ptr clause = {}) {
+  result<fetchable_query, error> build(criteria_ptr clause = {}) {
     try {
       reset();
       const auto node = resolve(typeid(EntityType));
@@ -66,11 +66,11 @@ public:
         .order_by(column::make_plain(&root, state_.data.pk_column_name))
         .asc();
 
-      return {utils::ok(std::move(q))};
+      return {ok(std::move(q))};
     } catch (const error_exception &ex) {
-      return {utils::failure(ex.error())};
+      return {failure(ex.error())};
     } catch (const std::exception &ex) {
-      return utils::failure{utils::error(error_code::UnexpectedError, ex.what())};
+      return failure{error(error_code::UnexpectedError, ex.what())};
     }
   }
 

@@ -15,35 +15,35 @@ public:
   : execute_step(std::move(ctx))
   , ptr_(ptr) {}
 
-  utils::result<void, utils::error> prepare(executor &/*conn*/) override {
+  result<void, error> prepare(executor &/*conn*/) override {
     id_ = ptr_.primary_key();
-    return utils::ok<void>();
+    return ok<void>();
   }
 
-  utils::result<void, utils::error> execute(statement &stmt) override {
+  result<void, error> execute(statement &stmt) override {
     if (!ptr_) {
-      return utils::failure(utils::error{error_code::InvalidObject, "Object is null"});
+      return failure(error{error_code::InvalidObject, "Object is null"});
     }
 
     identifier_statement_binder binder(stmt, 0);
     binder.bind(id_);
 
     if (const auto result = stmt.execute(); !result.is_ok()) {
-      return utils::failure(result.err());
+      return failure(result.err());
     }
 
-    return utils::ok<void>();
+    return ok<void>();
   }
 
-  utils::result<void, utils::error> finalize(object_cache &cache, const resolver_service_ptr& /*resolver_service*/) override {
+  result<void, error> finalize(object_cache &cache, const resolver_service_ptr& /*resolver_service*/) override {
     if (!ptr_) {
-      return utils::failure(utils::error{error_code::InvalidObject, "Object is null"});
+      return failure(error{error_code::InvalidObject, "Object is null"});
     }
 
     cache.erase<ObjectType>(id_);
     ptr_.change_state(object_state::Transient);
 
-    return utils::ok<void>();
+    return ok<void>();
   }
 
 private:
@@ -57,20 +57,20 @@ public:
   : execute_step(std::move(ctx))
   , ptr_(ptr) {}
 
-  utils::result<void, utils::error> prepare(executor &) override {
-    return utils::ok<void>();
+  result<void, error> prepare(executor &) override {
+    return ok<void>();
   }
-  utils::result<void, utils::error> execute(statement &stmt) override {
+  result<void, error> execute(statement &stmt) override {
     stmt.bind(*ptr_);
     if (const auto exec_result = stmt.execute(); !exec_result.is_ok()) {
-      return utils::failure(exec_result.err());
+      return failure(exec_result.err());
     }
 
-    return utils::ok<void>();
+    return ok<void>();
   }
 
-  utils::result<void, utils::error> finalize(object_cache& /*cache*/, const resolver_service_ptr& /*resolver_service*/) override {
-    return utils::ok<void>();
+  result<void, error> finalize(object_cache& /*cache*/, const resolver_service_ptr& /*resolver_service*/) override {
+    return ok<void>();
   }
 
 private:

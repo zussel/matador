@@ -3,9 +3,7 @@
 
 #include "matador/utils/error.hpp"
 
-#include <cstdint>
-
-namespace matador::utils {
+namespace matador {
 class error_exception final : public std::exception {
 public:
   explicit error_exception(class error &&err);
@@ -19,10 +17,6 @@ public:
 private:
   class error error_;
 };
-}
-
-namespace matador {
-using utils::error_exception;
 }
 
 #endif //QUERY_BUILDER_EXCEPTION_HPP

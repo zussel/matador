@@ -50,17 +50,17 @@ statement &statement::bind(const size_t pos, std::string &val, const size_t size
   return *this;
 }
 
-utils::result<execute_result, utils::error> statement::execute() const {
+result<execute_result, error> statement::execute() const {
   logger_->on_execute(statement_proxy_->sql());
   std::cout << statement_proxy_->sql() << std::endl;
   return statement_proxy_->execute(*bindings_);
 }
 
-utils::result<query_result<record>, utils::error> statement::fetch() const {
+result<query_result<record>, error> statement::fetch() const {
   std::cout << statement_proxy_->sql() << std::endl;
   auto result = statement_proxy_->fetch(*bindings_);
   if (!result.is_ok()) {
-    return utils::failure(result.err());
+    return failure(result.err());
   }
   logger_->on_fetch(statement_proxy_->sql());
   const auto prototype = result.value()->prototype();
@@ -72,12 +72,12 @@ utils::result<query_result<record>, utils::error> statement::fetch() const {
   return ok<query_result<record>>(fetch_result.release());
 }
 
-utils::result<std::optional<record>, utils::error> statement::fetch_one() const {
+result<std::optional<record>, error> statement::fetch_one() const {
   logger_->on_fetch(statement_proxy_->sql());
   std::cout << statement_proxy_->sql() << std::endl;
   auto result = statement_proxy_->fetch(*bindings_);
   if (!result.is_ok()) {
-    return utils::failure(result.err());
+    return failure(result.err());
   }
 
   const auto prototype = result.value()->prototype();
@@ -88,10 +88,10 @@ utils::result<std::optional<record>, utils::error> statement::fetch_one() const 
   auto records = fetch_result.release();
   auto first = records.begin();
   if (first == records.end()) {
-    return utils::ok(std::optional<record>{std::nullopt});
+    return ok(std::optional<record>{std::nullopt});
   }
   logger_->on_fetch(statement_proxy_->sql());
-  return utils::ok(std::optional{std::move(*first)});
+  return ok(std::optional{std::move(*first)});
 }
 
 void statement::reset() const {
@@ -106,10 +106,10 @@ std::string statement::sql() const {
   return statement_proxy_->sql();
 }
 
-utils::result<std::unique_ptr<query_result_impl>, utils::error> statement::fetch_internal() const {
+result<std::unique_ptr<query_result_impl>, error> statement::fetch_internal() const {
   auto result = statement_proxy_->fetch(*bindings_);
   if (!result.is_ok()) {
-    return utils::failure(result.err());
+    return failure(result.err());
   }
   logger_->on_fetch(statement_proxy_->sql());
 

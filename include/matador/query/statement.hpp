@@ -72,7 +72,7 @@ public:
    *
    * @return The number of affected rows
    */
-  [[nodiscard]] utils::result<execute_result, utils::error> execute() const;
+  [[nodiscard]] result<execute_result, error> execute() const;
 
   /**
    * Fetches the result of the prepared
@@ -84,7 +84,7 @@ public:
    * @return The query result set
    */
   template<class Type>
-  utils::result<query_result<Type>, utils::error> fetch();
+  result<query_result<Type>, error> fetch();
   /**
    * Fetches the result of the prepared
    * statement. The type is the record representing an
@@ -95,7 +95,7 @@ public:
    *
    * @return The query result set
    */
-  [[nodiscard]] utils::result<query_result<record>, utils::error> fetch() const;
+  [[nodiscard]] result<query_result<record>, error> fetch() const;
   /**
    * Fetches the first result of a prepared statement.
    * If a prepared statement is empty or not
@@ -105,10 +105,10 @@ public:
    * @return The query result set
    */
   template<class Type>
-  utils::result<object_ptr<Type>, utils::error> fetch_one();
+  result<object_ptr<Type>, error> fetch_one();
 
   template<class Type>
-  utils::result<std::shared_ptr<Type>, utils::error> fetch_one_raw();
+  result<std::shared_ptr<Type>, error> fetch_one_raw();
   /**
    * Fetches the first result of a prepared statement.
    * The type is a record representing an unknown variable type.
@@ -117,7 +117,7 @@ public:
    *
    * @return The query result set
    */
-  [[nodiscard]] utils::result<std::optional<record>, utils::error> fetch_one() const;
+  [[nodiscard]] result<std::optional<record>, error> fetch_one() const;
 
   /**
    * Resets the prepared statement to
@@ -142,7 +142,7 @@ public:
    */
   [[nodiscard]] std::string sql() const;
 
-  [[nodiscard]] utils::result<std::unique_ptr<query_result_impl>, utils::error> fetch_internal() const;
+  [[nodiscard]] result<std::unique_ptr<query_result_impl>, error> fetch_internal() const;
 
 private:
   std::shared_ptr<statement_proxy> statement_proxy_;
@@ -168,14 +168,14 @@ statement &statement::bind(const object_ptr<Type> &ptr) {
 }
 
 template<class Type>
-utils::result<query_result<Type>, utils::error> statement::fetch() {
+result<query_result<Type>, error> statement::fetch() {
   std::cout << statement_proxy_->sql() << std::endl;
   statement_proxy_->statement_->query_.result_type = typeid(Type);
   return statement_proxy_->fetch(*bindings_)
-  .and_then([this](std::unique_ptr<query_result_impl> &&value) -> utils::result<query_result<Type>, utils::error> {
+  .and_then([this](std::unique_ptr<query_result_impl> &&value) -> result<query_result<Type>, error> {
     auto resolver = statement_proxy_->statement_->query_.resolver->resolver<Type>();
     const auto prototype = value->prototype();
-    return utils::ok(query_result<Type>::make_query_result(
+    return ok(query_result<Type>::make_query_result(
       std::forward<decltype(value)>(value),
       resolver,
       [] { return std::make_shared<Type>(); }));
@@ -183,12 +183,12 @@ utils::result<query_result<Type>, utils::error> statement::fetch() {
 }
 
 template<class Type>
-utils::result<object_ptr<Type>, utils::error> statement::fetch_one() {
+result<object_ptr<Type>, error> statement::fetch_one() {
   std::cout << statement_proxy_->sql() << std::endl;
   statement_proxy_->statement_->query_.result_type = typeid(Type);
   auto result = statement_proxy_->fetch(*bindings_);
   if (!result.is_ok()) {
-    return utils::failure(result.err());
+    return failure(result.err());
   }
   auto resolver = statement_proxy_->statement_->query_.resolver->resolver<Type>();
   const auto prototype = result.value()->prototype();
@@ -198,26 +198,26 @@ utils::result<object_ptr<Type>, utils::error> statement::fetch_one() {
     [] { return std::make_shared<Type>(); });
   auto first = records.begin();
   if (first == records.end()) {
-    return utils::failure(utils::error{error_code::FetchFailed,"Failed to find entity."});
+    return failure(error{error_code::FetchFailed,"Failed to find entity."});
   }
 
-  return utils::ok(first.optr());
+  return ok(first.optr());
 }
 
 template<class Type>
-utils::result<std::shared_ptr<Type>, utils::error> statement::fetch_one_raw() {
+result<std::shared_ptr<Type>, error> statement::fetch_one_raw() {
   std::cout << statement_proxy_->sql() << std::endl;
   auto result = statement_proxy_->fetch(*bindings_);
   if (!result.is_ok()) {
-    return utils::failure(result.err());
+    return failure(result.err());
   }
 
   auto obj = std::make_shared<Type>();
   (*result)->bind(*obj);
   if (!(*result)->fetch(*obj)) {
-    return utils::ok(std::shared_ptr<Type>{});
+    return ok(std::shared_ptr<Type>{});
   }
-  return utils::ok(obj);
+  return ok(obj);
 }
 }
 

@@ -13,29 +13,29 @@
 
 namespace matador::query {
 template<typename ObjectType>
-utils::result<void, utils::error> finalize_inserted_object(object_ptr<ObjectType> &ptr,
+result<void, error> finalize_inserted_object(object_ptr<ObjectType> &ptr,
                                                            const identifier& pk,
                                                            object_cache &cache,
                                                            const std::shared_ptr<resolver_service> &resolver_service) {
   if (!ptr) {
-    return utils::failure(utils::error(error_code::InvalidObject, "Inserted object is null."));
+    return failure(error(error_code::InvalidObject, "Inserted object is null."));
   }
 
   if (!resolver_service) {
-    return utils::failure(utils::error(error_code::UnknownType, "Missing resolver service."));
+    return failure(error(error_code::UnknownType, "Missing resolver service."));
   }
 
   auto resolver = resolver_service->template resolver<ObjectType>();
   if (!resolver) {
-    return utils::failure(utils::error(error_code::UnknownType, "Missing object resolver for inserted type."));
+    return failure(error(error_code::UnknownType, "Missing object resolver for inserted type."));
   }
 
   if (!cache.import<ObjectType>(pk, ptr.proxy(), resolver)) {
-    return utils::failure(utils::error(error_code::FailedToFindObject, "Object cache already contains another live proxy for inserted object."));
+    return failure(error(error_code::FailedToFindObject, "Object cache already contains another live proxy for inserted object."));
   }
 
   ptr.change_state(object_state::Persistent);
-  return utils::ok<void>();
+  return ok<void>();
 }
 
 template <typename ObjectType>
@@ -46,29 +46,29 @@ public:
   , ptr_(ptr)
   , pk_generator_(pk_generator){}
 
-  utils::result<void, utils::error> prepare(executor& conn) override {
+  result<void, error> prepare(executor& conn) override {
     auto result = pk_generator_.next_id(conn);
     if (!result.is_ok()) {
-      return utils::failure(result.err());
+      return failure(result.err());
     }
     id_ = *result;
     pk_accessor_.set(*ptr_, id_);
 
-    return utils::ok<void>();
+    return ok<void>();
   }
 
-  utils::result<void, utils::error> execute(statement& stmt) override {
+  result<void, error> execute(statement& stmt) override {
     stmt.bind(*ptr_);
 
     if (const auto exec_result = stmt.execute(); !exec_result.is_ok()) {
-      return utils::failure(exec_result.err());
+      return failure(exec_result.err());
     }
 
     ptr_.change_state(object_state::Persistent);
-    return utils::ok<void>();
+    return ok<void>();
   }
 
-  utils::result<void, utils::error> finalize(object_cache& cache, const resolver_service_ptr& resolver_service) override {
+  result<void, error> finalize(object_cache& cache, const resolver_service_ptr& resolver_service) override {
     return finalize_inserted_object(ptr_, id_, cache, resolver_service);
   }
 
@@ -85,33 +85,33 @@ public:
   , ptr_(ptr)
   , pk_column_name_(std::move(pk_column_name)){}
 
-  utils::result<void, utils::error> prepare(executor&) override {
-    return utils::ok<void>();
+  result<void, error> prepare(executor&) override {
+    return ok<void>();
   }
 
-  utils::result<void, utils::error> execute(statement& stmt) override {
+  result<void, error> execute(statement& stmt) override {
     stmt.bind(*ptr_);
 
     auto result = stmt.fetch_one();
     if (!result.is_ok()) {
-      return utils::failure(result.err());
+      return failure(result.err());
     }
     if (!result.value().has_value()) {
-      return utils::failure(utils::error(error_code::FailedToFindObject, "Failed to insert object and retrieve identity."));
+      return failure(error(error_code::FailedToFindObject, "Failed to insert object and retrieve identity."));
     }
 
     auto rec = result->value();
     const auto& f = rec.at(pk_column_name_);
     if (auto res = id_.assign(f.value()); !res.is_ok()) {
-      return utils::failure(res.err());
+      return failure(res.err());
     }
     pk_accessor_.set(*ptr_, id_);
 
     ptr_.change_state(object_state::Persistent);
-    return utils::ok<void>();
+    return ok<void>();
   }
 
-  utils::result<void, utils::error> finalize(object_cache& cache, const resolver_service_ptr& resolver_service) override {
+  result<void, error> finalize(object_cache& cache, const resolver_service_ptr& resolver_service) override {
     return finalize_inserted_object(ptr_, id_, cache, resolver_service);
   }
 
@@ -127,21 +127,21 @@ public:
   : execute_step(std::move(ctx))
   , ptr_(ptr) {}
 
-  utils::result<void, utils::error> prepare(executor &) override {
-    return utils::ok<void>();
+  result<void, error> prepare(executor &) override {
+    return ok<void>();
   }
-  utils::result<void, utils::error> execute(statement &stmt) override {
+  result<void, error> execute(statement &stmt) override {
     stmt.bind(*ptr_);
     if (const auto exec_result = stmt.execute(); !exec_result.is_ok()) {
-      return utils::failure(exec_result.err());
+      return failure(exec_result.err());
     }
 
     id_ = primary_key_resolver::resolve_object(*ptr_).pk;
     ptr_.change_state(object_state::Persistent);
-    return utils::ok<void>();
+    return ok<void>();
   }
 
-  utils::result<void, utils::error> finalize(object_cache& cache, const resolver_service_ptr& resolver_service) override {
+  result<void, error> finalize(object_cache& cache, const resolver_service_ptr& resolver_service) override {
     return finalize_inserted_object(ptr_, id_, cache, resolver_service);
   }
 
@@ -156,20 +156,20 @@ public:
   : execute_step(std::move(ctx))
   , ptr_(ptr) {}
 
-  utils::result<void, utils::error> prepare(executor &) override {
-    return utils::ok<void>();
+  result<void, error> prepare(executor &) override {
+    return ok<void>();
   }
-  utils::result<void, utils::error> execute(statement &stmt) override {
+  result<void, error> execute(statement &stmt) override {
     stmt.bind(*ptr_);
     if (const auto exec_result = stmt.execute(); !exec_result.is_ok()) {
-      return utils::failure(exec_result.err());
+      return failure(exec_result.err());
     }
 
-    return utils::ok<void>();
+    return ok<void>();
   }
 
-  utils::result<void, utils::error> finalize(object_cache& /*cache*/, const resolver_service_ptr& /*resolver_service*/) override {
-    return utils::ok<void>();
+  result<void, error> finalize(object_cache& /*cache*/, const resolver_service_ptr& /*resolver_service*/) override {
+    return ok<void>();
   }
 
 private:

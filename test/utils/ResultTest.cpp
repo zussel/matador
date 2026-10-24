@@ -13,27 +13,27 @@ enum class math_error : uint8_t {
 };
 }
 
-static utils::result<float, math_error>divide(const float x, const float y) {
+static result<float, math_error>divide(const float x, const float y) {
   if (y == 0) {
-    return utils::failure(math_error::DivisionByZero);
+    return failure(math_error::DivisionByZero);
   }
 
-  return utils::ok(x / y);
+  return ok(x / y);
 }
 
-static utils::result<float, math_error>multiply(const float x, const float y) {
-  return utils::ok(x * y);
+static result<float, math_error>multiply(const float x, const float y) {
+  return ok(x * y);
 }
 
-static utils::result<float, math_error>plus(const float x, const float y) {
-  return utils::ok(x + y);
+static result<float, math_error>plus(const float x, const float y) {
+  return ok(x + y);
 }
 
-static utils::result<void, math_error>action_on_greater_42(const float i) {
+static result<void, math_error>action_on_greater_42(const float i) {
   if (i > 42) {
-    return utils::ok<void>();
+    return ok<void>();
   }
-  return utils::failure(math_error::Failure);
+  return failure(math_error::Failure);
 }
 
 }
@@ -80,9 +80,9 @@ TEST_CASE("Result: Test basics", "[result]") {
     .or_else([](const auto &err) {
       switch (err) {
         case test::math_error::DivisionByZero:
-          return utils::failure(std::string("division by zero error"));
+          return failure(std::string("division by zero error"));
         default:
-          return utils::failure(std::string("unknown error"));
+          return failure(std::string("unknown error"));
       }
     });
 
@@ -138,14 +138,14 @@ private:
     std::string message_;
 };
 
-utils::result<float, CustomError> custom_divide(const float x, const float y) {
-    utils::result<float, math_error> res = divide(x, y);
+result<float, CustomError> custom_divide(const float x, const float y) {
+    result<float, math_error> res = divide(x, y);
 
     if (res.is_ok()) {
-        return utils::ok(res.value());
+        return ok(res.value());
     }
 
-    return utils::failure<CustomError>({res.err(), "ERROR"});
+    return failure<CustomError>({res.err(), "ERROR"});
 }
 }
 

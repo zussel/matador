@@ -12,7 +12,7 @@ const char *test_result_reader::column(size_t /*index*/) const {
   return "";
 }
 
-utils::result<bool, utils::error> test_result_reader::fetch() { return utils::ok(rows_-- > 0); }
+result<bool, error> test_result_reader::fetch() { return ok(rows_-- > 0); }
 
 size_t test_result_reader::start_column_index() const {
   return 0;

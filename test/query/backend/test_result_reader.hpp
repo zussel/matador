@@ -36,7 +36,7 @@ class test_result_reader final : public query::query_result_reader {
 public:
   [[nodiscard]] size_t column_count() const override;
   [[nodiscard]] const char *column(size_t index) const override;
-  [[nodiscard]] utils::result<bool, utils::error> fetch() override;
+  [[nodiscard]] result<bool, error> fetch() override;
   [[nodiscard]] size_t start_column_index() const override;
   void unshift() override;
 

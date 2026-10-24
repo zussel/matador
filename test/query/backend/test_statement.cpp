@@ -12,16 +12,16 @@ namespace matador::test::orm {
 test_statement::test_statement(const query::query_context &query)
 : statement_impl(query, 0) {}
 
-utils::result<query::execute_result, utils::error> test_statement::execute(const query::value_writer &/*bindings*/) {
+result<query::execute_result, error> test_statement::execute(const query::value_writer &/*bindings*/) {
   using namespace std::chrono_literals;
   std::mt19937 rng(query_.sql.size());
   std::uniform_int_distribution dist(10, 50);
   std::this_thread::sleep_for(std::chrono::milliseconds(dist(rng)));
-  return utils::ok(query::execute_result{8});
+  return ok(query::execute_result{8});
 }
 
-utils::result<std::unique_ptr<query::query_result_impl>, utils::error> test_statement::fetch(const query::value_writer &/*bindings*/) {
-  return utils::ok(std::make_unique<query::query_result_impl>(std::make_unique<test_result_reader>(),
+result<std::unique_ptr<query::query_result_impl>, error> test_statement::fetch(const query::value_writer &/*bindings*/) {
+  return ok(std::make_unique<query::query_result_impl>(std::make_unique<test_result_reader>(),
     query_.columns,
     query_.resolver,
     query_.result_type,

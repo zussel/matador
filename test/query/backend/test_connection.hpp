@@ -10,18 +10,18 @@ class test_connection final : public query::connection_impl {
 public:
   explicit test_connection(const query::connection_info &info);
 
-  utils::result<void, utils::error> open() override;
-  utils::result<void, utils::error> close() override;
-  [[nodiscard]] utils::result<bool, utils::error> is_open() const override;
-  [[nodiscard]] utils::result<bool, utils::error> is_valid() const override;
-  [[nodiscard]] utils::result<utils::version, utils::error> client_version() const override;
-  [[nodiscard]] utils::result<utils::version, utils::error> server_version() const override;
-  utils::result<query::execute_result, utils::error> execute(const query::query_context &context) override;
-  utils::result<std::unique_ptr<query::query_result_impl>, utils::error> fetch(const query::query_context &context) override;
-  utils::result<std::unique_ptr<query::statement_impl>, utils::error> prepare(const query::query_context &context) override;
-  utils::result<std::vector<query::column>, utils::error> describe(const std::string &table) override;
-  utils::result<bool, utils::error> exists(const std::string &schema_name, const std::string &table_name) override;
-  utils::result<bool, utils::error> sequence_exists(const std::string &schema_name, const std::string &sequence_name) override;
+  result<void, error> open() override;
+  result<void, error> close() override;
+  [[nodiscard]] result<bool, error> is_open() const override;
+  [[nodiscard]] result<bool, error> is_valid() const override;
+  [[nodiscard]] result<utils::version, error> client_version() const override;
+  [[nodiscard]] result<utils::version, error> server_version() const override;
+  result<query::execute_result, error> execute(const query::query_context &context) override;
+  result<std::unique_ptr<query::query_result_impl>, error> fetch(const query::query_context &context) override;
+  result<std::unique_ptr<query::statement_impl>, error> prepare(const query::query_context &context) override;
+  result<std::vector<query::column>, error> describe(const std::string &table) override;
+  result<bool, error> exists(const std::string &schema_name, const std::string &table_name) override;
+  result<bool, error> sequence_exists(const std::string &schema_name, const std::string &sequence_name) override;
 
   [[nodiscard]] std::string to_escaped_string( const utils::blob_type_t& value ) const override;
 

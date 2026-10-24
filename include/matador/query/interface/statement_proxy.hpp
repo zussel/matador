@@ -11,8 +11,8 @@ protected:
 public:
   virtual ~statement_proxy() = default;
 
-  virtual utils::result<execute_result, utils::error> execute(value_writer& bindings) = 0;
-  virtual utils::result<std::unique_ptr<query_result_impl>, utils::error> fetch(value_writer& bindings) = 0;
+  virtual result<execute_result, error> execute(value_writer& bindings) = 0;
+  virtual result<std::unique_ptr<query_result_impl>, error> fetch(value_writer& bindings) = 0;
 
   template<class Type>
   void bind(const Type &obj, value_writer& bindings) {

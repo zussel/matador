@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 
-namespace matador::utils {
+namespace matador {
 class error;
 }
 
@@ -65,7 +65,7 @@ public:
    *
    * @param err Error to log
    */
-virtual void on_error(const utils::error& err) = 0;
+virtual void on_error(const error& err) = 0;
 };
 
 /**
@@ -104,7 +104,7 @@ public:
   /**
    * No logging on error.
    */
-  void on_error(const utils::error &/*err*/) override { }
+  void on_error(const error &/*err*/) override { }
 };
 
 inline const std::shared_ptr<abstract_sql_logger> null_logger = std::make_shared<null_sql_logger>();

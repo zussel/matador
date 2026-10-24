@@ -17,62 +17,62 @@ namespace matador::test::orm {
 test_connection::test_connection(const query::connection_info &info)
 : connection_impl(info) {}
 
-utils::result<void, utils::error> test_connection::open() {
+result<void, error> test_connection::open() {
   is_open_ = true;
   const auto user = info().user;
-  return utils::ok<void>();
+  return ok<void>();
 }
 
-utils::result<void, utils::error> test_connection::close() {
+result<void, error> test_connection::close() {
   is_open_ = false;
-  return utils::ok<void>();
+  return ok<void>();
 }
 
-utils::result<bool, utils::error> test_connection::is_open() const {
-  return utils::ok(is_open_);
+result<bool, error> test_connection::is_open() const {
+  return ok(is_open_);
 }
 
-utils::result<bool, utils::error> test_connection::is_valid() const {
+result<bool, error> test_connection::is_valid() const {
   return is_open();
 }
 
-utils::result<utils::version, utils::error> test_connection::client_version() const {
-  return utils::ok(utils::version{1, 2, 3});
+result<utils::version, error> test_connection::client_version() const {
+  return ok(utils::version{1, 2, 3});
 }
 
-utils::result<utils::version, utils::error> test_connection::server_version() const {
-  return utils::ok(utils::version{3, 2, 1});
+result<utils::version, error> test_connection::server_version() const {
+  return ok(utils::version{3, 2, 1});
 }
 
-utils::result<query::execute_result, utils::error> test_connection::execute(const query::query_context &/*context*/) {
-  return utils::ok(query::execute_result{4});
+result<query::execute_result, error> test_connection::execute(const query::query_context &/*context*/) {
+  return ok(query::execute_result{4});
 }
 
-utils::result<std::unique_ptr<query::query_result_impl>, utils::error> test_connection::fetch(const query::query_context &context) {
-  return utils::ok(std::make_unique<query::query_result_impl>(std::make_unique<test_result_reader>(),
+result<std::unique_ptr<query::query_result_impl>, error> test_connection::fetch(const query::query_context &context) {
+  return ok(std::make_unique<query::query_result_impl>(std::make_unique<test_result_reader>(),
                                                             context.columns,
                                                             context.resolver,
                                                             context.result_type,
                                                             context.columns.size()));
 }
 
-utils::result<std::unique_ptr<query::statement_impl>, utils::error> test_connection::prepare(const query::query_context &context) {
+result<std::unique_ptr<query::statement_impl>, error> test_connection::prepare(const query::query_context &context) {
   std::unique_ptr<query::statement_impl> s(std::make_unique<test_statement>(context));
-  return utils::ok(std::move(s));
+  return ok(std::move(s));
 }
 
-utils::result<std::vector<query::column>, utils::error> test_connection::describe(const std::string &/*table*/) {
-  return utils::ok(std::vector<query::column>{});
+result<std::vector<query::column>, error> test_connection::describe(const std::string &/*table*/) {
+  return ok(std::vector<query::column>{});
 }
 
-utils::result<bool, utils::error> test_connection::exists(const std::string &/*schema_name*/,
+result<bool, error> test_connection::exists(const std::string &/*schema_name*/,
                                                           const std::string &/*table_name*/) {
-  return utils::ok(false);
+  return ok(false);
 }
 
-utils::result<bool, utils::error> test_connection::sequence_exists(const std::string& /*schema_name*/,
+result<bool, error> test_connection::sequence_exists(const std::string& /*schema_name*/,
                                                                    const std::string& /*sequence_name*/) {
-  return utils::ok(false);
+  return ok(false);
 }
 
 std::string test_connection::to_escaped_string(const utils::blob_type_t &value) const {

@@ -29,18 +29,18 @@ public:
                         connection_pool &pool, const size_t connection_id)
       : statement_proxy(std::move(stmt)), pool_(pool), connection_id_(connection_id), bus_(bus) {}
 
-  utils::result<execute_result, utils::error> execute(value_writer &bindings) override {
+  result<execute_result, error> execute(value_writer &bindings) override {
     execution_metrics metrics{std::chrono::steady_clock::now()};
 
-    auto result = try_with_retry(
-        [this, &bindings, &metrics]() -> utils::result<execute_result, utils::error> {
+    auto res = try_with_retry(
+        [this, &bindings, &metrics]() -> result<execute_result, error> {
           const auto query = sql();
           if (!try_lock()) {
             ++metrics.lock_attempts;
             const auto now = std::chrono::steady_clock::now();
             bus_.publish(statement_lock_failed_event{query, now, now - metrics.lock_attempt_start});
-            return utils::failure(
-                utils::error{error_code::StatementLocked,
+            return failure(
+                error{error_code::StatementLocked,
                              "Failed to execute statement because it is already in use"});
           }
           const auto now = std::chrono::steady_clock::now();
@@ -48,8 +48,8 @@ public:
 
           auto guard = statement_guard(*this);
           if (const auto conn = pool_.acquire(connection_id_); !conn.valid()) {
-            return utils::failure(
-                utils::error{error_code::ExecuteFailed,
+            return failure(
+                error{error_code::ExecuteFailed,
                              "Failed to execute statement because couldn't lock connection"});
           }
 
@@ -63,32 +63,32 @@ public:
           return execution_result;
         });
 
-    return result;
+    return res;
   }
 
-  utils::result<std::unique_ptr<query_result_impl>, utils::error>
+  result<std::unique_ptr<query_result_impl>, error>
   fetch(value_writer &bindings) override {
     execution_metrics metrics{std::chrono::steady_clock::now()};
 
-    auto result = try_with_retry(
+    auto res = try_with_retry(
         [this, &bindings,
-         &metrics]() -> utils::result<std::unique_ptr<query_result_impl>, utils::error> {
+         &metrics]() -> result<std::unique_ptr<query_result_impl>, error> {
           if (!try_lock()) {
             ++metrics.lock_attempts;
-            return utils::failure(
-                utils::error{error_code::StatementLocked,
+            return failure(
+                error{error_code::StatementLocked,
                              "Failed to execute statement because it is already in use"});
           }
           auto guard = statement_guard(*this);
           if (const auto conn = pool_.acquire(connection_id_); !conn.valid()) {
-            return utils::failure(
-                utils::error{error_code::ExecuteFailed,
+            return failure(
+                error{error_code::ExecuteFailed,
                              "Failed to execute statement because couldn't lock connection"});
           }
           return statement_->fetch(bindings);
         });
 
-    return result;
+    return res;
   }
 
 protected:
@@ -112,7 +112,7 @@ protected:
       }
     }
 
-    return utils::failure(utils::error{error_code::StatementLocked,
+    return failure(error{error_code::StatementLocked,
                                        "Failed to execute statement because it is already in use"});
   }
 
@@ -145,7 +145,7 @@ statement_cache::statement_cache(utils::message_bus &bus, connection_pool &pool,
 , dialect_(backend_provider::instance().connection_dialect(pool_.info().type))
 , bus_(bus) {}
 
-utils::result<statement, utils::error> statement_cache::acquire(const query_context& ctx) {
+result<statement, error> statement_cache::acquire(const query_context& ctx) {
   std::unique_lock lock(mutex_);
   // hash statement
   const auto now = std::chrono::steady_clock::now();
@@ -154,7 +154,7 @@ utils::result<statement, utils::error> statement_cache::acquire(const query_cont
     usage_list_.splice(usage_list_.begin(), usage_list_, it->second.position);
     it->second.last_access = now;
     bus_.publish<statement_accessed_event>({ctx.sql, std::chrono::steady_clock::now()});
-    return utils::ok(it->second.stmt);
+    return ok(it->second.stmt);
   }
   // Prepare a new statement
   // acquire pool connection
@@ -164,7 +164,7 @@ utils::result<statement, utils::error> statement_cache::acquire(const query_cont
     const auto conn = pool_.acquire();
     auto result = conn->perform_prepare(ctx);
     if (!result) {
-      return utils::failure(utils::error{error_code::PrepareFailed, std::string("Failed to prepare")});
+      return failure(error{error_code::PrepareFailed, std::string("Failed to prepare")});
     }
     id = conn.id().value();
     stmt = result.release();
@@ -187,7 +187,7 @@ utils::result<statement, utils::error> statement_cache::acquire(const query_cont
   }).first;
   bus_.publish<statement_added_event>({ctx.sql, std::chrono::steady_clock::now()});
 
-  return utils::ok(it->second.stmt);
+  return ok(it->second.stmt);
 }
 
 size_t statement_cache::size() const {

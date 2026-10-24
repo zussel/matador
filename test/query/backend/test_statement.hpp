@@ -9,8 +9,8 @@ namespace matador::test::orm {
 class test_statement final : public query::statement_impl {
 public:
   explicit test_statement(const query::query_context &query);
-  utils::result<query::execute_result, utils::error> execute(const query::value_writer &bindings) override;
-  utils::result<std::unique_ptr<query::query_result_impl>, utils::error> fetch(const query::value_writer &bindings) override;
+  result<query::execute_result, error> execute(const query::value_writer &bindings) override;
+  result<std::unique_ptr<query::query_result_impl>, error> fetch(const query::value_writer &bindings) override;
   void reset() override;
 
 protected:

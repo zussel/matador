@@ -15,10 +15,10 @@ public:
   explicit connection_statement_proxy(std::unique_ptr<statement_impl> &&stmt)
       : statement_proxy(std::move(stmt)) {}
 
-  utils::result<execute_result, utils::error> execute(value_writer &bindings) override {
+  result<execute_result, error> execute(value_writer &bindings) override {
     return statement_->execute(bindings);
   }
-  utils::result<std::unique_ptr<query_result_impl>, utils::error>
+  result<std::unique_ptr<query_result_impl>, error>
   fetch(value_writer &bindings) override {
     return statement_->fetch(bindings);
   }
@@ -32,12 +32,12 @@ std::shared_ptr<resolver_service> normalize_resolver(std::shared_ptr<resolver_se
   return resolver ? std::move(resolver) : std::make_shared<resolver_service>();
 }
 
-utils::result<void, utils::error> to_void_result(const utils::result<execute_result, utils::error> &result) {
+result<void, error> to_void_result(const result<execute_result, error> &result) {
   if (result.is_error()) {
-    return utils::failure(result.err());
+    return failure(result.err());
   }
 
-  return utils::ok<void>();
+  return ok<void>();
 }
 } // namespace
 
@@ -92,22 +92,22 @@ connection::~connection() {
   }
 }
 
-utils::result<void, utils::error> connection::open() const {
+result<void, error> connection::open() const {
   const auto res = is_open();
   if (res.is_error()) {
-    return utils::failure(res.err());
+    return failure(res.err());
   }
   if (!*res) {
     logger_->on_connect();
     return connection_->open();
   }
-  return utils::ok<void>();
+  return ok<void>();
 }
 
-utils::result<void, utils::error> connection::close() const {
+result<void, error> connection::close() const {
   const auto result = is_open();
   if (result.is_error()) {
-    return utils::failure(result.err());
+    return failure(result.err());
   }
 
   if (*result) {
@@ -115,10 +115,10 @@ utils::result<void, utils::error> connection::close() const {
     return connection_->close();
   }
 
-  return utils::ok<void>();
+  return ok<void>();
 }
 
-utils::result<bool, utils::error> connection::is_open() const {
+result<bool, error> connection::is_open() const {
   return connection_->is_open();
 }
 
@@ -130,33 +130,33 @@ std::string connection::type() const {
   return connection_->info().type;
 }
 
-utils::result<void, utils::error> connection::begin() const {
+result<void, error> connection::begin() const {
   return to_void_result(execute({dialect().begin()}));
 }
 
-utils::result<void, utils::error> connection::commit() const {
+result<void, error> connection::commit() const {
   return to_void_result(execute({dialect().commit()}));
 }
 
-utils::result<void, utils::error> connection::rollback() const {
+result<void, error> connection::rollback() const {
   return to_void_result(execute({dialect().rollback()}));
 }
 
-utils::result<std::vector<column>, utils::error>
+result<std::vector<column>, error>
 connection::describe(const std::string &table_name) const {
   return connection_->describe(table_name);
 }
 
-utils::result<bool, utils::error> connection::exists(const std::string &schema_name,
+result<bool, error> connection::exists(const std::string &schema_name,
                                                      const std::string &table_name) const {
   return connection_->exists(schema_name, table_name);
 }
 
-utils::result<bool, utils::error> connection::exists(const std::string &table_name) const {
+result<bool, error> connection::exists(const std::string &table_name) const {
   return connection_->exists(dialect().default_schema_name(), table_name);
 }
 
-utils::result<bool, utils::error>
+result<bool, error>
 connection::sequence_exists(const std::string &sequence_name) const {
   return connection_->sequence_exists(dialect().default_schema_name(), sequence_name);
 }
@@ -166,22 +166,22 @@ static bool has_unknown_columns(const std::vector<column> &columns) {
                      [](const auto &col) { return col.type() == utils::basic_type::Null; });
 }
 
-utils::result<std::unique_ptr<query_result_impl>, utils::error> connection::fetch(const query_context &ctx) const {
+result<std::unique_ptr<query_result_impl>, error> connection::fetch(const query_context &ctx) const {
   logger_->on_fetch(ctx.sql);
   return connection_->fetch(ctx);
 }
 
-utils::result<execute_result, utils::error> connection::execute(const query_context &ctx) const {
+result<execute_result, error> connection::execute(const query_context &ctx) const {
   logger_->on_execute(ctx.sql);
   return connection_->execute(ctx);
 }
 
-utils::result<statement, utils::error> connection::prepare(const query_context &ctx) const {
+result<statement, error> connection::prepare(const query_context &ctx) const {
   logger_->on_prepare(ctx.sql);
 
   auto result = perform_prepare(ctx);
   if (!result) {
-    return utils::failure(result.err());
+    return failure(result.err());
   }
 
   return ok<statement>(statement(std::make_shared<connection_statement_proxy>(result.release()), logger_));
@@ -199,7 +199,7 @@ std::shared_ptr<resolver_service> connection::resolver() const {
   return resolver_service_;
 }
 
-utils::result<std::unique_ptr<statement_impl>, utils::error>
+result<std::unique_ptr<statement_impl>, error>
 connection::perform_prepare(const query_context &ctx) const {
   if (ctx.command != query_command::CreateTable &&
       (ctx.columns.empty() || has_unknown_columns(ctx.columns))) {
@@ -223,9 +223,9 @@ connection::perform_prepare(const query_context &ctx) const {
 
   auto result = connection_->prepare(ctx);
   if (!result) {
-    return utils::failure(result.err());
+    return failure(result.err());
   }
 
-  return utils::ok(result.release());
+  return ok(result.release());
 }
 } // namespace matador::query

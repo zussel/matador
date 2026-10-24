@@ -32,19 +32,19 @@ basic_schema::~basic_schema() {
 
 result<void, error> basic_schema::detach(const schema_node *node) {
   if (!node) {
-    return utils::failure(make_error(error_code::InvalidArgument, "Node is null."));
+    return failure(make_error(error_code::InvalidArgument, "Node is null."));
   }
 
   auto it = find_node(node);
   if (it == iterator(root_->last_child_.get())) {
-    return utils::failure(make_error(error_code::NodeNotFound, "Node is not attached to this repository."));
+    return failure(make_error(error_code::NodeNotFound, "Node is not attached to this repository."));
   }
 
   // log_.debug("detach node '%s' (type: %s)", node->name().c_str(), node->type_index().name());
 
   remove_node(it.get());
 
-  return utils::ok<void>();
+  return ok<void>();
 }
 
 basic_schema::const_iterator basic_schema::begin() const {
@@ -96,31 +96,31 @@ bool basic_schema::contains( const std::type_index& index ) const {
 result<basic_table_info_ref, error> basic_schema::basic_info(const std::type_index &ti) const {
   const auto it = find_node(ti);
   if (it == end()) {
-    return utils::failure(make_error(error_code::NodeNotFound, "Node '" + std::string(ti.name()) + "' not found."));
+    return failure(make_error(error_code::NodeNotFound, "Node '" + std::string(ti.name()) + "' not found."));
   }
 
-  return utils::ok(basic_table_info_ref{it->info()});
+  return ok(basic_table_info_ref{it->info()});
 }
 
 result<basic_table_info_ref, error> basic_schema::basic_info(const std::string& name) const {
     const auto it = find_node(name);
     if (it == end()) {
-      return utils::failure(make_error(error_code::NodeNotFound, "Node '" + name + "' not found."));
+      return failure(make_error(error_code::NodeNotFound, "Node '" + name + "' not found."));
     }
 
-    return utils::ok(basic_table_info_ref{it->info()});
+    return ok(basic_table_info_ref{it->info()});
 }
 
 result<const column*, error> basic_schema::primary_key_attribute(const std::type_index &ti) const {
   const auto it = find_node(ti);
   if (it == end()) {
-    return utils::failure(make_error(error_code::NodeNotFound, "Node '" + std::string(ti.name()) + "' not found."));
+    return failure(make_error(error_code::NodeNotFound, "Node '" + std::string(ti.name()) + "' not found."));
   }
 
   if (!it->info().has_primary_key()) {
-    return utils::failure(make_error(error_code::NoPrimaryKey, "Object '" + it->name() + "' does not have a primary key."));
+    return failure(make_error(error_code::NoPrimaryKey, "Object '" + it->name() + "' does not have a primary key."));
   }
-  return utils::ok(it->info().primary_key_attribute());
+  return ok(it->info().primary_key_attribute());
 }
 
 void basic_schema::dump(std::ostream &os) const {
@@ -146,28 +146,28 @@ void basic_schema::dump( std::ostream& os, const schema_node& node ) {
 
 result<schema_node*, error> basic_schema::attach_node(std::unique_ptr<schema_node> &&node, const std::string &parent) {
   if (!node) {
-    return utils::failure(make_error(error_code::InvalidArgument, "Node is null."));
+    return failure(make_error(error_code::InvalidArgument, "Node is null."));
   }
 
   if (has_node(node.get())) {
-    return utils::failure(make_error(error_code::NodeAlreadyExists, "Node '" + node->name() + "' already exists."));
+    return failure(make_error(error_code::NodeAlreadyExists, "Node '" + node->name() + "' already exists."));
   }
 
   auto parent_node = root_.get();
   if (!parent.empty()) {
     const auto it = find_node_by_name(parent);
     if (it == nodes_by_name_.end()) {
-      return utils::failure(make_error(error_code::NodeNotFound, "Parent node '" + parent + "' not found."));
+      return failure(make_error(error_code::NodeNotFound, "Parent node '" + parent + "' not found."));
     }
     parent_node = it->second;
   }
 
   if (nodes_by_name_.count(node->name()) > 0) {
-    return utils::failure(make_error(error_code::NodeAlreadyExists, "Node '" + node->name() + "' already exists."));
+    return failure(make_error(error_code::NodeAlreadyExists, "Node '" + node->name() + "' already exists."));
   }
 
   if (nodes_by_type_.count(node->type_index()) > 0) {
-    return utils::failure(make_error(error_code::NodeAlreadyExists, "Node type '" + std::string(node->type_index().name()) + "' already exists."));
+    return failure(make_error(error_code::NodeAlreadyExists, "Node type '" + std::string(node->type_index().name()) + "' already exists."));
   }
 
   auto *raw_node = node.get();
@@ -181,7 +181,7 @@ result<schema_node*, error> basic_schema::attach_node(std::unique_ptr<schema_nod
 
   raw_node->on_attach();
 
-  return utils::ok(raw_node);
+  return ok(raw_node);
 }
 
 basic_schema::const_iterator basic_schema::find_node(const std::string &name) const {

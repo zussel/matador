@@ -25,9 +25,9 @@ public:
   [[nodiscard]] size_t column_count() const override { return rows_.empty() ? 0 : rows_.front().size(); }
   [[nodiscard]] const char *column(size_t) const override { return ""; }
 
-  [[nodiscard]] matador::result<bool, matador::utils::error> fetch() override {
+  [[nodiscard]] matador::result<bool, matador::error> fetch() override {
     if (next_row_ == fail_on_fetch_) {
-      return matador::failure<matador::utils::error>(matador::utils::error{});
+      return matador::failure<matador::error>(matador::error{});
     }
     if (next_row_ == rows_.size()) {
       return matador::ok<bool>(false);
@@ -212,7 +212,7 @@ TEST_CASE("query_result_impl propagates reader failures", "[query_result_impl]")
   );
   revision_model model;
 
-  REQUIRE_THROWS_AS(result.fetch(model), matador::utils::error_exception);
+  REQUIRE_THROWS_AS(result.fetch(model), matador::error_exception);
 }
 
 TEST_CASE("query_result_impl propagates reader failures for records", "[query_result_impl]") {
@@ -224,7 +224,7 @@ TEST_CASE("query_result_impl propagates reader failures for records", "[query_re
   );
   matador::query::record record;
 
-  REQUIRE_THROWS_AS(result.fetch(record), matador::utils::error_exception);
+  REQUIRE_THROWS_AS(result.fetch(record), matador::error_exception);
 }
 
 TEST_CASE("query_result iterates typed results", "[query_result]") {
@@ -285,8 +285,8 @@ TEST_CASE("query_result rejects invalid construction dependencies", "[query_resu
 
 }
 
-template matador::result<matador::query::query_result<revision_model>, matador::utils::error>
+template matador::result<matador::query::query_result<revision_model>, matador::error>
 matador::query::fetchable_query::fetch_all<revision_model>(matador::query::executor &);
 
-template matador::result<matador::query::object_ptr<revision_model>, matador::utils::error>
+template matador::result<matador::query::object_ptr<revision_model>, matador::error>
 matador::query::fetchable_query::fetch_one<revision_model>(matador::query::executor &);

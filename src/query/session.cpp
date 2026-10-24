@@ -51,18 +51,18 @@ session::session(session_context&& ctx, const basic_schema &scm)
 
   for (const auto &pair : relation_producers.joined_object_producers()) {
     auto res = pair.second->build_query(dialect_)
-                   .and_then([this](query_context &&query_ctx) -> utils::result<statement, error> {
+                   .and_then([this](query_context &&query_ctx) -> result<statement, error> {
                      query_ctx.resolver = resolver_service_;
                      return cache_.acquire(query_ctx);
                    })
-                   .and_then([&pair, this](statement &&stmt) -> utils::result<void, error> {
+                   .and_then([&pair, this](statement &&stmt) -> result<void, error> {
                      resolver_service_->register_joined_object_resolver(
                          pair.second->produce(std::move(stmt)), pair.second->root_type(),
                          pair.second->collection_name());
 
-                     return utils::ok<void>();
+                     return ok<void>();
                    })
-                   .or_else([](const auto &err) { return utils::failure(err); });
+                   .or_else([](const auto &err) { return failure(err); });
 
     if (!res) {
       throw std::runtime_error(res.err().message());
@@ -71,17 +71,17 @@ session::session(session_context&& ctx, const basic_schema &scm)
 
   for (const auto &pair : relation_producers.collection_producers()) {
     auto res = pair.second->build_query(dialect_)
-                   .and_then([this](query_context &&query_ctx) -> utils::result<statement, error> {
+                   .and_then([this](query_context &&query_ctx) -> result<statement, error> {
                      query_ctx.resolver = resolver_service_;
                      return cache_.acquire(query_ctx);
                    })
-                   .and_then([&pair, this](statement &&stmt) -> utils::result<void, error> {
+                   .and_then([&pair, this](statement &&stmt) -> result<void, error> {
                      resolver_service_->register_collection_resolver(
                          pair.second->produce(std::move(stmt), *resolver_service_));
 
-                     return utils::ok<void>();
+                     return ok<void>();
                    })
-                   .or_else([](const auto &err) { return utils::failure(err); });
+                   .or_else([](const auto &err) { return failure(err); });
 
     if (!res) {
       throw std::runtime_error(res.err().message());

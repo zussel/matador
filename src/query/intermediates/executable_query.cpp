@@ -7,12 +7,12 @@
 
 namespace matador::query {
 
-utils::result<execute_result, utils::error> executable_query::execute(const executor &exec) const {
+result<execute_result, error> executable_query::execute(const executor &exec) const {
   query_builder compiler;
   return exec.execute(compiler.build(*context_, exec.dialect(), std::nullopt));
 }
 
-// utils::result<statement, utils::error> executable_query::prepare(executor &exec) const {
+// result<statement, error> executable_query::prepare(executor &exec) const {
   // query_builder compiler;
   // return exec.prepare(compiler.build(*context_, exec.dialect(), std::nullopt));
 // }

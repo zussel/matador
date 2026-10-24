@@ -20,9 +20,9 @@ public:
   : ctx_(std::move(ctx)) {}
   virtual ~execute_step() = default;
 
-  virtual utils::result<void, utils::error> prepare(executor &conn) = 0;
-  virtual utils::result<void, utils::error> execute(statement &stmt) = 0;
-  virtual utils::result<void, utils::error> finalize(object_cache& cache, const resolver_service_ptr& resolver_service) = 0;
+  virtual result<void, error> prepare(executor &conn) = 0;
+  virtual result<void, error> execute(statement &stmt) = 0;
+  virtual result<void, error> finalize(object_cache& cache, const resolver_service_ptr& resolver_service) = 0;
 
   [[nodiscard]] const query_context& ctx() const { return ctx_; }
 

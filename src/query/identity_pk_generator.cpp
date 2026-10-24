@@ -11,7 +11,7 @@ result<int64_t, error> identity_pk_generator::next_id(const executor &/*exec*/) 
   return failure<error>(error(error_code::Failure, "Identity PK generator not implemented"));
 }
 
-utils::result<int64_t, utils::error> identity_pk_generator::current_id(const executor &/*exec*/) {
+result<int64_t, error> identity_pk_generator::current_id(const executor &/*exec*/) {
   return failure<error>(error(error_code::Failure, "Identity PK generator not implemented"));
 }
 }

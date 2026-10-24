@@ -16,7 +16,7 @@ class abstract_object_resolver_producer {
 public:
   virtual ~abstract_object_resolver_producer() = default;
   virtual void create_relation_producers(resolver_producer_registry &registry) const = 0;
-  virtual utils::result<query_context, utils::error> build_query(const dialect& d) = 0;
+  virtual result<query_context, error> build_query(const dialect& d) = 0;
   virtual std::shared_ptr<abstract_resolver> produce(statement&& stmt) const = 0;
 
   [[nodiscard]] const std::type_index& type() const;
@@ -31,7 +31,7 @@ private:
 class abstract_joined_object_resolver_producer {
 public:
   virtual ~abstract_joined_object_resolver_producer() = default;
-  virtual utils::result<query_context, utils::error> build_query(const dialect& d) = 0;
+  virtual result<query_context, error> build_query(const dialect& d) = 0;
   virtual std::shared_ptr<abstract_resolver> produce(statement&& stmt) const = 0;
 
   [[nodiscard]] const std::type_index& root_type() const;

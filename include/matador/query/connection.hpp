@@ -72,13 +72,13 @@ public:
    * Opens the database connection. If the database connection
    * couldn't be opened, an exception is thrown.
    */
-  [[nodiscard]] utils::result<void, utils::error> open() const;
+  [[nodiscard]] result<void, error> open() const;
   /**
    * @brief Closes the database connection.
    *
    * Closes the database connection.
    */
-  [[nodiscard]] utils::result<void, utils::error> close() const;
+  [[nodiscard]] result<void, error> close() const;
   /**
    * @brief Returns true if the database connection is open.
    *
@@ -86,7 +86,7 @@ public:
    *
    * @return True on an open database connection.
    */
-  [[nodiscard]] utils::result<bool, utils::error> is_open() const;
+  [[nodiscard]] result<bool, error> is_open() const;
 
   /**
    * Returns the connection info data of the
@@ -114,39 +114,39 @@ public:
    * underlying database backends a transaction begin
    * statement.
    */
-  [[nodiscard]] utils::result<void, utils::error> begin() const;
+  [[nodiscard]] result<void, error> begin() const;
 
   /**
    * @brief Commits a transaction by calling the
    * underlying database backends a transaction commit
    * statement.
    */
-  [[nodiscard]] utils::result<void, utils::error> commit() const;
+  [[nodiscard]] result<void, error> commit() const;
 
   /**
    * @brief Roll back a transaction by calling the
    * underlying database backends transaction rollback or abort
    * statement.
    */
-  [[nodiscard]] utils::result<void, utils::error> rollback() const;
+  [[nodiscard]] result<void, error> rollback() const;
 
-  [[nodiscard]] utils::result<std::vector<column>, utils::error> describe(const std::string &table_name) const;
-  [[nodiscard]] utils::result<bool, utils::error> exists(const std::string &schema_name, const std::string &table_name) const;
-  [[nodiscard]] utils::result<bool, utils::error> exists(const std::string &table_name) const;
+  [[nodiscard]] result<std::vector<column>, error> describe(const std::string &table_name) const;
+  [[nodiscard]] result<bool, error> exists(const std::string &schema_name, const std::string &table_name) const;
+  [[nodiscard]] result<bool, error> exists(const std::string &table_name) const;
 
 
-  [[nodiscard]] utils::result<bool, utils::error> sequence_exists(const std::string &sequence_name) const;
+  [[nodiscard]] result<bool, error> sequence_exists(const std::string &sequence_name) const;
 
-  [[nodiscard]] utils::result<std::unique_ptr<query_result_impl>, utils::error> fetch(const query_context &ctx) const override;
-  [[nodiscard]] utils::result<execute_result, utils::error> execute(const query_context &ctx) const override;
-  [[nodiscard]] utils::result<statement, utils::error> prepare(const query_context &ctx) const override;
+  [[nodiscard]] result<std::unique_ptr<query_result_impl>, error> fetch(const query_context &ctx) const override;
+  [[nodiscard]] result<execute_result, error> execute(const query_context &ctx) const override;
+  [[nodiscard]] result<statement, error> prepare(const query_context &ctx) const override;
   [[nodiscard]] std::string str( const query_context& ctx ) const override;
 
   [[nodiscard]] const class dialect &dialect() const override;
   [[nodiscard]] std::shared_ptr<resolver_service> resolver() const override;
 
 private:
-  [[nodiscard]] utils::result<std::unique_ptr<statement_impl>, utils::error> perform_prepare(const query_context &ctx) const;
+  [[nodiscard]] result<std::unique_ptr<statement_impl>, error> perform_prepare(const query_context &ctx) const;
 
   struct connection_deleter {
     void operator()(connection_impl *impl) const noexcept;

@@ -65,8 +65,8 @@ fake_backend_state &state() {
   return instance;
 }
 
-utils::error test_error(const std::string &message) {
-  return utils::error{error_code::Failure, message};
+error test_error(const std::string &message) {
+  return error{error_code::Failure, message};
 }
 
 class recording_logger final : public abstract_sql_logger {
@@ -85,7 +85,7 @@ public:
     ++prepare_count;
     prepared_sql.push_back(stmt);
   }
-  void on_error(const utils::error &) override { ++error_count; }
+  void on_error(const error &) override { ++error_count; }
 
   size_t connect_count{};
   size_t close_count{};
@@ -128,14 +128,14 @@ public:
   explicit fake_statement_impl(query_context ctx)
   : statement_impl(std::move(ctx), 0) {}
 
-  utils::result<execute_result, utils::error> execute(const value_writer &) override {
+  result<execute_result, error> execute(const value_writer &) override {
     return ok<execute_result>(execute_result{7, {}});
   }
 
-  utils::result<std::unique_ptr<query_result_impl>, utils::error> fetch(const value_writer &) override {
+  result<std::unique_ptr<query_result_impl>, error> fetch(const value_writer &) override {
     ++state().fetch_count;
     if (state().fail_fetch) {
-      return utils::failure(test_error("fetch failed"));
+      return failure(test_error("fetch failed"));
     }
     return ok<std::unique_ptr<query_result_impl>>();
   }
@@ -151,101 +151,101 @@ public:
   explicit fake_connection_impl(const connection_info &info)
   : connection_impl(info) {}
 
-  utils::result<void, utils::error> open() override {
+  result<void, error> open() override {
     ++state().open_count;
     if (state().fail_open) {
-      return utils::failure(test_error("open failed"));
+      return failure(test_error("open failed"));
     }
 
     state().open = true;
-    return utils::ok<void>();
+    return ok<void>();
   }
 
-  utils::result<void, utils::error> close() override {
+  result<void, error> close() override {
     ++state().close_count;
     if (state().fail_close) {
-      return utils::failure(test_error("close failed"));
+      return failure(test_error("close failed"));
     }
 
     state().open = false;
-    return utils::ok<void>();
+    return ok<void>();
   }
 
-  utils::result<bool, utils::error> is_open() const override {
+  result<bool, error> is_open() const override {
     ++state().is_open_count;
     if (state().fail_is_open) {
-      return utils::failure(test_error("is_open failed"));
+      return failure(test_error("is_open failed"));
     }
 
-    return utils::ok<bool>(state().open);
+    return ok<bool>(state().open);
   }
 
-  utils::result<bool, utils::error> is_valid() const override {
-    return utils::ok<bool>(true);
+  result<bool, error> is_valid() const override {
+    return ok<bool>(true);
   }
 
-  utils::result<utils::version, utils::error> client_version() const override {
+  result<utils::version, error> client_version() const override {
     return ok<utils::version>();
   }
 
-  utils::result<utils::version, utils::error> server_version() const override {
+  result<utils::version, error> server_version() const override {
     return ok<utils::version>();
   }
 
-  utils::result<execute_result, utils::error> execute(const query_context &context) override {
+  result<execute_result, error> execute(const query_context &context) override {
     ++state().execute_count;
     state().executed_sql.push_back(context.sql);
 
     if (state().fail_execute) {
-      return utils::failure(test_error("execute failed"));
+      return failure(test_error("execute failed"));
     }
 
-    return utils::ok<execute_result>(execute_result{42, {}});
+    return ok<execute_result>(execute_result{42, {}});
   }
 
-  utils::result<std::unique_ptr<query_result_impl>, utils::error> fetch(const query_context &context) override {
+  result<std::unique_ptr<query_result_impl>, error> fetch(const query_context &context) override {
     ++state().fetch_count;
     state().fetched_sql.push_back(context.sql);
 
     if (state().fail_fetch) {
-      return utils::failure(test_error("fetch failed"));
+      return failure(test_error("fetch failed"));
     }
 
     return ok<std::unique_ptr<query_result_impl>>();
   }
 
-  utils::result<std::unique_ptr<statement_impl>, utils::error> prepare(const query_context &context) override {
+  result<std::unique_ptr<statement_impl>, error> prepare(const query_context &context) override {
     ++state().prepare_count;
     state().prepared_sql.push_back(context.sql);
 
     if (state().fail_prepare) {
-      return utils::failure(test_error("prepare failed"));
+      return failure(test_error("prepare failed"));
     }
 
-    return utils::ok<std::unique_ptr<statement_impl>>(
+    return ok<std::unique_ptr<statement_impl>>(
       std::make_unique<fake_statement_impl>(context));
   }
 
-  utils::result<std::vector<column>, utils::error> describe(const std::string &table) override {
+  result<std::vector<column>, error> describe(const std::string &table) override {
     ++state().describe_count;
     state().last_describe_table = table;
     return ok<std::vector<column>>();
   }
 
-  utils::result<bool, utils::error> exists(const std::string &schema_name,
+  result<bool, error> exists(const std::string &schema_name,
                                            const std::string &table_name) override {
     ++state().exists_count;
     state().last_exists_schema = schema_name;
     state().last_exists_table = table_name;
-    return utils::ok<bool>(true);
+    return ok<bool>(true);
   }
 
-  utils::result<bool, utils::error> sequence_exists(const std::string &schema_name,
+  result<bool, error> sequence_exists(const std::string &schema_name,
                                                     const std::string &sequence_name) override {
     ++state().sequence_exists_count;
     state().last_sequence_schema = schema_name;
     state().last_sequence_name = sequence_name;
-    return utils::ok<bool>(true);
+    return ok<bool>(true);
   }
 
   std::string to_escaped_string(const utils::blob_type_t &) const override {

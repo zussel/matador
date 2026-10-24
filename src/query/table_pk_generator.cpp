@@ -16,21 +16,21 @@ table_pk_generator::table_pk_generator(const std::string& table_name, const std:
   .where("name"_col == sequence_name)
 ) {}
 
-utils::result<int64_t, utils::error> table_pk_generator::next_id(const executor &exec) {
-    return next_id_query_.fetch_value<int64_t>(exec).and_then([](const std::optional<int64_t> id) -> utils::result<int64_t, utils::error> {
+result<int64_t, error> table_pk_generator::next_id(const executor &exec) {
+    return next_id_query_.fetch_value<int64_t>(exec).and_then([](const std::optional<int64_t> id) -> result<int64_t, error> {
         if (!id) {
-            return utils::failure(utils::error(error_code::RetrieveDataFailed, "Sequence returned no value"));
+            return failure(error(error_code::RetrieveDataFailed, "Sequence returned no value"));
         }
-        return utils::ok(*id);
+        return ok(*id);
     });
 }
 
-utils::result<int64_t, utils::error> table_pk_generator::current_id(const executor& exec) {
-    return current_id_query_.fetch_value<int64_t>(exec).and_then([](const std::optional<int64_t> id) -> utils::result<int64_t, utils::error> {
+result<int64_t, error> table_pk_generator::current_id(const executor& exec) {
+    return current_id_query_.fetch_value<int64_t>(exec).and_then([](const std::optional<int64_t> id) -> result<int64_t, error> {
         if (!id) {
-            return utils::failure(utils::error(error_code::RetrieveDataFailed, "Sequence returned no value"));
+            return failure(error(error_code::RetrieveDataFailed, "Sequence returned no value"));
         }
-        return utils::ok(*id);
+        return ok(*id);
     });
 }
 }

@@ -13,8 +13,8 @@ class executor;
 class abstract_pk_generator {
 public:
   virtual ~abstract_pk_generator() = default;
-  virtual utils::result<int64_t, utils::error> next_id(const executor& exec) = 0;
-  virtual utils::result<int64_t, utils::error> current_id(const executor& exec) = 0;
+  virtual result<int64_t, error> next_id(const executor& exec) = 0;
+  virtual result<int64_t, error> current_id(const executor& exec) = 0;
 
   [[nodiscard]] generator_type type() const;
 

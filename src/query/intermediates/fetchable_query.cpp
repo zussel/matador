@@ -7,7 +7,7 @@
 // #include "matador/query/statement.hpp"
 
 namespace matador::query {
-utils::result<query_result<record>, error> fetchable_query::fetch_all(const executor &exec) const {
+result<query_result<record>, error> fetchable_query::fetch_all(const executor &exec) const {
   query_builder compiler;
   auto ctx = compiler.build(*context_, exec.dialect(), std::nullopt);
   ctx.resolver = exec.resolver();

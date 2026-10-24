@@ -11,8 +11,8 @@ class sequence_pk_generator : public abstract_pk_generator {
 public:
     explicit sequence_pk_generator(const std::string& sequence_name);
 
-    utils::result<int64_t, utils::error> next_id(const executor& exec) override;
-    utils::result<int64_t, utils::error> current_id(const executor& exec) override;
+    result<int64_t, error> next_id(const executor& exec) override;
+    result<int64_t, error> current_id(const executor& exec) override;
 
 private:
     fetchable_query next_id_query_;

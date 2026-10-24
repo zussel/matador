@@ -100,7 +100,7 @@ class relation_completer final {
 public:
   using endpoint_ptr = std::shared_ptr<relation_endpoint>;
 
-  static utils::result<void, utils::error> complete(schema_node *node, const std::vector<std::unique_ptr<observer<Type>>> &observers) {
+  static result<void, error> complete(schema_node *node, const std::vector<std::unique_ptr<observer<Type>>> &observers) {
     relation_completer completer(node->repo_, observers);
 
     return completer.complete_node_relations(node);
@@ -139,7 +139,7 @@ private:
   // , log_(logger::create_logger("relation_completer"))
   , observers_(observers) {}
 
-  utils::result<void, utils::error> complete_node_relations(schema_node* node) {
+  result<void, error> complete_node_relations(schema_node* node) {
     try {
       current_node_ = node;
 
@@ -153,10 +153,10 @@ private:
       current_node_ = nullptr;
     } catch (const error_exception &e) {
       current_node_ = nullptr;
-      return utils::failure(e.error());
+      return failure(e.error());
     }
 
-    return utils::ok<void>();
+    return ok<void>();
   }
 
   template<class CollectionType>

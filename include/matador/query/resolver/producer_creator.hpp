@@ -53,7 +53,7 @@ public:
       : abstract_object_resolver_producer(typeid(Type)), repo_(repo), table_(tab),
         pk_name_(std::move(pk_name)) {}
   void create_relation_producers(resolver_producer_registry &registry) const override;
-  utils::result<query_context, utils::error> build_query(const dialect &d) override;
+  result<query_context, error> build_query(const dialect &d) override;
 
   std::shared_ptr<abstract_resolver> produce(statement &&stmt) const override {
     return std::make_shared<query_object_resolver<Type>>(std::move(stmt));
@@ -73,7 +73,7 @@ public:
       : abstract_joined_object_resolver_producer(root_type, typeid(Type), join_column), repo_(repo),
         table_(tab), pk_name_(std::move(pk_name)) {}
 
-  utils::result<query_context, utils::error> build_query(const dialect &d) override;
+  result<query_context, error> build_query(const dialect &d) override;
 
   std::shared_ptr<abstract_resolver> produce(statement &&stmt) const override {
     return std::make_shared<query_object_resolver<Type>>(std::move(stmt));
@@ -96,7 +96,7 @@ public:
   , pk_name_(std::move(pk_name))
   {}
 
-  utils::result<query_context, utils::error> build_query(const dialect& d) override;
+  result<query_context, error> build_query(const dialect& d) override;
 
   std::shared_ptr<abstract_joined_resolver> produce(statement&& stmt, const resolver_service& rs) const override {
     return std::make_shared<query_collection_resolver<Type>>(std::move(stmt), root_type(), join_column_name(), rs.resolver<typename Type::value_type>());
@@ -119,7 +119,7 @@ public:
   , value_name_(std::move(value_name))
   {}
 
-  utils::result<query_context, utils::error> build_query(const dialect& d) override;
+  result<query_context, error> build_query(const dialect& d) override;
 
   std::shared_ptr<abstract_joined_resolver> produce(statement&& stmt, const resolver_service& /*rs*/) const override {
     return std::make_shared<query_collection_primitive_resolver<Type>>(
@@ -257,45 +257,45 @@ void object_resolver_producer<Type>::create_relation_producers(resolver_producer
 }
 
 template <typename Type>
-utils::result<query_context, utils::error>
+result<query_context, error>
 object_resolver_producer<Type>::build_query(const dialect &d) {
   const auto *pk_column = table_[pk_name_];
   const auto statement = select(table_.columns())
       .from(table_)
       .where(*pk_column == _)
       .compile(d);
-  return utils::ok(statement);
+  return ok(statement);
 }
 
 template <typename Type>
-utils::result<query_context, utils::error>
+result<query_context, error>
 joined_object_resolver_producer<Type>::build_query(const dialect &d) {
   const auto *join_column = table_[collection_name()];
   const auto statement = select(table_.columns())
       .from(table_)
       .where(*join_column == _)
       .compile(d);
-  return utils::ok(statement);
+  return ok(statement);
 }
 template <typename Type>
-utils::result<query_context, utils::error>
+result<query_context, error>
 query_joined_collection_resolver_producer<Type>::build_query(const dialect &d) {
   const auto *pk_column = table_[pk_name_];
   const auto *join_column = table_[join_column_name()];
 
   const auto stmt = select({*pk_column}).from(table_).where(*join_column == _).compile(d);
 
-  return utils::ok(stmt);
+  return ok(stmt);
 }
 template <typename Type>
-utils::result<query_context, utils::error>
+result<query_context, error>
 query_joined_collection_primitive_resolver_producer<Type>::build_query(const dialect &d) {
   const auto *value_column = table_[value_name_];
   const auto *join_column = table_[join_column_name()];
 
   const auto stmt = select({*value_column}).from(table_).where(*join_column == _).compile(d);
 
-  return utils::ok(stmt);
+  return ok(stmt);
 }
 } // namespace matador::query
 #endif // MATADOR_PRODUCER_CREATOR_HPP

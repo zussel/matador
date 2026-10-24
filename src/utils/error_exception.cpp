@@ -1,6 +1,6 @@
 #include "matador/utils/error_exception.hpp"
 
-namespace matador::utils {
+namespace matador {
 error_exception::error_exception(class error &&err)
 : error_(std::move(err)) {}
 

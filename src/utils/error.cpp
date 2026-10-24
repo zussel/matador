@@ -1,9 +1,10 @@
 #include "matador/utils/error.hpp"
 
-#include <utility>
 #include <algorithm>
+#include <ostream>
+#include <utility>
 
-namespace matador::utils {
+namespace matador {
 std::string error::error_code() const {
   return ec_.message();
 }

@@ -57,7 +57,7 @@ public:
   statement_cache &operator=(statement_cache &&) = delete;
   ~statement_cache() = default;
 
-  [[nodiscard]] utils::result<statement, utils::error> acquire(const query_context &ctx);
+  [[nodiscard]] result<statement, error> acquire(const query_context &ctx);
 
   [[nodiscard]] size_t size() const;
   [[nodiscard]] size_t capacity() const;

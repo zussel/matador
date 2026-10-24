@@ -25,37 +25,37 @@ public:
   explicit delete_step_processor(query_builder_context &ctx)
   : ctx_(ctx) {}
 
-  utils::result<void, utils::error> build(object_ptr<ObjectType> ptr, const bool as_relation_step = false) {
+  result<void, error> build(object_ptr<ObjectType> ptr, const bool as_relation_step = false) {
     if (!ptr) {
-      return utils::failure(utils::error{error_code::InvalidObject, "Object is null"});
+      return failure(error{error_code::InvalidObject, "Object is null"});
     }
 
     ptr_ = ptr;
 
     const auto key = make_entity_visit_key<ObjectType>(*ptr_);
     if (ctx_.visited_.find(key) != ctx_.visited_.end()) {
-      return utils::ok<void>();
+      return ok<void>();
     }
     ctx_.visited_.insert(key);
 
     const auto it = ctx_.schema_.find(typeid(ObjectType));
     if (it == ctx_.schema_.end()) {
-      return utils::failure(utils::error{error_code::UnknownType, "Unknown type"});
+      return failure(error{error_code::UnknownType, "Unknown type"});
     }
 
     if (const auto &info = it->info(); !info.has_primary_key()) {
-      return utils::failure(utils::error{error_code::MissingPrimaryKey, "Type " + info.name() + " has no primary key"});
+      return failure(error{error_code::MissingPrimaryKey, "Type " + info.name() + " has no primary key"});
     }
 
     try {
       access::process(*this, *ptr_);
     } catch (const error_exception &ex) {
-      return utils::failure(ex.error());
+      return failure(ex.error());
     }
 
     const auto cit = ctx_.contexts_by_type_.find(it->info().type_index());
     if (cit == ctx_.contexts_by_type_.end()) {
-      return utils::failure(utils::error{error_code::UnknownType, "Unknown type"});
+      return failure(error{error_code::UnknownType, "Unknown type"});
     }
 
     if (as_relation_step) {
@@ -66,7 +66,7 @@ public:
 
     ptr_.reset();
 
-    return utils::ok<void>();
+    return ok<void>();
   }
 
   template<class PrimaryKeyType>
@@ -241,9 +241,9 @@ public:
   : schema_(schema)
   , contexts_by_type_(contexts_by_type) {}
 
-  utils::result<std::vector<std::unique_ptr<execute_step>>, utils::error> build(const object_ptr<ObjectType> &ptr) {
+  result<std::vector<std::unique_ptr<execute_step>>, error> build(const object_ptr<ObjectType> &ptr) {
     if (const auto it = schema_.find(typeid(ObjectType)); it == schema_.end()) {
-      return utils::failure(utils::error{error_code::UnknownType, "Unknown type for delete query"});
+      return failure(error{error_code::UnknownType, "Unknown type for delete query"});
     }
 
     query_builder_context ctx{schema_, contexts_by_type_};
@@ -251,7 +251,7 @@ public:
 
     const auto result = processor.build(ptr);
     if (!result) {
-      return utils::failure(result.err());
+      return failure(result.err());
     }
 
     // relation inserts must run after all entity inserts were collected
@@ -260,7 +260,7 @@ public:
     }
     ctx.steps_.clear();
 
-    return utils::ok(std::move(ctx.relation_steps_));
+    return ok(std::move(ctx.relation_steps_));
   }
 
 private:
