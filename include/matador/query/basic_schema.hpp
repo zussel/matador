@@ -77,6 +77,15 @@ public:
    */
   [[nodiscard]] std::string name() const;
 
+  /**
+   * Clears the schema.
+   */
+  void clear();
+
+  template < typename Type >
+  [[nodiscard]] const_iterator find() const {
+    return find(std::type_index(typeid(Type)));
+  }
   [[nodiscard]] const_iterator find(const std::type_index& ti) const;
   [[nodiscard]] const_iterator find(const std::string& name) const;
 

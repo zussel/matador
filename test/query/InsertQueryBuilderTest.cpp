@@ -243,4 +243,8 @@ TEST_CASE("Insert query builder can be reused without leaking visited relation s
 
   REQUIRE((*first)[2]->ctx().sql.find("INSERT INTO \"recipe_ingredients\"") != std::string::npos);
   REQUIRE((*second)[2]->ctx().sql.find("INSERT INTO \"recipe_ingredients\"") != std::string::npos);
+
+  for (const auto &query : *first) {
+    std::cout << query->ctx().sql << std::endl;
+  }
 }

@@ -2,7 +2,7 @@
 #define MATADOR_COLLECTION_PROXY_HPP
 
 #include "matador/query/collection_resolver.hpp"
-#include "matador/query/many_to_many_relation.hpp"
+#include "matador/query/object_ptr.hpp"
 
 #include "matador/query/identifier.hpp"
 
@@ -265,7 +265,6 @@ public:
   using value_type = Type;
   using owner_type = OwnerType;
   using owner_type_ptr = object_ptr<OwnerType>;
-  //using relation_type = many_to_many_relation<value_type, owner_type>;
   using iterator = typename std::vector<value_type>::iterator;
   using const_iterator = typename std::vector<value_type>::const_iterator;
 

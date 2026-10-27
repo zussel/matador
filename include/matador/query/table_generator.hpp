@@ -141,8 +141,11 @@ private:
     [[nodiscard]] std::shared_ptr<table> foreign_table() const;
 
     static std::shared_ptr<table> acquire_table(basic_schema &repo, const std::type_index &ti, const std::string& name);
-    static std::shared_ptr<table> acquire_foreign_table(basic_schema &repo,
-                                                        const std::type_index &ti);
+    static std::shared_ptr<table> acquire_from_repo(const basic_schema &repo, const std::type_index &ti);
+    static std::shared_ptr<table> provide_table_in_advance(basic_schema& repo, const std::type_index& ti, const std::shared_ptr<table> & tab);
+    template <typename Type>
+    static std::shared_ptr<table> acquire_foreign_table(basic_schema &repo, const std::type_index &ti);
+
 private:
     basic_schema &repo_;
     std::shared_ptr<table> table_;
@@ -171,24 +174,33 @@ void table_generator::on_attribute(const char *id, std::optional<Type> & /*x*/, 
 
 template<typename Type>
 void table_generator::create_fk_constraint(const std::string& name) const {
-    const auto pk_attr = find_column_by_name(name);
-    if (pk_attr == std::end(table_->columns_)) {
-        return;
-    }
-    const auto obj = foreign_table<Type>();
-    constraint pk_constraint = constraint::make_fk_constraint(*table_, pk_attr->index(), *obj);
-    table_->constraints_.emplace_back(pk_constraint);
+  const auto pk_attr = find_column_by_name(name);
+  if (pk_attr == std::end(table_->columns_)) {
+      return;
+  }
+  const auto obj = foreign_table<Type>();
+  constraint pk_constraint = constraint::make_fk_constraint(*table_, pk_attr->index(), *obj);
+  table_->constraints_.emplace_back(pk_constraint);
 }
 
 template<typename Type>
 std::shared_ptr<table> table_generator::foreign_table() const {
     const auto ti = std::type_index(typeid(Type));
-    const auto obj = acquire_foreign_table(repo_, ti);
-    table_generator gen(repo_, obj);
-    Type t;
-    access::process(gen, t);
+    const auto obj = acquire_foreign_table<Type>(repo_, ti);
     return obj;
 }
 
+template<typename Type>
+std::shared_ptr<table> table_generator::acquire_foreign_table(basic_schema &repo, const std::type_index &ti) {
+  auto tab = acquire_from_repo(repo, ti);
+  if (!tab) {
+    tab = std::make_shared<table>("");
+    table_generator gen(repo, tab);
+    Type t;
+    access::process(gen, t);
+  }
+
+  return provide_table_in_advance(repo, ti, tab);
+}
 }
 #endif //MATADOR_OBJECT_GENERATOR_HPP

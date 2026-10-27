@@ -1,7 +1,6 @@
 #ifndef MATADOR_COLLECTION_RESOLVER_HPP
 #define MATADOR_COLLECTION_RESOLVER_HPP
 
-#include "matador/query/object_ptr.hpp"
 #include "matador/query/resolver/abstract_joined_resolver.hpp"
 
 #include <any>

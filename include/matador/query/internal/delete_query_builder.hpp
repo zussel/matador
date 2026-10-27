@@ -9,6 +9,7 @@
 #include "matador/query/internal/delete_step.hpp"
 #include "matador/query/internal/execute_step.hpp"
 #include "matador/query/internal/query_contexts.hpp"
+#include "matador/query/many_to_many_relation.hpp"
 #include "matador/query/query_builder_utils.hpp"
 #include "matador/query/identifier.hpp"
 #include "matador/query/statement.hpp"

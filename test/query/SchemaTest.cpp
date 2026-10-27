@@ -103,6 +103,54 @@ TEST_CASE("Test one to many", "[relation][one-to-many]") {
   // std::cout << *result->get().object();
 }
 
+TEST_CASE("Test many to many relation", "[relation][many-to-many]") {
+  query::schema repo;
+
+  REQUIRE(repo.empty());
+
+  REQUIRE(repo.attach<test::ingredient>("ingredients").is_ok());
+  REQUIRE(repo.attach<test::recipe>("recipes").is_ok());
+
+  REQUIRE(repo.size() == 3);
+  REQUIRE(repo.contains("ingredients"));
+  REQUIRE(repo.contains("recipes"));
+  REQUIRE(repo.contains("recipe_ingredients"));
+
+  auto it = repo.find("recipe_ingredients");
+  REQUIRE(it != repo.end());
+
+  query::schema::dump(std::cout, *it);
+
+  auto result = repo.basic_info("ingredients");
+  REQUIRE(result);
+  const auto tab = result->get().table();
+  REQUIRE(!result->get().endpoints_empty());
+  REQUIRE(result->get().endpoints_size() == 1);
+  result = repo.basic_info("recipes");
+  REQUIRE(!result->get().endpoints_empty());
+  REQUIRE(result->get().endpoints_size() == 1);
+  result = repo.basic_info("recipe_ingredients");
+  REQUIRE(!result->get().endpoints_empty());
+  REQUIRE(result->get().endpoints_size() == 2);
+
+  repo.clear();
+
+  REQUIRE(repo.empty());
+
+  REQUIRE(repo.attach<test::ingredient>("ingredients").is_ok());
+  REQUIRE(repo.attach<test::recipe>("recipes").is_ok());
+
+  REQUIRE(repo.size() == 3);
+  REQUIRE(repo.contains("ingredients"));
+  REQUIRE(repo.contains("recipes"));
+  REQUIRE(repo.contains("recipe_ingredients"));
+
+  it = repo.find("recipe_ingredients");
+  REQUIRE(it != repo.end());
+
+  query::schema::dump(std::cout, *it);
+}
+
 TEST_CASE("Test one to many reverse", "[relation][one-to-many][reverse]") {
   query::schema repo;
 
@@ -126,48 +174,17 @@ TEST_CASE("Test one to many reverse", "[relation][one-to-many][reverse]") {
   // std::cout << *result->get().object();
 }
 
-TEST_CASE("Test many to many relation", "[relation][many-to-many]") {
-  query::schema repo;
-
-  REQUIRE(repo.empty());
-
-  auto res = repo.attach<test::recipe>("recipes")
-      .and_then([&repo] { return repo.attach<test::ingredient>("ingredients"); });
-  REQUIRE(res);
-
-  REQUIRE(repo.size() == 3);
-  REQUIRE(repo.contains("ingredients"));
-  REQUIRE(repo.contains("recipes"));
-  REQUIRE(repo.contains("recipe_ingredients"));
-
-  // std::cout << *repo.basic_info("ingredients")->get().object();
-  // std::cout << *repo.basic_info("recipes")->get().object();
-  // std::cout << *repo.basic_info("recipe_ingredients")->get().object();
-
-
-  auto result = repo.basic_info("ingredients");
-  REQUIRE(!result->get().endpoints_empty());
-  REQUIRE(result->get().endpoints_size() == 1);
-  // std::cout << *result->get().object();
-  result = repo.basic_info("recipes");
-  REQUIRE(!result->get().endpoints_empty());
-  REQUIRE(result->get().endpoints_size() == 1);
-  // std::cout << *result->get().object();
-  result = repo.basic_info("recipe_ingredients");
-  REQUIRE(!result->get().endpoints_empty());
-  REQUIRE(result->get().endpoints_size() == 2);
-  // std::cout << *result->get().object();
-}
-
-template<typename Type>
-class test_observer : public matador::query::observer<Type> {
+namespace {
+template <typename Type>
+class test_observer final : public query::observer<Type> {
 public:
-  void on_attach(const query::schema_node& /*node*/, const Type& /*prototype*/) const override {}
-  void on_detach(const query::schema_node& /*node*/, const Type& /*prototype*/) const override {}
-  void on_insert(const Type& /*obj*/) override {}
-  void on_update(const Type& /*obj*/) override {}
-  void on_delete(const Type& /*obj*/) override {}
+  void on_attach(const query::schema_node & /*node*/, const Type & /*prototype*/) const override {}
+  void on_detach(const query::schema_node & /*node*/, const Type & /*prototype*/) const override {}
+  void on_insert(const Type & /*obj*/) override {}
+  void on_update(const Type & /*obj*/) override {}
+  void on_delete(const Type & /*obj*/) override {}
 };
+} // namespace
 
 TEST_CASE("Test repository observer", "[repository][observer]") {
   query::schema repo;

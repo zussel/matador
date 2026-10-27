@@ -8,6 +8,7 @@
 #include "matador/query/internal/insert_step.hpp"
 #include "matador/query/internal/primary_key_accessor.hpp"
 #include "matador/query/internal/query_contexts.hpp"
+#include "matador/query/many_to_many_relation.hpp"
 #include "matador/query/object_ptr.hpp"
 #include "matador/query/query.hpp"
 #include "matador/query/query_builder_utils.hpp"
@@ -188,17 +189,17 @@ public:
     }
   }
 
-    template<class ForeignType>
-    void on_has_many_to_many(const char *id,
-                             collection<object_ptr<ForeignType>> &objects,
-                             const char *join_column,
-                             const char *inverse_join_column,
-                             const foreign_key_options &attr) {
+  template<class ForeignType>
+  void on_has_many_to_many(const char *id,
+                           collection<object_ptr<ForeignType>> &objects,
+                           const char *join_column,
+                           const char *inverse_join_column,
+                           const foreign_key_options &attr) {
     if (id == nullptr || join_column == nullptr || inverse_join_column == nullptr) {
       return;
     }
 
-    using relation_value_type = many_to_many_relation<ObjectType, ForeignType>;
+    using relation_value_type = many_to_many_relation<ForeignType, ObjectType>;
     const std::type_index foreign_type{typeid(ForeignType)};
     const std::type_index local_type{typeid(ObjectType)};
     insert_many_to_many_relations<relation_value_type>(
@@ -209,7 +210,7 @@ public:
         return {std::string{relation_name}, local_type, foreign_type};
       },
       [this, join_column, inverse_join_column](const auto &obj) {
-        return make_object<relation_value_type>(join_column, inverse_join_column, ptr_, obj);
+        return make_object<relation_value_type>(inverse_join_column, join_column, obj, ptr_);
       });
   }
 
@@ -225,7 +226,7 @@ public:
       return;
     }
 
-    using relation_value_type = many_to_many_relation<ForeignType, ObjectType>;
+    using relation_value_type = many_to_many_relation<ObjectType, ForeignType>;
     const std::type_index foreign_type{typeid(ForeignType)};
     const std::type_index local_type{typeid(ObjectType)};
     insert_many_to_many_relations<relation_value_type>(
@@ -236,7 +237,7 @@ public:
         return {std::string{relation_name}, foreign_type, local_type};
       },
       [this, join_columns = std::move(join_columns)](const auto &obj) {
-        return make_object<relation_value_type>(join_columns.inverse_join_column, join_columns.join_column, obj, ptr_);
+        return make_object<relation_value_type>(join_columns.join_column, join_columns.inverse_join_column, ptr_, obj);
       });
   }
 

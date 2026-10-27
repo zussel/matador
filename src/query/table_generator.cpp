@@ -21,7 +21,7 @@ std::shared_ptr<table> table_generator::acquire_table(basic_schema &repo, const 
 
   return repo.provide_table_in_advance(ti, std::make_shared<table>(name));
 }
-std::shared_ptr<table> table_generator::acquire_foreign_table(basic_schema &repo, const std::type_index &ti) {
+std::shared_ptr<table> table_generator::acquire_from_repo(const basic_schema &repo, const std::type_index &ti) {
   if (const auto result = repo.basic_info(ti)) {
     return result->get().table();
   }
@@ -30,7 +30,11 @@ std::shared_ptr<table> table_generator::acquire_foreign_table(basic_schema &repo
     return repo.table_for_type(ti);
   }
 
-  return repo.provide_table_in_advance(ti, std::make_shared<table>(""));
+  return nullptr;
+}
+
+std::shared_ptr<table> table_generator::provide_table_in_advance(basic_schema &repo, const std::type_index &ti, const std::shared_ptr<table> &tab) {
+  return repo.provide_table_in_advance(ti, tab);
 }
 
 void table_generator::on_revision(const char *id, uint64_t &rev) {
@@ -57,7 +61,7 @@ void table_generator::create_unique_constraint(const std::string &name) const {
 
 std::vector<column>::iterator table_generator::find_column_by_name(const std::string &name) const {
   return std::find_if(std::begin(table_->columns_), std::end(table_->columns_), [&name](const column &elem) {
-    return elem.name() == name;
+    return elem.column_name() == name;
   });
 }
 

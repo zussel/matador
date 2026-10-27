@@ -25,9 +25,7 @@ basic_schema::basic_schema(std::string name)
 }
 
 basic_schema::~basic_schema() {
-  while (root_ && root_->first_child_->next_sibling_ != root_->last_child_.get()) {
-    remove_node(root_->first_child_->next_sibling_);
-  }
+  clear();
 }
 
 result<void, error> basic_schema::detach(const schema_node *node) {
@@ -35,7 +33,7 @@ result<void, error> basic_schema::detach(const schema_node *node) {
     return failure(make_error(error_code::InvalidArgument, "Node is null."));
   }
 
-  auto it = find_node(node);
+  const auto it = find_node(node);
   if (it == iterator(root_->last_child_.get())) {
     return failure(make_error(error_code::NodeNotFound, "Node is not attached to this repository."));
   }
@@ -65,6 +63,12 @@ size_t basic_schema::size() const {
 
 std::string basic_schema::name() const {
   return name_;
+}
+
+void basic_schema::clear() {
+  while (root_ && root_->first_child_->next_sibling_ != root_->last_child_.get()) {
+    remove_node(root_->first_child_->next_sibling_);
+  }
 }
 
 basic_schema::const_iterator basic_schema::find(const std::type_index &ti) const {
@@ -132,7 +136,7 @@ void basic_schema::dump(std::ostream &os) const {
 }
 
 void basic_schema::dump( std::ostream& os, const schema_node& node ) {
-    os << "node [" << node.name() << "]\n";
+    os << "node [" << node.name() << "] (type index: " << node.info().type_index().name() << ")\n";
     for (auto it = node.info().endpoint_begin(); it != node.info().endpoint_end(); ++it) {
         os << "  " << node.name() << "::" << it->second->field_name() << " (" << it->second->type_name() << ")";
         if (it->second->foreign_endpoint()) {
