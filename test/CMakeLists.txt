@@ -8,6 +8,25 @@ CPMAddPackage(
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
 add_executable(MatadorTests
+    query/ColumnExpressionTest.cpp
+    query/ColumnTest.cpp
+    query/ConnectionTest.cpp
+    query/CriteriaTests.cpp
+    query/DeleteIntermediateTest.cpp
+    query/DeleteQueryBuilderTest.cpp
+    query/DropIntermediateTest.cpp
+    query/FieldTest.cpp
+    query/IdentifierTest.cpp
+    query/InsertIntermediateTest.cpp
+    query/InsertQueryBuilderTest.cpp
+    query/QueryResultImplTest.cpp
+    query/RelationCompleterTest.cpp
+    query/SchemaTest.cpp
+    query/SelectIntermediateTest.cpp
+    query/SelectQueryBuilderTest.cpp
+    query/StatementCacheTest.cpp
+    query/TableTest.cpp
+    query/UpdateIntermediateTest.cpp
     query/backend/test_backend_service.cpp
     query/backend/test_backend_service.hpp
     query/backend/test_connection.cpp
@@ -20,24 +39,6 @@ add_executable(MatadorTests
     query/backend/test_statement.hpp
     query/utils/RecordingObserver.cpp
     query/utils/RecordingObserver.hpp
-    query/ColumnTest.cpp
-    query/ColumnExpressionTest.cpp
-    query/ConnectionTest.cpp
-    query/CriteriaTests.cpp
-    query/DeleteIntermediateTest.cpp
-    query/DropIntermediateTest.cpp
-    query/FieldTest.cpp
-    query/IdentifierTest.cpp
-    query/QueryResultImplTest.cpp
-    query/RelationCompleterTest.cpp
-    query/SchemaTest.cpp
-    query/InsertIntermediateTest.cpp
-    query/InsertQueryBuilderTest.cpp
-    query/SelectIntermediateTest.cpp
-    query/SelectQueryBuilderTest.cpp
-    query/StatementCacheTest.cpp
-    query/TableTest.cpp
-    query/UpdateIntermediateTest.cpp
     utils/ConvertTest.cpp
     utils/DependencyInjectionTest.cpp
     utils/MessageBusTest.cpp
