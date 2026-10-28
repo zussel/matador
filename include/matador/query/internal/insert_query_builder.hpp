@@ -1,6 +1,7 @@
 #ifndef MATADOR_INSERT_QUERY_BUILDER_HPP
 #define MATADOR_INSERT_QUERY_BUILDER_HPP
 
+#include "matador/query/runtime/statement.hpp"
 #include "matador/query/basic_schema.hpp"
 #include "matador/query/collection.hpp"
 #include "matador/query/intermediates/executable_query.hpp"
@@ -8,11 +9,10 @@
 #include "matador/query/internal/insert_step.hpp"
 #include "matador/query/internal/primary_key_accessor.hpp"
 #include "matador/query/internal/query_contexts.hpp"
-#include "matador/query/many_to_many_relation.hpp"
+#include "matador/query/model/many_to_many_relation.hpp"
 #include "matador/query/object_ptr.hpp"
 #include "matador/query/query.hpp"
 #include "matador/query/query_builder_utils.hpp"
-#include "matador/query/statement.hpp"
 
 #include "matador/utils/error_exception.hpp"
 

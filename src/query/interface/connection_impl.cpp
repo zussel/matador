@@ -1,6 +1,6 @@
 #include "matador/query/interface/connection_impl.hpp"
 
-#include "matador/query/backend_provider.hpp"
+#include "matador/query/runtime/backend_provider.hpp"
 
 namespace matador::query {
 connection_impl::connection_impl(const connection_info &info)

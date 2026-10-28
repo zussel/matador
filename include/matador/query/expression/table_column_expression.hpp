@@ -1,8 +1,8 @@
 #ifndef MATADOR_TABLE_COLUMN_EXPRESSION_HPP
 #define MATADOR_TABLE_COLUMN_EXPRESSION_HPP
 
+#include "matador/query/model/column.hpp"
 #include "matador/query/expression/abstract_column_expression.hpp"
-#include "matador/query/column.hpp"
 
 namespace matador::query {
 class table_column_expression : public abstract_column_expression {

@@ -1,12 +1,12 @@
 #ifndef MATADOR_BASIC_TABLE_INFO_HPP
 #define MATADOR_BASIC_TABLE_INFO_HPP
 
-#include "matador/query/column.hpp"
-#include "matador/query/constraint.hpp"
-#include "matador/query/identifier.hpp"
-#include "matador/query/relation_endpoint.hpp"
-#include "matador/query/table.hpp"
 #include "matador/query/abstract_pk_generator.hpp"
+#include "matador/query/model/column.hpp"
+#include "matador/query/model/constraint.hpp"
+#include "matador/query/model/identifier.hpp"
+#include "matador/query/model/relation_endpoint.hpp"
+#include "matador/query/model/table.hpp"
 
 namespace matador::query {
 class schema_node;

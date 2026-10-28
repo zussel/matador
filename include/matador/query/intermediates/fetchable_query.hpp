@@ -3,9 +3,9 @@
 
 #include "matador/query/intermediates/intermediate.hpp"
 
-#include "matador/query/executor.hpp"
-#include "matador/query/query_result.hpp"
-#include "matador/query/record.hpp"
+#include "matador/query/runtime/executor.hpp"
+#include "matador/query/runtime/query_result.hpp"
+#include "matador/query/model/record.hpp"
 
 #include "matador/utils/error.hpp"
 #include "matador/utils/result.hpp"

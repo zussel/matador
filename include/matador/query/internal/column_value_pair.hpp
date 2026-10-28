@@ -1,8 +1,8 @@
 #ifndef QUERY_KEY_VALUE_PAIR_HPP
 #define QUERY_KEY_VALUE_PAIR_HPP
 
+#include "matador/query/model/column.hpp"
 #include "matador/query/expression/column_expression.hpp"
-#include "matador/query/column.hpp"
 
 namespace matador::query::internal {
 

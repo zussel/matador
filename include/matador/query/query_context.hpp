@@ -1,7 +1,7 @@
 #ifndef QUERY_QUERY_DATA_HPP
 #define QUERY_QUERY_DATA_HPP
 
-#include "matador/query/column.hpp"
+#include "matador/query/model/column.hpp"
 
 #include "matador/query/resolver_service.hpp"
 

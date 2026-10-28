@@ -1,7 +1,7 @@
 #ifndef MATADOR_QUERY_UTILS_HPP
 #define MATADOR_QUERY_UTILS_HPP
 
-#include "matador/query/column_value.hpp"
+#include "matador/query/model/column_value.hpp"
 
 #include <string>
 

@@ -3,10 +3,10 @@
 
 #include "matador/query/internal/fk_value_extractor.hpp"
 
+#include "matador/query/model/primary_key_options.hpp"
 #include "matador/query/access.hpp"
-#include "matador/query/value_writer.hpp"
 #include "matador/query/default_type_traits.hpp"
-#include "matador/query/primary_key_options.hpp"
+#include "matador/query/value_writer.hpp"
 
 #include <vector>
 

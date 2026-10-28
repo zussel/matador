@@ -1,6 +1,6 @@
 #include "matador/query/manual_pk_generator.hpp"
 
-#include "matador/query/error_code.hpp"
+#include "matador/query/runtime/error_code.hpp"
 
 namespace matador::query {
 manual_pk_generator::manual_pk_generator()

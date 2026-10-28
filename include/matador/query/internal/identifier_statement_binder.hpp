@@ -1,7 +1,7 @@
 #ifndef MATADOR_IDENTIFIER_STATEMENT_BINDER_HPP
 #define MATADOR_IDENTIFIER_STATEMENT_BINDER_HPP
 
-#include "matador/query/identifier.hpp"
+#include "matador/query/model/identifier.hpp"
 #include "matador/query/identifier_serializer.hpp"
 
 namespace matador::query {

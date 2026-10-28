@@ -1,7 +1,7 @@
 #include "matador/query/criteria/like_criteria.hpp"
 
+#include "matador/query/model/column.hpp"
 #include "matador/query/criteria/criteria_visitor.hpp"
-#include "matador/query/column.hpp"
 
 namespace matador::query {
 like_criteria::like_criteria(const column& col, std::string pattern)

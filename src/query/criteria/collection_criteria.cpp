@@ -1,9 +1,9 @@
-#include <utility>
-
 #include "matador/query/criteria/collection_criteria.hpp"
 
+#include "matador/query/model/column.hpp"
 #include "matador/query/criteria/criteria_visitor.hpp"
-#include "matador/query/column.hpp"
+
+#include <utility>
 
 namespace matador::query {
 collection_criteria::collection_criteria(const column& col, const collection_operator operand_, std::vector<criteria_value> values )

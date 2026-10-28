@@ -4,7 +4,7 @@
 #include "matador/query/intermediates/intermediate.hpp"
 #include "matador/query/intermediates/delete_from_intermediate.hpp"
 
-#include "matador/query/table.hpp"
+#include "matador/query/model/table.hpp"
 
 namespace matador::query {
 class delete_intermediate : public intermediate {

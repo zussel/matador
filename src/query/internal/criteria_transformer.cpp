@@ -1,7 +1,7 @@
 #include "matador/query/internal/criteria_transformer.hpp"
 
 #include "matador/query/criteria.hpp"
-#include "matador/query/table.hpp"
+#include "matador/query/model/table.hpp"
 
 namespace matador::query {
 criteria_transformer::criteria_transformer(const table_map &tables_by_name)

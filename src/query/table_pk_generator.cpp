@@ -1,8 +1,8 @@
 #include "matador/query/table_pk_generator.hpp"
-#include "matador/query/query.hpp"
+#include "matador/query/runtime/error_code.hpp"
 #include "matador/query/criteria.hpp"
-#include "matador/query/error_code.hpp"
 #include "matador/query/expression/expression_operators.hpp"
+#include "matador/query/query.hpp"
 
 namespace matador::query {
 table_pk_generator::table_pk_generator(const std::string& table_name, const std::string &sequence_name)

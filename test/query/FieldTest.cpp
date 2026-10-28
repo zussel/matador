@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/query/field.hpp"
+#include "matador/query/model/field.hpp"
 
 using namespace matador;
 

@@ -1,9 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include "matador/query/model/table.hpp"
 #include "matador/query/criteria.hpp"
 #include "matador/query/dialect.hpp"
 #include "matador/query/query.hpp"
-#include "matador/query/table.hpp"
 
 namespace matador::query {
 class dialect_builder {

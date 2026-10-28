@@ -1,8 +1,8 @@
 #ifndef MATADOR_QUERY_OBJECT_LOADER_HPP
 #define MATADOR_QUERY_OBJECT_LOADER_HPP
 
+#include "matador/query/runtime/statement.hpp"
 #include "matador/query/internal/identifier_statement_binder.hpp"
-#include "matador/query/statement.hpp"
 
 #include "matador/query/object_resolver.hpp"
 #include "matador/utils/error_exception.hpp"

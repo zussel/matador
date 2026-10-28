@@ -1,11 +1,11 @@
 #ifndef QUERY_CONNECTION_IMPL_HPP
 #define QUERY_CONNECTION_IMPL_HPP
 
-#include "matador/query/column.hpp"
+#include "matador/query/model/column.hpp"
 
+#include "matador/query/runtime/connection_info.hpp"
+#include "matador/query/runtime/execute_result.hpp"
 #include "matador/query/dialect.hpp"
-#include "matador/query/connection_info.hpp"
-#include "matador/query/execute_result.hpp"
 
 #include "matador/utils/error.hpp"
 #include "matador/utils/result.hpp"

@@ -1,9 +1,9 @@
 #ifndef MATADOR_QUERY_DATA_HPP
 #define MATADOR_QUERY_DATA_HPP
 
-#include "matador/query/column.hpp"
-#include "matador/query/table.hpp"
 #include "matador/query/query_part.hpp"
+#include "matador/query/model/column.hpp"
+#include "matador/query/model/table.hpp"
 
 #include <memory>
 #include <vector>

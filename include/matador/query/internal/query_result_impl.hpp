@@ -1,27 +1,27 @@
 #ifndef QUERY_QUERY_RESULT_IMPL_HPP
 #define QUERY_QUERY_RESULT_IMPL_HPP
 
-#include "matador/query/default_type_traits.hpp"
+#include "matador/query/model/column_options.hpp"
+#include "matador/query/model/foreign_key_options.hpp"
+#include "matador/query/model/identifier.hpp"
+#include "matador/query/model/primary_key_options.hpp"
 #include "matador/query/access.hpp"
-#include "matador/query/column_options.hpp"
-#include "matador/query/foreign_key_options.hpp"
-#include "matador/query/primary_key_options.hpp"
-#include "matador/query/identifier.hpp"
+#include "matador/query/default_type_traits.hpp"
 
+#include "matador/query/model/record.hpp"
 #include "matador/query/interface/query_result_reader.hpp"
 #include "matador/query/internal/collection_utils.hpp"
 #include "matador/query/internal/identifier_discover_service.hpp"
-#include "matador/query/internal/primary_key_reader.hpp"
 #include "matador/query/internal/identifier_reader.hpp"
+#include "matador/query/internal/primary_key_reader.hpp"
 #include "matador/query/resolver_service.hpp"
-#include "matador/query/record.hpp"
 
-#include "matador/query/column.hpp"
+#include "matador/query/model/column.hpp"
 #include "matador/query/collection.hpp"
-#include "matador/query/object_proxy.hpp"
-#include "matador/query/object_ptr.hpp"
 #include "matador/query/collection_proxy.hpp"
 #include "matador/query/join_columns_collector.hpp"
+#include "matador/query/object_proxy.hpp"
+#include "matador/query/object_ptr.hpp"
 #include "matador/utils/error_exception.hpp"
 
 #include <memory>

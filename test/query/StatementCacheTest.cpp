@@ -1,9 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/query/connection_pool.hpp"
-#include "matador/query/error_code.hpp"
+#include "matador/query/runtime/backend_provider.hpp"
+#include "matador/query/runtime/connection_pool.hpp"
+#include "matador/query/runtime/error_code.hpp"
 #include "matador/query/interface/connection_impl.hpp"
-#include "matador/query/backend_provider.hpp"
 
 #include "backend/test_backend_service.hpp"
 

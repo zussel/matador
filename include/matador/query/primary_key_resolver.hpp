@@ -2,9 +2,9 @@
 #define PRIMARY_KEY_RESOLVER_HPP
 
 #include "matador/query/access.hpp"
-#include "matador/query/column_options.hpp"
-#include "matador/query/identifier.hpp"
-#include "matador/query/primary_key_options.hpp"
+#include "matador/query/model/column_options.hpp"
+#include "matador/query/model/identifier.hpp"
+#include "matador/query/model/primary_key_options.hpp"
 
 #include "default_type_traits.hpp"
 

@@ -1,9 +1,9 @@
 #ifndef MATADOR_ACCESS_HPP
 #define MATADOR_ACCESS_HPP
 
-#include "matador/query/primary_key_options.hpp"
-#include "matador/query/column_options.hpp"
-#include "matador/query/foreign_key_options.hpp"
+#include "matador/query/model/column_options.hpp"
+#include "matador/query/model/foreign_key_options.hpp"
+#include "matador/query/model/primary_key_options.hpp"
 
 #include <optional>
 

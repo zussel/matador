@@ -3,7 +3,7 @@
 
 #include "matador/query/criteria/abstract_criteria.hpp"
 
-#include "matador/query/column.hpp"
+#include "matador/query/model/column.hpp"
 
 namespace matador::query {
 

@@ -6,24 +6,15 @@ configure_file (${CMAKE_SOURCE_DIR}/include/matador/version.hpp.in ${CMAKE_BINAR
 add_library(matador
     ../include/matador/query/basic_schema.hpp
     ../include/matador/query/basic_table_info.hpp
+    ../include/matador/query/model/relation_endpoint.hpp
+    ../include/matador/query/model/relation_type.hpp
     ../include/matador/query/query_data.hpp
-    ../include/matador/query/relation_endpoint.hpp
-    ../include/matador/query/relation_type.hpp
     ../include/matador/query/resolver_service.hpp
     ../include/matador/query/schema.hpp
     ../include/matador/utils/flags.hpp
     query/abstract_pk_generator.cpp
-    query/backend_provider.cpp
     query/basic_schema.cpp
     query/basic_table_info.cpp
-    query/backend_provider.cpp
-    query/column.cpp
-    query/column_options.cpp
-    query/column_value.cpp
-    query/connection.cpp
-    query/connection_info.cpp
-    query/connection_pool.cpp
-    query/constraint.cpp
     query/criteria/abstract_column_criteria.cpp
     query/criteria/between_criteria.cpp
     query/criteria/binary_criteria.cpp
@@ -33,10 +24,8 @@ add_library(matador
     query/criteria/like_criteria.cpp
     query/criteria/logical_criteria.cpp
     query/criteria/not_criteria.cpp
-    query/criteria_evaluator.cpp
     query/dialect.cpp
     query/dialect_builder.cpp
-    query/error_code.cpp
     query/expression/binary_column_expression.cpp
     query/expression/column_expression.cpp
     query/expression/expression_operators.cpp
@@ -44,10 +33,7 @@ add_library(matador
     query/expression/table_column_expression.cpp
     query/expression/value_expression.cpp
     query/expression_evaluator.cpp
-    query/field.cpp
-    query/foreign_key_options.cpp
     query/generators.cpp
-    query/identifier.cpp
     query/identity_pk_generator.cpp
     query/interface/connection_impl.cpp
     query/interface/statement_impl.cpp
@@ -92,33 +78,47 @@ add_library(matador
     query/internal/query_parts.cpp
     query/internal/query_result_impl.cpp
     query/internal/result_binder.cpp
-    query/internal/select_query_builder.cpp
     query/internal/schema_utils.cpp
+    query/internal/select_query_builder.cpp
     query/internal/string_builder_utils.cpp
     query/internal/value_extractor.cpp
     query/manual_pk_generator.cpp
+    query/model/column.cpp
+    query/model/column_options.cpp
+    query/model/column_value.cpp
+    query/model/constraint.cpp
+    query/model/criteria_evaluator.cpp
+    query/model/field.cpp
+    query/model/foreign_key_options.cpp
+    query/model/identifier.cpp
+    query/model/primary_key_options.cpp
+    query/model/record.cpp
+    query/model/relation_endpoint.cpp
+    query/model/table.cpp
+    query/model/table.cpp
     query/observer.cpp
-    query/primary_key_options.cpp
     query/query.cpp
     query/query_builder.cpp
     query/query_part.cpp
-    query/query_result.cpp
     query/query_utils.cpp
-    query/record.cpp
-    query/relation_endpoint.cpp
     query/resolver/abstract_joined_resolver.cpp
     query/resolver/joined_collection_resolver_producer.cpp
     query/resolver/producer_object_resolver_factory.cpp
     query/resolver/resolver_producer.cpp
     query/resolver_service.cpp
+    query/runtime/backend_provider.cpp
+    query/runtime/backend_provider.cpp
+    query/runtime/connection.cpp
+    query/runtime/connection_info.cpp
+    query/runtime/connection_pool.cpp
+    query/runtime/error_code.cpp
+    query/runtime/query_result.cpp
+    query/runtime/session.cpp
+    query/runtime/statement.cpp
+    query/runtime/statement_cache.cpp
     query/schema_node.cpp
     query/schema_node_iterator.cpp
     query/sequence_pk_generator.cpp
-    query/session.cpp
-    query/statement.cpp
-    query/statement_cache.cpp
-    query/table.cpp
-    query/table.cpp
     query/table_generator.cpp
     query/table_pk_generator.cpp
     utils/default_type_traits.cpp

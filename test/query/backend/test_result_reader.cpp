@@ -1,6 +1,6 @@
 #include "test_result_reader.hpp"
 
-#include "matador/query/column_value.hpp"
+#include "matador/query/model/column_value.hpp"
 
 namespace matador::test::orm {
 

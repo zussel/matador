@@ -1,10 +1,10 @@
 #ifndef MATADOR_QUERY_ALTER_TABLE_INTERMEDIATE_HPP
 #define MATADOR_QUERY_ALTER_TABLE_INTERMEDIATE_HPP
 
+#include "matador/query/model/column.hpp"
+#include "matador/query/model/constraint.hpp"
 #include "matador/query/intermediates/executable_query.hpp"
 #include "matador/query/intermediates/intermediate.hpp"
-#include "matador/query/column.hpp"
-#include "matador/query/constraint.hpp"
 
 namespace matador::query {
 class add_primary_key_constraint_intermediate final : public executable_query {

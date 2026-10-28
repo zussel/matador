@@ -1,6 +1,6 @@
 #include "matador/query/identity_pk_generator.hpp"
 
-#include "matador/query/error_code.hpp"
+#include "matador/query/runtime/error_code.hpp"
 
 namespace matador::query {
 identity_pk_generator::identity_pk_generator()
