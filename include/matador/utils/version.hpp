@@ -6,8 +6,8 @@
 #include "matador/utils/result.hpp"
 #include "matador/utils/error.hpp"
 
-
 #include <string>
+#include <iosfwd>
 
 namespace matador::utils {
 

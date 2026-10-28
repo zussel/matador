@@ -3,6 +3,7 @@
 #include <matador/utils/errors.hpp>
 
 #include <limits>
+#include <ostream>
 
 namespace matador::utils {
 namespace {
