@@ -1,11 +1,11 @@
 #ifndef CRITERIA_COLLECTION_CRITERIA_NODE_HPP
 #define CRITERIA_COLLECTION_CRITERIA_NODE_HPP
 
+#include "matador/query/model/table.hpp"
 #include "matador/query/criteria/abstract_column_criteria.hpp"
 #include "matador/query/criteria/criteria_utils.hpp"
 #include "matador/query/intermediates/fetchable_query.hpp"
 #include "matador/query/query_context.hpp"
-#include "matador/query/table.hpp"
 
 namespace matador::query {
 class column;

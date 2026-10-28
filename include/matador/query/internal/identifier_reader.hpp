@@ -1,10 +1,10 @@
 #ifndef MATADOR_IDENTIFIER_READER_HPP
 #define MATADOR_IDENTIFIER_READER_HPP
 
+#include "matador/query/model/identifier.hpp"
+#include "matador/query/model/primary_key_options.hpp"
 #include "matador/query/access.hpp"
 #include "matador/query/type_traits.hpp"
-#include "matador/query/identifier.hpp"
-#include "matador/query/primary_key_options.hpp"
 
 namespace matador::query {
 class query_result_reader;

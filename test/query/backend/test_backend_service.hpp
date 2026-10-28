@@ -1,7 +1,7 @@
 #ifndef NOOP_BACKEND_SERVICE_HPP
 #define NOOP_BACKEND_SERVICE_HPP
 
-#include "matador/query/backend_provider.hpp"
+#include "matador/query/runtime/backend_provider.hpp"
 
 #include <unordered_set>
 

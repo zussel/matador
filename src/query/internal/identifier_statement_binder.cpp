@@ -1,6 +1,6 @@
 #include "matador/query/internal/identifier_statement_binder.hpp"
 
-#include "matador/query/statement.hpp"
+#include "matador/query/runtime/statement.hpp"
 
 namespace matador::query {
 identifier_statement_binder::identifier_statement_binder(statement &stmt, const size_t index)

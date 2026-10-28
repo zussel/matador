@@ -7,10 +7,12 @@
 #include "matador/query/resolver/query_object_resolver.hpp"
 #include "matador/query/resolver/resolver_producer.hpp"
 #include "matador/query/resolver/query_collection_resolver.hpp"
+#include "matador/query/resolver/joined_collection_resolver_producer.hpp"
 
 namespace matador::query {
 class dialect;
 class statement;
+class basic_schema;
 
 class resolver_producer_registry final {
 public:

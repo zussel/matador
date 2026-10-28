@@ -1,8 +1,8 @@
 #ifndef QUERY_FROM_INTERMEDIATE_HPP
 #define QUERY_FROM_INTERMEDIATE_HPP
 
+#include "matador/query/model/join_data.hpp"
 #include "matador/query/intermediates/fetchable_query.hpp"
-#include "matador/query/join_data.hpp"
 #include "matador/query/query_context.hpp"
 
 #include "matador/query/intermediates/where_intermediate.hpp"

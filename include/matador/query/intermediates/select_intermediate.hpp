@@ -4,7 +4,7 @@
 #include "matador/query/intermediates/intermediate.hpp"
 #include "matador/query/intermediates/from_intermediate.hpp"
 
-#include "matador/query/column.hpp"
+#include "matador/query/model/column.hpp"
 
 #include <stdexcept>
 #include <vector>

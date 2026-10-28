@@ -1,8 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/query/column.hpp"
+#include "matador/query/model/column.hpp"
+#include "matador/query/model/table.hpp"
 #include "matador/query/expression/placeholder_expression.hpp"
-#include "matador/query/table.hpp"
 
 #include <memory>
 #include <stdexcept>

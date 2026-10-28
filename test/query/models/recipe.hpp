@@ -1,10 +1,10 @@
 #ifndef QUERY_RECIPE_HPP
 #define QUERY_RECIPE_HPP
 
+#include "matador/query/model/foreign_key_options.hpp"
 #include "matador/query/access.hpp"
-#include "matador/query/foreign_key_options.hpp"
-#include "matador/query/object_ptr.hpp"
 #include "matador/query/collection.hpp"
+#include "matador/query/object_ptr.hpp"
 
 #include <string>
 #include <utility>

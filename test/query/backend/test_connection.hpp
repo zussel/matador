@@ -1,8 +1,8 @@
 #ifndef QUERY_NOOP_CONNECTION_HPP
 #define QUERY_NOOP_CONNECTION_HPP
 
+#include "matador/query/runtime/execute_result.hpp"
 #include "matador/query/interface/connection_impl.hpp"
-#include "matador/query/execute_result.hpp"
 
 namespace matador::test::orm {
 

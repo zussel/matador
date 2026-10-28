@@ -3,7 +3,7 @@
 
 #include "matador/utils/message_bus.hpp"
 
-#include "matador/query/statement_cache.hpp"
+#include "matador/query/runtime/statement_cache.hpp"
 
 #include <queue>
 

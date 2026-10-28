@@ -4,7 +4,7 @@
 #include "matador/query/collection_resolver.hpp"
 #include "matador/query/object_ptr.hpp"
 
-#include "matador/query/identifier.hpp"
+#include "matador/query/model/identifier.hpp"
 
 #include <atomic>
 #include <mutex>

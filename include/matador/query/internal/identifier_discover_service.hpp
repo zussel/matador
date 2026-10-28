@@ -1,11 +1,11 @@
 #ifndef QUERY_RESULT_PK_RESOLVER_HPP
 #define QUERY_RESULT_PK_RESOLVER_HPP
 
+#include "matador/query/model/column_options.hpp"
+#include "matador/query/model/foreign_key_options.hpp"
+#include "matador/query/model/identifier.hpp"
+#include "matador/query/model/primary_key_options.hpp"
 #include "matador/query/access.hpp"
-#include "matador/query/column_options.hpp"
-#include "matador/query/foreign_key_options.hpp"
-#include "matador/query/primary_key_options.hpp"
-#include "matador/query/identifier.hpp"
 #include "matador/query/interface/query_result_reader.hpp"
 
 #include <stack>

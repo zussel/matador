@@ -1,14 +1,14 @@
 #include "matador/query/query_utils.hpp"
 
-#include "matador/query/internal/attribute_string_writer.hpp"
-#include "matador/query/column.hpp"
-#include "matador/query/query_context.hpp"
-#include "matador/query/internal/string_builder_utils.hpp"
-#include "matador/query/expression_evaluator.hpp"
+#include "matador/query/model/column.hpp"
 #include "matador/query/dialect.hpp"
+#include "matador/query/expression_evaluator.hpp"
+#include "matador/query/internal/attribute_string_writer.hpp"
+#include "matador/query/internal/string_builder_utils.hpp"
+#include "matador/query/query_context.hpp"
 
+#include "matador/query/model/column_value.hpp"
 #include "matador/utils/string.hpp"
-#include "matador/query/column_value.hpp"
 
 namespace matador::query {
 void prepare_column(query_context& ctx, const dialect& d, const column& col) {

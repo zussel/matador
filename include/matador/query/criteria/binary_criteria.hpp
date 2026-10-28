@@ -1,9 +1,9 @@
 #ifndef CRITERIA_BINARY_CRITERIA_NODE_HPP
 #define CRITERIA_BINARY_CRITERIA_NODE_HPP
 
+#include "matador/query/model/column.hpp"
 #include "matador/query/criteria/abstract_column_criteria.hpp"
 #include "matador/query/criteria/criteria_utils.hpp"
-#include "matador/query/column.hpp"
 
 namespace matador::query {
 enum class binary_operator {

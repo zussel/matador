@@ -1,11 +1,11 @@
 #ifndef MATADOR_BASIC_SCHEMA_HPP
 #define MATADOR_BASIC_SCHEMA_HPP
 
-#include "matador/query/error_code.hpp"
-#include "matador/query/schema_node.hpp"
-#include "matador/query/schema_node_iterator.hpp"
 #include "matador/query/resolver/joined_collection_resolver_producer.hpp"
 #include "matador/query/resolver/resolver_producer.hpp"
+#include "matador/query/schema_node.hpp"
+#include "matador/query/schema_node_iterator.hpp"
+#include "matador/query/runtime/error_code.hpp"
 
 #include "matador/utils/error.hpp"
 #include "matador/utils/result.hpp"

@@ -1,22 +1,22 @@
 #ifndef MATADOR_DELETE_QUERY_BUILDER_HPP
 #define MATADOR_DELETE_QUERY_BUILDER_HPP
 
-#include "matador/query/collection.hpp"
-#include "matador/query/object_cache.hpp"
-#include "matador/query/object_ptr.hpp"
+#include "matador/query/runtime/error_code.hpp"
+#include "matador/query/runtime/statement.hpp"
 #include "matador/query/basic_schema.hpp"
-#include "matador/query/error_code.hpp"
+#include "matador/query/collection.hpp"
 #include "matador/query/internal/delete_step.hpp"
 #include "matador/query/internal/execute_step.hpp"
-#include "matador/query/internal/query_contexts.hpp"
-#include "matador/query/many_to_many_relation.hpp"
-#include "matador/query/query_builder_utils.hpp"
-#include "matador/query/identifier.hpp"
-#include "matador/query/statement.hpp"
 #include "matador/query/internal/primary_key_accessor.hpp"
+#include "matador/query/internal/query_contexts.hpp"
+#include "matador/query/model/identifier.hpp"
+#include "matador/query/model/many_to_many_relation.hpp"
+#include "matador/query/object_cache.hpp"
+#include "matador/query/object_ptr.hpp"
+#include "matador/query/query_builder_utils.hpp"
 
-#include "matador/utils/error_exception.hpp"
 #include "matador/utils/error.hpp"
+#include "matador/utils/error_exception.hpp"
 #include "matador/utils/result.hpp"
 
 namespace matador::query {

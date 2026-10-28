@@ -1,12 +1,12 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/query/collection.hpp"
-#include "matador/query/error_code.hpp"
-#include "matador/query/object_ptr.hpp"
-#include "matador/query/schema.hpp"
-#include "matador/query/relation_endpoint.hpp"
-#include "matador/query/resolver/producer_creator.hpp"
+#include "matador/query/runtime/error_code.hpp"
 #include "matador/query/access.hpp"
+#include "matador/query/collection.hpp"
+#include "matador/query/model/relation_endpoint.hpp"
+#include "matador/query/object_ptr.hpp"
+#include "matador/query/resolver/producer_creator.hpp"
+#include "matador/query/schema.hpp"
 
 #include <string>
 #include <typeindex>

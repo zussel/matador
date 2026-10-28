@@ -1,8 +1,8 @@
 #ifndef TEST_STATEMENT_HPP
 #define TEST_STATEMENT_HPP
 
+#include "matador/query/runtime/execute_result.hpp"
 #include "matador/query/interface/statement_impl.hpp"
-#include "matador/query/execute_result.hpp"
 
 namespace matador::test::orm {
 

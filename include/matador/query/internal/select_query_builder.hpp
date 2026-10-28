@@ -1,18 +1,18 @@
 #ifndef MATADOR_SELECT_QUERY_BUILDER_HPP
 #define MATADOR_SELECT_QUERY_BUILDER_HPP
 
+#include "matador/query/runtime/error_code.hpp"
+#include "matador/query/runtime/statement.hpp"
 #include "matador/query/access.hpp"
 #include "matador/query/basic_schema.hpp"
-#include "matador/query/column_options.hpp"
 #include "matador/query/criteria.hpp"
-#include "matador/query/error_code.hpp"
-#include "matador/query/foreign_key_options.hpp"
 #include "matador/query/internal/criteria_transformer.hpp"
 #include "matador/query/join_columns_collector.hpp"
+#include "matador/query/model/column_options.hpp"
+#include "matador/query/model/foreign_key_options.hpp"
+#include "matador/query/model/primary_key_options.hpp"
 #include "matador/query/object_ptr.hpp"
-#include "matador/query/primary_key_options.hpp"
 #include "matador/query/query.hpp"
-#include "matador/query/statement.hpp"
 
 #include "matador/utils/error.hpp"
 #include "matador/utils/error_exception.hpp"

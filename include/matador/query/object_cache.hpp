@@ -3,7 +3,7 @@
 
 #include "matador/query/object_proxy.hpp"
 #include "matador/query/object_resolver.hpp"
-#include "matador/query/identifier.hpp"
+#include "matador/query/model/identifier.hpp"
 
 #include "matador/utils/message_bus.hpp"
 

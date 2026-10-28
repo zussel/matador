@@ -1,6 +1,6 @@
 #include "matador/query/basic_schema.hpp"
 
-#include "matador/query/error_code.hpp"
+#include "matador/query/runtime/error_code.hpp"
 #include "matador/query/schema_node.hpp"
 #include "matador/query/schema_node_iterator.hpp"
 

@@ -1,7 +1,7 @@
 #ifndef QUERY_QUERY_HPP
 #define QUERY_QUERY_HPP
 
-#include "matador/query/column.hpp"
+#include "matador/query/model/column.hpp"
 
 #include "matador/query/intermediates/alter_intermediate.hpp"
 #include "matador/query/intermediates/create_intermediate.hpp"

@@ -1,6 +1,6 @@
 #include "matador/query/internal/identifier_discover_service.hpp"
 
-#include "matador/query/column_value.hpp"
+#include "matador/query/model/column_value.hpp"
 
 namespace matador::query {
 void identifier_discover_service::on_attribute(const char *id, const column_value &x, const column_options &attr) {

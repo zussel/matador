@@ -3,8 +3,8 @@
 
 #include "matador/query/intermediates/executable_query.hpp"
 
-#include "matador/query/constraint.hpp"
-#include "matador/query/column.hpp"
+#include "matador/query/model/column.hpp"
+#include "matador/query/model/constraint.hpp"
 
 #include <list>
 

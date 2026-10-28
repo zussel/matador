@@ -1,15 +1,15 @@
 #ifndef MATADOR_INSERT_STEP_HPP
 #define MATADOR_INSERT_STEP_HPP
 
+#include "matador/query/runtime/error_code.hpp"
 #include "matador/query/abstract_pk_generator.hpp"
 #include "matador/query/internal/execute_step.hpp"
-#include "matador/query/error_code.hpp"
 
 #include "matador/query/object_cache.hpp"
 #include "matador/query/object_ptr.hpp"
 
+#include "matador/query/runtime/statement.hpp"
 #include "matador/query/resolver_service.hpp"
-#include "matador/query/statement.hpp"
 
 namespace matador::query {
 template<typename ObjectType>

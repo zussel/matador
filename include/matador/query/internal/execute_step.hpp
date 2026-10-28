@@ -1,10 +1,10 @@
 #ifndef MATADOR_EXECUTE_STEP_HPP
 #define MATADOR_EXECUTE_STEP_HPP
 
+#include "matador/query/runtime/executor.hpp"
 #include "matador/query/abstract_pk_generator.hpp"
-#include "matador/query/executor.hpp"
-#include "matador/query/identifier.hpp"
 #include "matador/query/internal/primary_key_accessor.hpp"
+#include "matador/query/model/identifier.hpp"
 #include "matador/query/object_cache.hpp"
 #include "matador/query/query_context.hpp"
 

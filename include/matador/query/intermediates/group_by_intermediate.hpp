@@ -1,8 +1,8 @@
 #ifndef QUERY_GROUP_BY_INTERMEDIATE_HPP
 #define QUERY_GROUP_BY_INTERMEDIATE_HPP
 
+#include "matador/query/model/column.hpp"
 #include "matador/query/intermediates/fetchable_query.hpp"
-#include "matador/query/column.hpp"
 
 namespace matador::query {
 class order_by_intermediate;

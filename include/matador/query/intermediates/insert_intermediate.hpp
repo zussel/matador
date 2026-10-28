@@ -4,7 +4,7 @@
 #include "matador/query/intermediates/intermediate.hpp"
 #include "matador/query/intermediates/into_intermediate.hpp"
 // #include "matador/query/generator.hpp"
-#include "matador/query/column.hpp"
+#include "matador/query/model/column.hpp"
 
 namespace matador::query {
 // class schema;
