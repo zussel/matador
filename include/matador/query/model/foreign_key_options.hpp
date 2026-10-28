@@ -1,8 +1,8 @@
 #ifndef MATADOR_FOREIGN_OPTIONS_HPP
 #define MATADOR_FOREIGN_OPTIONS_HPP
 
-#include "matador/query/fetch_type.hpp"
-#include "matador/query/cascade_type.hpp"
+#include "matador/query/model/fetch_type.hpp"
+#include "matador/query/model/cascade_type.hpp"
 
 // ReSharper disable CppNonExplicitConvertingConstructor
 namespace matador::query {
