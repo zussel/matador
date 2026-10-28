@@ -1,10 +1,10 @@
 #ifndef MATADOR_OBJECT_PK_BINDER_HPP
 #define MATADOR_OBJECT_PK_BINDER_HPP
 
+#include "matador/query/mapping/access.hpp"
+#include "matador/query/mapping/default_type_traits.hpp"
+#include "matador/query/mapping/value_writer.hpp"
 #include "matador/query/model/primary_key_options.hpp"
-#include "matador/query/access.hpp"
-#include "matador/query/default_type_traits.hpp"
-#include "matador/query/value_writer.hpp"
 
 namespace matador::query {
 class column_options;

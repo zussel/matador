@@ -1,4 +1,4 @@
-#include "matador/query/identity_pk_generator.hpp"
+#include "matador/query/mapping/identity_pk_generator.hpp"
 
 #include "matador/query/runtime/error_code.hpp"
 

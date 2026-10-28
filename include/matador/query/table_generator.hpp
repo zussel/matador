@@ -1,8 +1,8 @@
 #ifndef MATADOR_OBJECT_GENERATOR_HPP
 #define MATADOR_OBJECT_GENERATOR_HPP
 
-#include "matador/query/access.hpp"
-#include "matador/query/default_type_traits.hpp"
+#include "matador/query/mapping/access.hpp"
+#include "matador/query/mapping/default_type_traits.hpp"
 #include "matador/query/model/identifier.hpp"
 #include "matador/query/model/primary_key_options.hpp"
 #include "matador/query/model/table.hpp"

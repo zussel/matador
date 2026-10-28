@@ -1,5 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include "matador/query/mapping/value_writer.hpp"
 #include "matador/query/builder/query_context.hpp"
 #include "matador/query/dialect_builder.hpp"
 #include "matador/query/interface/connection_impl.hpp"
@@ -8,7 +9,6 @@
 #include "matador/query/runtime/backend_provider.hpp"
 #include "matador/query/runtime/connection.hpp"
 #include "matador/query/runtime/error_code.hpp"
-#include "matador/query/value_writer.hpp"
 #include "matador/utils/error_exception.hpp"
 
 #include <memory>

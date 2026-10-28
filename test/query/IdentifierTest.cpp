@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/query/default_type_traits.hpp"
+#include "matador/query/mapping/default_type_traits.hpp"
 #include "matador/query/model/column_value.hpp"
 #include "matador/query/model/identifier.hpp"
 

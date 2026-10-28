@@ -1,6 +1,6 @@
 #include "matador/query/table_generator.hpp"
 
-#include "matador/query/access.hpp"
+#include "matador/query/mapping/access.hpp"
 #include "matador/query/basic_schema.hpp"
 
 #include <algorithm>

@@ -1,10 +1,10 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/query/runtime/query_result.hpp"
-#include "matador/query/access.hpp"
+#include "matador/query/mapping/access.hpp"
 #include "matador/query/collection.hpp"
 #include "matador/query/intermediates/fetchable_query.hpp"
 #include "matador/query/internal/query_result_impl.hpp"
+#include "matador/query/runtime/query_result.hpp"
 
 #include <limits>
 #include <stdexcept>

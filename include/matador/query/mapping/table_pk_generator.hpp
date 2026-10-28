@@ -1,7 +1,7 @@
 #ifndef MATADOR_TABLE_PK_GENERATOR_HPP
 #define MATADOR_TABLE_PK_GENERATOR_HPP
 
-#include "matador/query/abstract_pk_generator.hpp"
+#include "abstract_pk_generator.hpp"
 #include "matador/query/intermediates/fetchable_query.hpp"
 
 namespace matador::query {

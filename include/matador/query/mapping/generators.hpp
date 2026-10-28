@@ -1,8 +1,8 @@
 #ifndef MATADOR_GENERATORS_HPP
 #define MATADOR_GENERATORS_HPP
 
+#include "access.hpp"
 #include "matador/query/builder/placeholder.hpp"
-#include "matador/query/access.hpp"
 
 #include <vector>
 

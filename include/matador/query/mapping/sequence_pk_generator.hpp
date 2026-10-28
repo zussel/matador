@@ -1,7 +1,7 @@
 #ifndef MATADOR_SEQUENCE_PK_GENERATOR_H
 #define MATADOR_SEQUENCE_PK_GENERATOR_H
 
-#include "matador/query/abstract_pk_generator.hpp"
+#include "abstract_pk_generator.hpp"
 #include "matador/query/intermediates/fetchable_query.hpp"
 
 #include <string>

@@ -1,12 +1,12 @@
 #ifndef QUERY_QUERY_RESULT_IMPL_HPP
 #define QUERY_QUERY_RESULT_IMPL_HPP
 
+#include "matador/query/mapping/access.hpp"
+#include "matador/query/mapping/default_type_traits.hpp"
 #include "matador/query/model/column_options.hpp"
 #include "matador/query/model/foreign_key_options.hpp"
 #include "matador/query/model/identifier.hpp"
 #include "matador/query/model/primary_key_options.hpp"
-#include "matador/query/access.hpp"
-#include "matador/query/default_type_traits.hpp"
 
 #include "matador/query/model/record.hpp"
 #include "matador/query/interface/query_result_reader.hpp"

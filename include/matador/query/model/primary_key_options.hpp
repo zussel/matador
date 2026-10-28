@@ -1,7 +1,7 @@
 #ifndef primary_key_options_HPP
 #define primary_key_options_HPP
 
-#include "matador/query/primary_key_generator_type.hpp"
+#include "matador/query/mapping/primary_key_generator_type.hpp"
 
 #include <cstddef>
 

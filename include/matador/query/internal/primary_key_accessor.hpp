@@ -1,10 +1,10 @@
 #ifndef MATADOR_PRIMARY_KEY_ACCESSOR_HPP
 #define MATADOR_PRIMARY_KEY_ACCESSOR_HPP
 
+#include "matador/query/mapping/access.hpp"
 #include "matador/query/model/column_options.hpp"
 #include "matador/query/model/identifier.hpp"
 #include "matador/query/model/primary_key_options.hpp"
-#include "matador/query/access.hpp"
 
 #include <cstdint>
 #include <string>

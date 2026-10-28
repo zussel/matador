@@ -1,4 +1,4 @@
-#include "matador/query/abstract_pk_generator.hpp"
+#include "matador/query/mapping/abstract_pk_generator.hpp"
 
 namespace matador::query {
 abstract_pk_generator::abstract_pk_generator(const generator_type type)

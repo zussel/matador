@@ -1,9 +1,9 @@
 #ifndef QUERY_FK_VALUE_EXTRACTOR_HPP
 #define QUERY_FK_VALUE_EXTRACTOR_HPP
 
+#include "matador/query/mapping/access.hpp"
 #include "matador/query/model/column_options.hpp"
 #include "matador/query/model/primary_key_options.hpp"
-#include "matador/query/access.hpp"
 
 #include "matador/utils/types.hpp"
 

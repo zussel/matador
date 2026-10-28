@@ -1,7 +1,7 @@
 #ifndef MATADOR_BASIC_TABLE_INFO_HPP
 #define MATADOR_BASIC_TABLE_INFO_HPP
 
-#include "matador/query/abstract_pk_generator.hpp"
+#include "matador/query/mapping/abstract_pk_generator.hpp"
 #include "matador/query/model/column.hpp"
 #include "matador/query/model/constraint.hpp"
 #include "matador/query/model/identifier.hpp"

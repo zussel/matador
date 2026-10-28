@@ -1,12 +1,12 @@
 #ifndef MATADOR_OBJECT_RESULT_BINDER_HPP
 #define MATADOR_OBJECT_RESULT_BINDER_HPP
 
+#include "matador/query/mapping/access.hpp"
+#include "matador/query/mapping/default_type_traits.hpp"
+#include "matador/query/mapping/value_reader.hpp"
 #include "matador/query/model/column_options.hpp"
 #include "matador/query/model/foreign_key_options.hpp"
 #include "matador/query/model/primary_key_options.hpp"
-#include "matador/query/access.hpp"
-#include "matador/query/default_type_traits.hpp"
-#include "matador/query/value_reader.hpp"
 
 namespace matador::query {
 

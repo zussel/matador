@@ -1,7 +1,7 @@
 #ifndef TEST_PARAMETER_BINDER_HPP
 #define TEST_PARAMETER_BINDER_HPP
 
-#include "matador/query/value_writer.hpp"
+#include "matador/query/mapping/value_writer.hpp"
 
 namespace matador::test::orm {
 

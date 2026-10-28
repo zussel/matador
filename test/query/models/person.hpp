@@ -1,8 +1,8 @@
 #ifndef QUERY_PERSON_HPP
 #define QUERY_PERSON_HPP
 
+#include "matador/query/mapping/access.hpp"
 #include "matador/query/model/column_options.hpp"
-#include "matador/query/access.hpp"
 
 #include "matador/utils/types.hpp"
 

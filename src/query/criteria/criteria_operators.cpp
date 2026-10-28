@@ -6,7 +6,7 @@
 #include "matador/query/criteria/logical_criteria.hpp"
 #include "matador/query/criteria/not_criteria.hpp"
 
-#include "matador/query/identifier_serializer.hpp"
+#include "matador/query/mapping/identifier_serializer.hpp"
 
 namespace {
 class identifier_to_value_converter final : public matador::query::identifier_serializer {

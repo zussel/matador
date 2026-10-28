@@ -1,7 +1,7 @@
 #ifndef MATADOR_MANUAL_PK_GENERATOR_HPP
 #define MATADOR_MANUAL_PK_GENERATOR_HPP
 
-#include "matador/query/abstract_pk_generator.hpp"
+#include "abstract_pk_generator.hpp"
 
 namespace matador::query {
 class manual_pk_generator : public abstract_pk_generator {

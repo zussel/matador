@@ -1,11 +1,11 @@
 #ifndef QUERY_STATEMENT_IMPL_HPP
 #define QUERY_STATEMENT_IMPL_HPP
 
+#include "matador/query/mapping/value_writer.hpp"
 #include "matador/query/builder/query_context.hpp"
 #include "matador/query/internal/object_binder.hpp"
-#include "matador/query/value_writer.hpp"
 
-#include "matador/query/type_traits.hpp"
+#include "matador/query/mapping/type_traits.hpp"
 #include "matador/utils/error.hpp"
 #include "matador/utils/result.hpp"
 

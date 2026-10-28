@@ -3,7 +3,7 @@
 
 #include "airplane.hpp"
 
-#include "matador/query/access.hpp"
+#include "matador/query/mapping/access.hpp"
 #include "matador/query/object_ptr.hpp"
 
 #include <string>

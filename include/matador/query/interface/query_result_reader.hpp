@@ -1,8 +1,8 @@
 #ifndef QUERY_QUERY_RESULT_READER_HPP
 #define QUERY_QUERY_RESULT_READER_HPP
 
+#include "matador/query/mapping/value_reader.hpp"
 #include "matador/query/internal/result_binder.hpp"
-#include "matador/query/value_reader.hpp"
 
 #include "matador/utils/error.hpp"
 #include "matador/utils/result.hpp"

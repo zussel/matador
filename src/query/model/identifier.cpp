@@ -1,8 +1,8 @@
 #include "matador/query/model/identifier.hpp"
 
+#include "matador/query/mapping/identifier_serializer.hpp"
 #include "matador/query/model/column_options.hpp"
 #include "matador/query/model/column_value.hpp"
-#include "matador/query/identifier_serializer.hpp"
 
 #include "matador/query/runtime/error_code.hpp"
 

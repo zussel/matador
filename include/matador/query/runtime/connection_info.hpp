@@ -1,7 +1,7 @@
 #ifndef QUERY_CONNECTION_INFO_HPP
 #define QUERY_CONNECTION_INFO_HPP
 
-#include "matador/query/access.hpp"
+#include "matador/query/mapping/access.hpp"
 
 #include <string>
 

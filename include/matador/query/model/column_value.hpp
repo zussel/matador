@@ -3,7 +3,7 @@
 
 #include "matador_export.h"
 
-#include "matador/query/default_type_traits.hpp"
+#include "matador/query/mapping/default_type_traits.hpp"
 
 #include "matador/utils/convert.hpp"
 #include "matador/utils/result.hpp"

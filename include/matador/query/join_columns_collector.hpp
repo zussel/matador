@@ -1,7 +1,7 @@
 #ifndef JOIN_COLUMNS_COLLECTOR_HPP
 #define JOIN_COLUMNS_COLLECTOR_HPP
 
-#include "matador/query/access.hpp"
+#include "matador/query/mapping/access.hpp"
 #include "matador/query/model/column_options.hpp"
 #include "matador/query/model/primary_key_options.hpp"
 

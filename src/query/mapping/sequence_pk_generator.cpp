@@ -1,4 +1,4 @@
-#include "matador/query/sequence_pk_generator.hpp"
+#include "matador/query/mapping/sequence_pk_generator.hpp"
 
 #include "matador/query/builder/query.hpp"
 #include "matador/query/runtime/error_code.hpp"

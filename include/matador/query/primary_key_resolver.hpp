@@ -1,12 +1,12 @@
 #ifndef PRIMARY_KEY_RESOLVER_HPP
 #define PRIMARY_KEY_RESOLVER_HPP
 
-#include "matador/query/access.hpp"
+#include "matador/query/mapping/access.hpp"
 #include "matador/query/model/column_options.hpp"
 #include "matador/query/model/identifier.hpp"
 #include "matador/query/model/primary_key_options.hpp"
 
-#include "default_type_traits.hpp"
+#include "matador/query/mapping/default_type_traits.hpp"
 
 #include <cstdint>
 #include <string>

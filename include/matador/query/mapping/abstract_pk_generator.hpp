@@ -1,7 +1,7 @@
 #ifndef MATADOR_ABSTRACT_PK_GENERATOR_HPP
 #define MATADOR_ABSTRACT_PK_GENERATOR_HPP
 
-#include "matador/query/primary_key_generator_type.hpp"
+#include "matador/query/mapping/primary_key_generator_type.hpp"
 
 #include "matador/utils/error.hpp"
 #include "matador/utils/result.hpp"

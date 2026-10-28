@@ -1,7 +1,7 @@
 #ifndef QUERY_AIRPLANE_HPP
 #define QUERY_AIRPLANE_HPP
 
-#include "matador/query/access.hpp"
+#include "matador/query/mapping/access.hpp"
 
 #include <string>
 

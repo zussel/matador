@@ -1,4 +1,4 @@
-#include "matador/query/generators.hpp"
+#include "matador/query/mapping/generators.hpp"
 
 namespace matador::query {
 void placeholder_generator::on_revision(const char * /*id*/, uint64_t &) {

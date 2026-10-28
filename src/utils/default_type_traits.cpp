@@ -1,7 +1,7 @@
-#include "matador/query/default_type_traits.hpp"
+#include "matador/query/mapping/default_type_traits.hpp"
 
-#include "matador/query/value_reader.hpp"
-#include "matador/query/value_writer.hpp"
+#include "matador/query/mapping/value_reader.hpp"
+#include "matador/query/mapping/value_writer.hpp"
 
 namespace matador::query {
 

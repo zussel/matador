@@ -1,14 +1,14 @@
 #ifndef MATADOR_REPOSITORY_NODE_HPP
 #define MATADOR_REPOSITORY_NODE_HPP
 
-#include "matador/query/table_info.hpp"
+#include "matador/query/mapping/identity_pk_generator.hpp"
 #include "matador/query/internal/observer_list_creator.hpp"
 #include "matador/query/internal/primary_key_generator_finder.hpp"
-#include "matador/query/identity_pk_generator.hpp"
-#include "matador/query/manual_pk_generator.hpp"
-#include "matador/query/sequence_pk_generator.hpp"
-#include "matador/query/table_pk_generator.hpp"
+#include "matador/query/mapping/manual_pk_generator.hpp"
+#include "matador/query/mapping/sequence_pk_generator.hpp"
 #include "matador/query/table_generator.hpp"
+#include "matador/query/table_info.hpp"
+#include "matador/query/mapping/table_pk_generator.hpp"
 
 #include <memory>
 

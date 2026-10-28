@@ -1,4 +1,4 @@
-#include "matador/query/table_pk_generator.hpp"
+#include "matador/query/mapping/table_pk_generator.hpp"
 #include "matador/query/builder/query.hpp"
 #include "matador/query/criteria.hpp"
 #include "matador/query/expression/expression_operators.hpp"

@@ -12,7 +12,6 @@ add_library(matador
     ../include/matador/query/resolver_service.hpp
     ../include/matador/query/schema.hpp
     ../include/matador/utils/flags.hpp
-    query/abstract_pk_generator.cpp
     query/basic_schema.cpp
     query/basic_table_info.cpp
     query/builder/query.cpp
@@ -37,8 +36,6 @@ add_library(matador
     query/expression/table_column_expression.cpp
     query/expression/value_expression.cpp
     query/expression_evaluator.cpp
-    query/generators.cpp
-    query/identity_pk_generator.cpp
     query/interface/connection_impl.cpp
     query/interface/statement_impl.cpp
     query/interface/statement_proxy.cpp
@@ -86,7 +83,12 @@ add_library(matador
     query/internal/select_query_builder.cpp
     query/internal/string_builder_utils.cpp
     query/internal/value_extractor.cpp
-    query/manual_pk_generator.cpp
+    query/mapping/abstract_pk_generator.cpp
+    query/mapping/generators.cpp
+    query/mapping/identity_pk_generator.cpp
+    query/mapping/manual_pk_generator.cpp
+    query/mapping/sequence_pk_generator.cpp
+    query/mapping/table_pk_generator.cpp
     query/model/column.cpp
     query/model/column_options.cpp
     query/model/column_value.cpp
@@ -118,9 +120,7 @@ add_library(matador
     query/runtime/statement_cache.cpp
     query/schema_node.cpp
     query/schema_node_iterator.cpp
-    query/sequence_pk_generator.cpp
     query/table_generator.cpp
-    query/table_pk_generator.cpp
     utils/default_type_traits.cpp
     utils/error.cpp
     utils/error_exception.cpp

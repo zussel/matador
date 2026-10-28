@@ -1,7 +1,7 @@
 #ifndef ATTRIBUTE_STRING_WRITER_HPP
 #define ATTRIBUTE_STRING_WRITER_HPP
 
-#include "matador/query/value_writer.hpp"
+#include "matador/query/mapping/value_writer.hpp"
 
 #include "matador/query/interface/connection_impl.hpp"
 

@@ -1,4 +1,4 @@
-#include "matador/query/manual_pk_generator.hpp"
+#include "matador/query/mapping/manual_pk_generator.hpp"
 
 #include "matador/query/runtime/error_code.hpp"
 
