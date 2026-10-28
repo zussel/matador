@@ -1,13 +1,13 @@
 #ifndef MATADOR_SCHEMA_OBSERVER_HPP
 #define MATADOR_SCHEMA_OBSERVER_HPP
 
-#include "matador/query/internal/primary_key_generator_finder.hpp"
-#include "matador/query/observer.hpp"
-#include "matador/query/schema_node.hpp"
 #include "matador/query/identity_pk_generator.hpp"
+#include "matador/query/internal/primary_key_generator_finder.hpp"
 #include "matador/query/manual_pk_generator.hpp"
+#include "matador/query/observer.hpp"
 #include "matador/query/sequence_pk_generator.hpp"
 #include "matador/query/table_pk_generator.hpp"
+#include "schema_node.hpp"
 
 namespace matador::query {
 class schema;

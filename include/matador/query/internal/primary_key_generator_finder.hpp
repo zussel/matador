@@ -1,10 +1,10 @@
 #ifndef MATADOR_PRIMARY_KEY_GENERATOR_FINDER_HPP
 #define MATADOR_PRIMARY_KEY_GENERATOR_FINDER_HPP
 
+#include "matador/query/schema/table_info.hpp"
 #include "matador/query/mapping/access.hpp"
 #include "matador/query/mapping/primary_key_generator_type.hpp"
 #include "matador/query/model/primary_key_options.hpp"
-#include "matador/query/table_info.hpp"
 
 namespace matador::query {
 class column_options;

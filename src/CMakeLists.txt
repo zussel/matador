@@ -4,16 +4,14 @@ configure_file (${CMAKE_SOURCE_DIR}/include/matador/version.hpp.in ${CMAKE_BINAR
 #ADD_SUBDIRECTORY(utils)
 
 add_library(matador
-    ../include/matador/query/basic_schema.hpp
-    ../include/matador/query/basic_table_info.hpp
     ../include/matador/query/builder/query_data.hpp
     ../include/matador/query/model/relation_endpoint.hpp
     ../include/matador/query/model/relation_type.hpp
     ../include/matador/query/resolver_service.hpp
     ../include/matador/query/schema.hpp
+    ../include/matador/query/schema/basic_schema.hpp
+    ../include/matador/query/schema/basic_table_info.hpp
     ../include/matador/utils/flags.hpp
-    query/basic_schema.cpp
-    query/basic_table_info.cpp
     query/builder/query.cpp
     query/builder/query_builder.cpp
     query/builder/query_part.cpp
@@ -118,9 +116,11 @@ add_library(matador
     query/runtime/session.cpp
     query/runtime/statement.cpp
     query/runtime/statement_cache.cpp
-    query/schema_node.cpp
-    query/schema_node_iterator.cpp
-    query/table_generator.cpp
+    query/schema/basic_schema.cpp
+    query/schema/basic_table_info.cpp
+    query/schema/schema_node.cpp
+    query/schema/schema_node_iterator.cpp
+    query/schema/table_generator.cpp
     utils/default_type_traits.cpp
     utils/error.cpp
     utils/error_exception.cpp

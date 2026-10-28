@@ -1,8 +1,8 @@
 #ifndef MATADOR_SCHEMA_UTILS_HPP
 #define MATADOR_SCHEMA_UTILS_HPP
 
+#include "matador/query/schema/basic_schema.hpp"
 #include "matador/query/internal/query_contexts.hpp"
-#include "matador/query/basic_schema.hpp"
 
 namespace matador::query {
 class dialect;

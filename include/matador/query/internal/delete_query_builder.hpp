@@ -1,8 +1,8 @@
 #ifndef MATADOR_DELETE_QUERY_BUILDER_HPP
 #define MATADOR_DELETE_QUERY_BUILDER_HPP
 
+#include "matador/query/schema/basic_schema.hpp"
 #include "matador/query/builder/query_builder_utils.hpp"
-#include "matador/query/basic_schema.hpp"
 #include "matador/query/collection.hpp"
 #include "matador/query/internal/delete_step.hpp"
 #include "matador/query/internal/execute_step.hpp"

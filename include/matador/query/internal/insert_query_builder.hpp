@@ -1,9 +1,9 @@
 #ifndef MATADOR_INSERT_QUERY_BUILDER_HPP
 #define MATADOR_INSERT_QUERY_BUILDER_HPP
 
+#include "matador/query/schema/basic_schema.hpp"
 #include "matador/query/builder/query.hpp"
 #include "matador/query/builder/query_builder_utils.hpp"
-#include "matador/query/basic_schema.hpp"
 #include "matador/query/collection.hpp"
 #include "matador/query/intermediates/executable_query.hpp"
 #include "matador/query/internal/execute_step.hpp"

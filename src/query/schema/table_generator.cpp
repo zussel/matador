@@ -1,7 +1,7 @@
-#include "matador/query/table_generator.hpp"
+#include "matador/query/schema/table_generator.hpp"
 
+#include "matador/query/schema/basic_schema.hpp"
 #include "matador/query/mapping/access.hpp"
-#include "matador/query/basic_schema.hpp"
 
 #include <algorithm>
 

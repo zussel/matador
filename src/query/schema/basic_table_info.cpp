@@ -1,6 +1,6 @@
-#include "matador/query/basic_table_info.hpp"
+#include "matador/query/schema/basic_table_info.hpp"
 
-#include "matador/query/schema_node.hpp"
+#include "matador/query/schema/schema_node.hpp"
 
 #include <algorithm>
 

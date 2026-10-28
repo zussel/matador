@@ -1,11 +1,11 @@
 #ifndef SCHEMA_HPP
 #define SCHEMA_HPP
 
-#include "matador/query/basic_schema.hpp"
+#include "matador/query/schema/basic_schema.hpp"
 
 #include "matador/query/observer.hpp"
-#include "matador/query/resolver/producer_creator.hpp"
 #include "matador/query/relation_completer.hpp"
+#include "matador/query/resolver/producer_creator.hpp"
 
 #include "matador/utils/result.hpp"
 #include "matador/utils/error.hpp"

@@ -1,8 +1,8 @@
 #ifndef QUERY_SESSION_HPP
 #define QUERY_SESSION_HPP
 
+#include "matador/query/schema/basic_schema.hpp"
 #include "matador/query/builder/query.hpp"
-#include "matador/query/basic_schema.hpp"
 #include "matador/query/criteria.hpp"
 #include "matador/query/internal/delete_query_builder.hpp"
 #include "matador/query/internal/insert_query_builder.hpp"

@@ -3,7 +3,7 @@
 #include "matador/query/runtime/backend_provider.hpp"
 #include "matador/query/dialect.hpp"
 
-#include "matador/query/basic_schema.hpp"
+#include "matador/query/schema/basic_schema.hpp"
 #include "matador/query/internal/schema_utils.hpp"
 #include "matador/query/resolver/producer_creator.hpp"
 

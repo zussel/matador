@@ -1,12 +1,12 @@
 #ifndef MATADOR_SELECT_QUERY_BUILDER_HPP
 #define MATADOR_SELECT_QUERY_BUILDER_HPP
 
-#include "matador/query/mapping/access.hpp"
-#include "matador/query/basic_schema.hpp"
+#include "matador/query/schema/basic_schema.hpp"
 #include "matador/query/builder/query.hpp"
 #include "matador/query/criteria.hpp"
 #include "matador/query/internal/criteria_transformer.hpp"
 #include "matador/query/join_columns_collector.hpp"
+#include "matador/query/mapping/access.hpp"
 #include "matador/query/model/column_options.hpp"
 #include "matador/query/model/foreign_key_options.hpp"
 #include "matador/query/model/primary_key_options.hpp"

@@ -1,5 +1,5 @@
-#include "matador/query/schema_node_iterator.hpp"
-#include "matador/query/schema_node.hpp"
+#include "matador/query/schema/schema_node_iterator.hpp"
+#include "matador/query/schema/schema_node.hpp"
 
 namespace matador::query {
 schema_node_iterator::schema_node_iterator(pointer node)

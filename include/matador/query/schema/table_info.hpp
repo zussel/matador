@@ -1,7 +1,7 @@
 #ifndef OBJECT_INFO_HPP
 #define OBJECT_INFO_HPP
 
-#include "matador/query/basic_table_info.hpp"
+#include "basic_table_info.hpp"
 #include "matador/query/observer.hpp"
 
 #include <functional>
