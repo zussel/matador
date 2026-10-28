@@ -1,10 +1,10 @@
 #ifndef QUERY_INTO_INTERMEDIATE_HPP
 #define QUERY_INTO_INTERMEDIATE_HPP
 
+#include "matador/query/relations/object_ptr.hpp"
 #include "matador/query/builder/placeholder.hpp"
 #include "matador/query/intermediates/values_intermediate.hpp"
 #include "matador/query/internal/value_extractor.hpp"
-#include "matador/query/object_ptr.hpp"
 
 namespace matador::query {
 class into_intermediate : public intermediate {

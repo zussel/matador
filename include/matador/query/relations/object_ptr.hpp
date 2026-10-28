@@ -1,8 +1,8 @@
 #ifndef OBJECT_PTR_HPP
 #define OBJECT_PTR_HPP
 
-#include "matador/query/object_proxy.hpp"
 #include "matador/query/model/identifier.hpp"
+#include "matador/query/relations/object_proxy.hpp"
 
 #include <memory>
 

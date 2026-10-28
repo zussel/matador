@@ -1,4 +1,5 @@
 #include "matador/query/internal/select_query_builder.hpp"
+#include "matador/query/criteria.hpp"
 
 #include <cstdio>
 

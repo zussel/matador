@@ -1,12 +1,12 @@
 #ifndef QUERY_QUERY_RESULT_HPP
 #define QUERY_QUERY_RESULT_HPP
 
-#include "error_code.hpp"
+#include "matador/query/relations/object_ptr.hpp"
+#include "matador/query/runtime/error_code.hpp"
 #include "matador/query/internal/query_result_impl.hpp"
 #include "matador/query/model/column.hpp"
 #include "matador/query/model/field.hpp"
 #include "matador/query/model/record.hpp"
-#include "matador/query/object_ptr.hpp"
 
 #include "matador/utils/error.hpp"
 #include "matador/utils/result.hpp"

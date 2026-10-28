@@ -8,6 +8,7 @@
 #include "matador/query/model/identifier.hpp"
 #include "matador/query/model/primary_key_options.hpp"
 
+#include "matador/query/model/column.hpp"
 #include "matador/query/model/record.hpp"
 #include "matador/query/interface/query_result_reader.hpp"
 #include "matador/query/internal/collection_utils.hpp"
@@ -16,12 +17,10 @@
 #include "matador/query/internal/primary_key_reader.hpp"
 #include "matador/query/resolver_service.hpp"
 
-#include "matador/query/model/column.hpp"
-#include "matador/query/collection.hpp"
-#include "matador/query/collection_proxy.hpp"
-#include "matador/query/join_columns_collector.hpp"
-#include "matador/query/object_proxy.hpp"
-#include "matador/query/object_ptr.hpp"
+#include "matador/query/relations/collection.hpp"
+#include "matador/query/relations/join_columns_collector.hpp"
+#include "matador/query/relations/object_proxy.hpp"
+#include "matador/query/relations/object_ptr.hpp"
 #include "matador/utils/error_exception.hpp"
 
 #include <memory>

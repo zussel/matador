@@ -3,13 +3,13 @@
 
 #include "matador/query/primary_key_resolver.hpp"
 
-#include "matador/query/object_resolver.hpp"
+#include "matador/query/relations/object_resolver.hpp"
 
 #include <atomic>
 #include <memory>
-#include <utility>
-#include <stdexcept>
 #include <mutex>
+#include <stdexcept>
+#include <utility>
 
 namespace matador::query {
 enum class object_state : uint8_t {

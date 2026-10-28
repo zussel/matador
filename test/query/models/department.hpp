@@ -1,8 +1,8 @@
 #ifndef DEPARTMENT_EMPLOYEE_HPP
 #define DEPARTMENT_EMPLOYEE_HPP
 
-#include "matador/query/object_ptr.hpp"
-#include "matador/query/collection.hpp"
+#include "matador/query/relations/collection.hpp"
+#include "matador/query/relations/object_ptr.hpp"
 
 #include <string>
 #include <vector>

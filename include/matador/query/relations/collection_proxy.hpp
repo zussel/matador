@@ -1,8 +1,8 @@
 #ifndef MATADOR_COLLECTION_PROXY_HPP
 #define MATADOR_COLLECTION_PROXY_HPP
 
-#include "matador/query/collection_resolver.hpp"
-#include "matador/query/object_ptr.hpp"
+#include "matador/query/relations/collection_resolver.hpp"
+#include "matador/query/relations/object_ptr.hpp"
 
 #include "matador/query/model/identifier.hpp"
 

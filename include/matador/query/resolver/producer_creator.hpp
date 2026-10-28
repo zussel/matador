@@ -3,6 +3,7 @@
 
 #include "matador/query/builder/query.hpp"
 #include "matador/query/criteria/criteria_operators.hpp"
+#include "matador/query/schema/basic_schema.hpp"
 
 #include "matador/query/resolver/query_object_resolver.hpp"
 #include "matador/query/resolver/resolver_producer.hpp"
@@ -12,7 +13,6 @@
 namespace matador::query {
 class dialect;
 class statement;
-class basic_schema;
 
 class resolver_producer_registry final {
 public:

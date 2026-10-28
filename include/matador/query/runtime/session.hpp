@@ -1,22 +1,20 @@
 #ifndef QUERY_SESSION_HPP
 #define QUERY_SESSION_HPP
 
-#include "matador/query/schema/basic_schema.hpp"
+#include "matador/query/relations/object_cache.hpp"
 #include "matador/query/builder/query.hpp"
 #include "matador/query/criteria.hpp"
 #include "matador/query/internal/delete_query_builder.hpp"
 #include "matador/query/internal/insert_query_builder.hpp"
 #include "matador/query/internal/query_contexts.hpp"
 #include "matador/query/internal/select_query_builder.hpp"
-#include "matador/query/object_cache.hpp"
-#include "matador/query/object_ptr.hpp"
+#include "matador/query/relations/object_ptr.hpp"
 #include "matador/query/resolver_service.hpp"
-#include "matador/query/runtime/connection.hpp"
 #include "matador/query/runtime/connection_pool.hpp"
 #include "matador/query/runtime/error_code.hpp"
-#include "matador/query/runtime/executor.hpp"
 #include "matador/query/runtime/statement.hpp"
 #include "matador/query/runtime/statement_cache.hpp"
+#include "matador/query/schema/basic_schema.hpp"
 
 #include <unordered_map>
 #include <utility>

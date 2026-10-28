@@ -3,8 +3,8 @@
 
 #include "airplane.hpp"
 
+#include "matador/query/relations/object_ptr.hpp"
 #include "matador/query/mapping/access.hpp"
-#include "matador/query/object_ptr.hpp"
 
 #include <string>
 #include <utility>

@@ -1,9 +1,9 @@
 #ifndef MATADOR_RESOLVER_SERVICE_HPP
 #define MATADOR_RESOLVER_SERVICE_HPP
 
-#include "matador/query/object_resolver.hpp"
-#include "matador/query/collection_resolver.hpp"
 #include "matador/query/resolver/producer_object_resolver_factory.hpp"
+#include "matador/query/relations/collection_resolver.hpp"
+#include "matador/query/relations/object_resolver.hpp"
 
 namespace matador::query {
 class resolver_service final {

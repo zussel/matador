@@ -1,8 +1,8 @@
 #ifndef MATADOR_OBJECT_RESOLVER_FACTORY_HPP
 #define MATADOR_OBJECT_RESOLVER_FACTORY_HPP
 
+#include "matador/query/relations/object_resolver.hpp"
 #include "matador/query/resolver/abstract_type_resolver_factory.hpp"
-#include "matador/query/object_resolver.hpp"
 
 namespace matador::query {
 class object_resolver_factory : public abstract_type_resolver_factory {

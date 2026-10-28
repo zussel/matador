@@ -5,11 +5,11 @@
 #include "matador/query/internal/execute_step.hpp"
 #include "matador/query/runtime/error_code.hpp"
 
-#include "matador/query/object_cache.hpp"
-#include "matador/query/object_ptr.hpp"
+#include "matador/query/relations/object_cache.hpp"
+#include "matador/query/relations/object_ptr.hpp"
 
-#include "matador/query/runtime/statement.hpp"
 #include "matador/query/resolver_service.hpp"
+#include "matador/query/runtime/statement.hpp"
 
 namespace matador::query {
 template<typename ObjectType>

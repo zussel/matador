@@ -2,7 +2,7 @@
 #define RELATION_COMPLETER_HPP
 
 #include "matador/query/internal/observer_list_copy_creator.hpp"
-#include "matador/query/join_columns_collector.hpp"
+#include "matador/query/relations/join_columns_collector.hpp"
 #include "matador/query/model/many_to_many_relation.hpp"
 #include "matador/query/schema/schema_node.hpp"
 #include "matador/query/schema/basic_schema.hpp"

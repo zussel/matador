@@ -1,7 +1,7 @@
 #ifndef MATADOR_CONTAINER_RESOLVER_FACTORY_HPP
 #define MATADOR_CONTAINER_RESOLVER_FACTORY_HPP
 
-#include "matador/query/collection_resolver.hpp"
+#include "matador/query/relations/collection_resolver.hpp"
 
 #include <memory>
 

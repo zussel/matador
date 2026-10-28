@@ -1,11 +1,11 @@
 #ifndef MATADOR_DELETE_STEP_HPP
 #define MATADOR_DELETE_STEP_HPP
 
-#include "matador/query/runtime/error_code.hpp"
-#include "matador/query/runtime/statement.hpp"
+#include "matador/query/relations/object_ptr.hpp"
 #include "matador/query/internal/execute_step.hpp"
 #include "matador/query/internal/identifier_statement_binder.hpp"
-#include "matador/query/object_ptr.hpp"
+#include "matador/query/runtime/error_code.hpp"
+#include "matador/query/runtime/statement.hpp"
 
 namespace matador::query {
 template<typename ObjectType>

@@ -1,9 +1,9 @@
 #ifndef QUERY_HAS_MANY_TO_MANY_RELATION_HPP
 #define QUERY_HAS_MANY_TO_MANY_RELATION_HPP
 
+#include "matador/query/relations/object_ptr.hpp"
 #include "matador/query/mapping/access.hpp"
 #include "matador/query/model/foreign_key_options.hpp"
-#include "matador/query/object_ptr.hpp"
 
 namespace matador::query {
 template < class ForeignType >

@@ -4,7 +4,7 @@
 #include "matador/query/runtime/statement.hpp"
 #include "matador/query/internal/identifier_statement_binder.hpp"
 
-#include "matador/query/object_resolver.hpp"
+#include "matador/query/relations/object_resolver.hpp"
 #include "matador/utils/error_exception.hpp"
 
 #include <mutex>

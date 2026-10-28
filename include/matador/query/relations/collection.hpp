@@ -1,7 +1,7 @@
 #ifndef COLLECTION_HPP
 #define COLLECTION_HPP
 
-#include "matador/query/collection_proxy.hpp"
+#include "matador/query/relations/collection_proxy.hpp"
 
 namespace matador::query {
 

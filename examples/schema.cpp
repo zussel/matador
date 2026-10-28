@@ -1,8 +1,8 @@
-#include <iostream>
-
-#include "matador/query/collection.hpp"
-#include "matador/query/object_ptr.hpp"
+#include "matador/query/relations/collection.hpp"
+#include "matador/query/relations/object_ptr.hpp"
 #include "matador/query/schema.hpp"
+
+#include <iostream>
 
 using namespace matador;
 
