@@ -1,13 +1,13 @@
 #ifndef QUERY_QUERY_COMPILER_HPP
 #define QUERY_QUERY_COMPILER_HPP
 
-#include "matador/query/query_part_visitor.hpp"
-#include "matador/query/query_data.hpp"
+#include "query_data.hpp"
+#include "query_part_visitor.hpp"
 
-#include "matador/query/query_context.hpp"
 #include "matador/query/interface/connection_impl.hpp"
+#include "query_context.hpp"
 
-#include "matador/query/placeholder.hpp"
+#include "placeholder.hpp"
 
 #include <functional>
 #include <optional>

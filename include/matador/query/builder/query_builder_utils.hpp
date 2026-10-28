@@ -1,11 +1,17 @@
 #ifndef MATADOR_QUERY_BUILDER_UTILS_HPP
 #define MATADOR_QUERY_BUILDER_UTILS_HPP
 
+#include "matador/query/internal/execute_step.hpp"
+#include "matador/query/internal/query_contexts.hpp"
+
 #include <functional>
 #include <map>
 #include <typeindex>
+#include <unordered_set>
 
 namespace matador::query {
+class basic_schema;
+
 template<class EntityType>
 static std::pair<std::type_index, const void *> make_entity_visit_key(const EntityType &ptr) {
   return {std::type_index(typeid(EntityType)), static_cast<const void *>(&ptr)};

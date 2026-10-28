@@ -2,8 +2,8 @@
 
 #include "matador/query/intermediates/join_intermediate.hpp"
 
+#include "matador/query/builder/query_data.hpp"
 #include "matador/query/internal/query_parts.hpp"
-#include "matador/query/query_data.hpp"
 
 namespace matador::query {
 select_intermediate::select_intermediate(const std::vector<column> &columns) {

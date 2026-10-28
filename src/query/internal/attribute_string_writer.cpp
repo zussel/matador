@@ -1,6 +1,6 @@
 #include "matador/query/internal/attribute_string_writer.hpp"
 
-#include "matador/query/query_utils.hpp"
+#include "matador/query/builder/query_utils.hpp"
 #include "matador/query/dialect.hpp"
 
 #include "matador/utils/convert.hpp"

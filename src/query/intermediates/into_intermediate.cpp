@@ -1,7 +1,7 @@
 #include "matador/query/intermediates/into_intermediate.hpp"
 
+#include "matador/query/builder/query_data.hpp"
 #include "matador/query/internal/query_parts.hpp"
-#include "matador/query/query_data.hpp"
 
 namespace matador::query {
 values_intermediate into_intermediate::values(const std::initializer_list<std::variant<placeholder, utils::database_type>> values) const {

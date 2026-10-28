@@ -2,8 +2,8 @@
 
 #include "matador/query/intermediates/delete_from_intermediate.hpp"
 
+#include "matador/query/builder/query_data.hpp"
 #include "matador/query/internal/query_parts.hpp"
-#include "matador/query/query_data.hpp"
 
 namespace matador::query {
 delete_intermediate::delete_intermediate() {

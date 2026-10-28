@@ -1,14 +1,14 @@
 #ifndef QUERY_QUERY_PARTS_HPP
 #define QUERY_QUERY_PARTS_HPP
 
+#include "matador/query/builder/placeholder.hpp"
+#include "matador/query/builder/query_context.hpp"
+#include "matador/query/builder/query_part.hpp"
+#include "matador/query/criteria/abstract_criteria.hpp"
+#include "matador/query/internal/column_value_pair.hpp"
 #include "matador/query/model/column.hpp"
 #include "matador/query/model/constraint.hpp"
 #include "matador/query/model/table.hpp"
-#include "matador/query/criteria/abstract_criteria.hpp"
-#include "matador/query/internal/column_value_pair.hpp"
-#include "matador/query/placeholder.hpp"
-#include "matador/query/query_context.hpp"
-#include "matador/query/query_part.hpp"
 
 #include <list>
 #include <memory>

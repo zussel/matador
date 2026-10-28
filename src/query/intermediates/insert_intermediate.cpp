@@ -2,8 +2,8 @@
 
 #include "matador/query/intermediates/into_intermediate.hpp"
 
+#include "matador/query/builder/query_data.hpp"
 #include "matador/query/internal/query_parts.hpp"
-#include "matador/query/query_data.hpp"
 
 namespace matador::query {
 insert_intermediate::insert_intermediate() {

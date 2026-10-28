@@ -1,7 +1,7 @@
 #ifndef MATADOR_QUERY_CONTEXTS_HPP
 #define MATADOR_QUERY_CONTEXTS_HPP
 
-#include "matador/query/query_context.hpp"
+#include "matador/query/builder/query_context.hpp"
 
 namespace matador::query {
 struct query_contexts {

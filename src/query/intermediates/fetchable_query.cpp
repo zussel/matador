@@ -1,9 +1,9 @@
 #include "matador/query/intermediates/fetchable_query.hpp"
 
-#include "matador/query/query_builder.hpp"
+#include "matador/query/builder/query_builder.hpp"
 
-#include "matador/query/runtime/executor.hpp"
 #include "matador/query/model/field.hpp"
+#include "matador/query/runtime/executor.hpp"
 // #include "matador/query/statement.hpp"
 
 namespace matador::query {

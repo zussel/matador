@@ -1,5 +1,5 @@
 #include "matador/query/intermediates/executable_query.hpp"
-#include "matador/query/query_builder.hpp"
+#include "matador/query/builder/query_builder.hpp"
 
 #include "matador/query/runtime/execute_result.hpp"
 #include "matador/query/runtime/executor.hpp"

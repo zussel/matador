@@ -1,18 +1,18 @@
-#include "matador/query/query_builder.hpp"
+#include "matador/query/builder/query_builder.hpp"
 
-#include "matador/query/model/column.hpp"
-#include "matador/query/model/constraint.hpp"
+#include "matador/query/builder/query_data.hpp"
+#include "matador/query/builder/query_utils.hpp"
 #include "matador/query/criteria_evaluator.hpp"
 #include "matador/query/expression_evaluator.hpp"
 #include "matador/query/internal/attribute_string_writer.hpp"
-#include "matador/query/query_data.hpp"
-#include "matador/query/query_utils.hpp"
+#include "matador/query/model/column.hpp"
+#include "matador/query/model/constraint.hpp"
 
 #include "matador/query/internal/basic_type_to_string_visitor.hpp"
 #include "matador/query/internal/query_parts.hpp"
 #include "matador/query/internal/string_builder_utils.hpp"
 
-#include "matador/query/query_context.hpp"
+#include "matador/query/builder/query_context.hpp"
 #include "matador/query/dialect.hpp"
 
 namespace matador::query {

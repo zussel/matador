@@ -3,9 +3,9 @@
 
 #include "matador/utils/types.hpp"
 
-#include "matador/query/model/column_options.hpp"
+#include "matador/query/builder/query_functions.hpp"
 #include "matador/query/expression/abstract_column_expression.hpp"
-#include "matador/query/query_functions.hpp"
+#include "matador/query/model/column_options.hpp"
 
 #include <memory>
 #include <string>

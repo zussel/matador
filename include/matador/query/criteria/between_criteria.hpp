@@ -1,9 +1,9 @@
 #ifndef CRITERIA_BETWEEN_CRITERIA_NODE_HPP
 #define CRITERIA_BETWEEN_CRITERIA_NODE_HPP
 
+#include "matador/query/builder/placeholder.hpp"
 #include "matador/query/criteria/abstract_column_criteria.hpp"
 #include "matador/query/criteria/criteria_utils.hpp"
-#include "matador/query/placeholder.hpp"
 
 namespace matador::query {
 

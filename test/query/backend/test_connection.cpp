@@ -2,7 +2,7 @@
 #include "test_statement.hpp"
 #include "test_result_reader.hpp"
 
-#include "matador/query/query_context.hpp"
+#include "matador/query/builder/query_context.hpp"
 
 #include "matador/query/internal/query_result_impl.hpp"
 

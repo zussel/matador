@@ -1,9 +1,9 @@
 #include "matador/query/internal/schema_utils.hpp"
 
+#include "matador/query/builder/query.hpp"
 #include "matador/query/criteria.hpp"
 #include "matador/query/generators.hpp"
 #include "matador/query/internal/query_contexts.hpp"
-#include "matador/query/query.hpp"
 
 using namespace matador::utils;
 

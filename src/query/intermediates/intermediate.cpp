@@ -1,6 +1,6 @@
 #include "matador/query/intermediates/intermediate.hpp"
 
-#include "matador/query/query_data.hpp"
+#include "matador/query/builder/query_data.hpp"
 
 namespace matador::query {
 intermediate::intermediate()

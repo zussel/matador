@@ -2,7 +2,7 @@
 
 #include "matador/query/internal/query_parts.hpp"
 
-#include "matador/query/query_data.hpp"
+#include "matador/query/builder/query_data.hpp"
 
 namespace matador::query {
 drop_intermediate::drop_intermediate() {

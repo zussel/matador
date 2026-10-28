@@ -1,5 +1,5 @@
-#include "matador/query/query.hpp"
-#include "matador/query/query_functions.hpp"
+#include "matador/query/builder/query.hpp"
+#include "matador/query/builder/query_functions.hpp"
 
 namespace matador::query {
 column count(const std::string& column) {

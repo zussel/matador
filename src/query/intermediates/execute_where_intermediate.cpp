@@ -5,7 +5,7 @@
 
 #include "matador/query/internal/query_parts.hpp"
 
-#include "matador/query/query_data.hpp"
+#include "matador/query/builder/query_data.hpp"
 
 namespace matador::query {
 fetchable_query execute_where_intermediate::returning(const std::vector<column> &table_columns) const {

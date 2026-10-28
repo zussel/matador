@@ -1,5 +1,6 @@
 #include "matador/query/criteria_evaluator.hpp"
 
+#include "matador/query/builder/query_utils.hpp"
 #include "matador/query/criteria/between_criteria.hpp"
 #include "matador/query/criteria/binary_criteria.hpp"
 #include "matador/query/criteria/check_null_criteria.hpp"
@@ -7,10 +8,9 @@
 #include "matador/query/criteria/like_criteria.hpp"
 #include "matador/query/criteria/logical_criteria.hpp"
 #include "matador/query/criteria/not_criteria.hpp"
-#include "matador/query/query_utils.hpp"
 
+#include "matador/query/builder/query_context.hpp"
 #include "matador/query/dialect.hpp"
-#include "matador/query/query_context.hpp"
 
 #include "matador/query/model/column_value.hpp"
 #include "matador/utils/enum_mapper.hpp"

@@ -6,15 +6,19 @@ configure_file (${CMAKE_SOURCE_DIR}/include/matador/version.hpp.in ${CMAKE_BINAR
 add_library(matador
     ../include/matador/query/basic_schema.hpp
     ../include/matador/query/basic_table_info.hpp
+    ../include/matador/query/builder/query_data.hpp
     ../include/matador/query/model/relation_endpoint.hpp
     ../include/matador/query/model/relation_type.hpp
-    ../include/matador/query/query_data.hpp
     ../include/matador/query/resolver_service.hpp
     ../include/matador/query/schema.hpp
     ../include/matador/utils/flags.hpp
     query/abstract_pk_generator.cpp
     query/basic_schema.cpp
     query/basic_table_info.cpp
+    query/builder/query.cpp
+    query/builder/query_builder.cpp
+    query/builder/query_part.cpp
+    query/builder/query_utils.cpp
     query/criteria/abstract_column_criteria.cpp
     query/criteria/between_criteria.cpp
     query/criteria/binary_criteria.cpp
@@ -97,10 +101,6 @@ add_library(matador
     query/model/table.cpp
     query/model/table.cpp
     query/observer.cpp
-    query/query.cpp
-    query/query_builder.cpp
-    query/query_part.cpp
-    query/query_utils.cpp
     query/resolver/abstract_joined_resolver.cpp
     query/resolver/joined_collection_resolver_producer.cpp
     query/resolver/producer_object_resolver_factory.cpp

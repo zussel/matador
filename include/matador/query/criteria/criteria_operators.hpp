@@ -1,11 +1,11 @@
 #ifndef CRITERIA_CRITERIA_OPERATORS_HPP
 #define CRITERIA_CRITERIA_OPERATORS_HPP
 
-#include "matador/query/model/column_value.hpp"
+#include "matador/query/builder/placeholder.hpp"
 #include "matador/query/criteria/binary_criteria.hpp"
 #include "matador/query/criteria/collection_criteria.hpp"
 #include "matador/query/intermediates/fetchable_query.hpp"
-#include "matador/query/placeholder.hpp"
+#include "matador/query/model/column_value.hpp"
 
 namespace matador::query {
 template<class Type>

@@ -1,7 +1,7 @@
 #include "matador/query/sequence_pk_generator.hpp"
 
+#include "matador/query/builder/query.hpp"
 #include "matador/query/runtime/error_code.hpp"
-#include "matador/query/query.hpp"
 
 namespace matador::query {
 sequence_pk_generator::sequence_pk_generator(const std::string& sequence_name)

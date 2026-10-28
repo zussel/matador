@@ -1,6 +1,6 @@
 #include "matador/query/internal/query_parts.hpp"
 
-#include "matador/query/query_part_visitor.hpp"
+#include "matador/query/builder/query_part_visitor.hpp"
 
 #include <utility>
 

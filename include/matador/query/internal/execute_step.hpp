@@ -1,18 +1,18 @@
 #ifndef MATADOR_EXECUTE_STEP_HPP
 #define MATADOR_EXECUTE_STEP_HPP
 
-#include "matador/query/runtime/executor.hpp"
-#include "matador/query/abstract_pk_generator.hpp"
+#include "matador/query/builder/query_context.hpp"
 #include "matador/query/internal/primary_key_accessor.hpp"
 #include "matador/query/model/identifier.hpp"
 #include "matador/query/object_cache.hpp"
-#include "matador/query/query_context.hpp"
 
 #include "matador/utils/error.hpp"
 #include "matador/utils/result.hpp"
 
 namespace matador::query {
 using resolver_service_ptr = std::shared_ptr<resolver_service>;
+
+class statement;
 
 class execute_step {
 public:

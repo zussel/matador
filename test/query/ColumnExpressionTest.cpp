@@ -1,13 +1,13 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/query/model/column.hpp"
+#include "matador/query/builder/placeholder.hpp"
 #include "matador/query/expression/binary_column_expression.hpp"
 #include "matador/query/expression/expression_operators.hpp"
 #include "matador/query/expression/expression_visitor.hpp"
 #include "matador/query/expression/placeholder_expression.hpp"
 #include "matador/query/expression/table_column_expression.hpp"
 #include "matador/query/expression/value_expression.hpp"
-#include "matador/query/placeholder.hpp"
+#include "matador/query/model/column.hpp"
 
 #include <string>
 #include <type_traits>

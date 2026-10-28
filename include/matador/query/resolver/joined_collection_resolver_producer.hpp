@@ -3,7 +3,7 @@
 
 #include "matador/query/resolver/abstract_joined_resolver.hpp"
 
-#include "matador/query/query_context.hpp"
+#include "matador/query/builder/query_context.hpp"
 
 #include "matador/utils/error.hpp"
 #include "matador/utils/result.hpp"

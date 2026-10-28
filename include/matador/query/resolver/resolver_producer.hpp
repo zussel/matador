@@ -1,7 +1,7 @@
 #ifndef MATADOR_RESOLVER_PRODUCER_HPP
 #define MATADOR_RESOLVER_PRODUCER_HPP
 
-#include "matador/query/query_context.hpp"
+#include "matador/query/builder/query_context.hpp"
 
 #include "matador/utils/error.hpp"
 #include "matador/utils/result.hpp"

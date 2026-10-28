@@ -1,7 +1,7 @@
 #ifndef MATADOR_PRODUCER_CREATOR_HPP
 #define MATADOR_PRODUCER_CREATOR_HPP
 
-#include "matador/query/query.hpp"
+#include "matador/query/builder/query.hpp"
 #include "matador/query/criteria/criteria_operators.hpp"
 
 #include "matador/query/resolver/query_object_resolver.hpp"

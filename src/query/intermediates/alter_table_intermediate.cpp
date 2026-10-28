@@ -1,7 +1,7 @@
 #include "matador/query/intermediates/alter_table_intermediate.hpp"
 
+#include "matador/query/builder/query_data.hpp"
 #include "matador/query/internal/query_parts.hpp"
-#include "matador/query/query_data.hpp"
 
 namespace matador::query {
 executable_query query_add_foreign_key_constraint_intermediate::references( const table& tab, const std::vector<column>& columns) {
