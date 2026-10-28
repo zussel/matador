@@ -1,8 +1,8 @@
 #ifndef QUERY_DIALECT_HPP
 #define QUERY_DIALECT_HPP
 
+#include "matador/query/dialect/dialect_token.hpp"
 #include "matador/query/builder/query_functions.hpp"
-#include "matador/query/dialect_token.hpp"
 
 #include "matador/utils/string.hpp"
 #include "matador/utils/types.hpp"

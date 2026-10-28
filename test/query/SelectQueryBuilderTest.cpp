@@ -1,9 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/query/dialect.hpp"
+#include "matador/query/dialect/dialect.hpp"
+#include "matador/query/criteria_evaluator.hpp"
 #include "matador/query/internal/select_query_builder.hpp"
 #include "matador/query/schema.hpp"
-#include "matador/query/criteria_evaluator.hpp"
 
 #include "models/airplane.hpp"
 #include "models/department.hpp"

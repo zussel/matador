@@ -25,8 +25,8 @@ add_library(matador
     query/criteria/like_criteria.cpp
     query/criteria/logical_criteria.cpp
     query/criteria/not_criteria.cpp
-    query/dialect.cpp
-    query/dialect_builder.cpp
+    query/dialect/dialect.cpp
+    query/dialect/dialect_builder.cpp
     query/expression/binary_column_expression.cpp
     query/expression/column_expression.cpp
     query/expression/expression_operators.cpp

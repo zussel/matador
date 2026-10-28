@@ -3,9 +3,9 @@
 
 #include "matador/query/model/column.hpp"
 
+#include "matador/query/dialect/dialect.hpp"
 #include "matador/query/runtime/connection_info.hpp"
 #include "matador/query/runtime/execute_result.hpp"
-#include "matador/query/dialect.hpp"
 
 #include "matador/utils/error.hpp"
 #include "matador/utils/result.hpp"

@@ -8,8 +8,8 @@
 #include "matador/query/internal/basic_type_to_string_visitor.hpp"
 #include "matador/query/internal/string_builder_utils.hpp"
 
+#include "matador/query/dialect/dialect.hpp"
 #include "matador/query/builder/query_context.hpp"
-#include "matador/query/dialect.hpp"
 
 #include "matador/utils/enum_mapper.hpp"
 

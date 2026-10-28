@@ -9,8 +9,8 @@
 #include "matador/query/criteria/logical_criteria.hpp"
 #include "matador/query/criteria/not_criteria.hpp"
 
+#include "matador/query/dialect/dialect.hpp"
 #include "matador/query/builder/query_context.hpp"
-#include "matador/query/dialect.hpp"
 
 #include "matador/query/model/column_value.hpp"
 #include "matador/utils/enum_mapper.hpp"

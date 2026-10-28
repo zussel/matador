@@ -1,10 +1,10 @@
 #ifndef QUERY_DIALECT_BUILDER_HPP
 #define QUERY_DIALECT_BUILDER_HPP
 
-#include "matador/query/dialect.hpp"
+#include "matador/query/dialect/dialect.hpp"
 
 namespace matador::query {
-class dialect_builder {
+class dialect_builder final {
 public:
   static dialect_builder &builder();
 

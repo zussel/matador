@@ -1,8 +1,8 @@
 #include "matador/query/runtime/connection.hpp"
 
-#include "matador/query/runtime/backend_provider.hpp"
-#include "matador/query/dialect.hpp"
+#include "matador/query/dialect/dialect.hpp"
 #include "matador/query/interface/connection_impl.hpp"
+#include "matador/query/runtime/backend_provider.hpp"
 
 #include <algorithm>
 #include <utility>

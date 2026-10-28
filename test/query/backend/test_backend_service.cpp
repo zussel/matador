@@ -1,7 +1,7 @@
 #include "test_backend_service.hpp"
 #include "test_connection.hpp"
 
-#include "matador/query/dialect_builder.hpp"
+#include "matador/query/dialect/dialect_builder.hpp"
 
 #include <algorithm>
 

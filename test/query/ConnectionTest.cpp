@@ -1,10 +1,10 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/query/mapping/value_writer.hpp"
+#include "matador/query/dialect/dialect_builder.hpp"
 #include "matador/query/builder/query_context.hpp"
-#include "matador/query/dialect_builder.hpp"
 #include "matador/query/interface/connection_impl.hpp"
 #include "matador/query/interface/statement_impl.hpp"
+#include "matador/query/mapping/value_writer.hpp"
 #include "matador/query/resolver/query_object_resolver.hpp"
 #include "matador/query/runtime/backend_provider.hpp"
 #include "matador/query/runtime/connection.hpp"

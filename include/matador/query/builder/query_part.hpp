@@ -1,7 +1,7 @@
 #ifndef QUERY_QUERY_PART_HPP
 #define QUERY_QUERY_PART_HPP
 
-#include "matador/query/dialect_token.hpp"
+#include "matador/query/dialect/dialect_token.hpp"
 
 namespace matador::query {
 

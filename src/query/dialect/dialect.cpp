@@ -1,4 +1,4 @@
-#include "matador/query/dialect.hpp"
+#include "matador/query/dialect/dialect.hpp"
 
 #include "matador/utils/string.hpp"
 

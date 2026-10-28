@@ -1,10 +1,10 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include "matador/query/dialect/dialect_builder.hpp"
 #include "matador/query/builder/placeholder.hpp"
 #include "matador/query/builder/query.hpp"
 #include "matador/query/criteria.hpp"
 #include "matador/query/criteria_evaluator.hpp"
-#include "matador/query/dialect_builder.hpp"
 
 using namespace matador::query;
 using namespace matador::utils;

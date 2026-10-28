@@ -1,6 +1,6 @@
 #include "matador/query/internal/string_builder_utils.hpp"
 
-#include "matador/query/dialect.hpp"
+#include "matador/query/dialect/dialect.hpp"
 
 namespace matador::query {
 void prepare_identifier_string_append(std::string& out, const std::string_view col, const dialect &d) {

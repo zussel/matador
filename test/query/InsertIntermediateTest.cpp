@@ -1,7 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include "matador/query/dialect/dialect.hpp"
 #include "matador/query/builder/query.hpp"
-#include "matador/query/dialect.hpp"
 #include "matador/query/model/table.hpp"
 
 #include <cstdint>

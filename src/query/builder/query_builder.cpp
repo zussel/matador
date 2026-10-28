@@ -12,8 +12,8 @@
 #include "matador/query/internal/query_parts.hpp"
 #include "matador/query/internal/string_builder_utils.hpp"
 
+#include "matador/query/dialect/dialect.hpp"
 #include "matador/query/builder/query_context.hpp"
-#include "matador/query/dialect.hpp"
 
 namespace matador::query {
 query_context query_builder::build(const query_data& data,

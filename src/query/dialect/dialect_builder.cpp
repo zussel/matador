@@ -1,4 +1,4 @@
-#include "matador/query/dialect_builder.hpp"
+#include "matador/query/dialect/dialect_builder.hpp"
 
 namespace matador::query {
 dialect_builder &dialect_builder::builder() {
