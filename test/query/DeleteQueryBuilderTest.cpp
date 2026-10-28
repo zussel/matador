@@ -200,7 +200,7 @@ TEST_CASE("Delete query builder skips duplicate objects during cascading deletes
   REQUIRE(parent_sql.find("DELETE FROM \"departments\"") != std::string::npos);
 }
 
-TEST_CASE("Delete query builder cascades many-to-many persistent objects before the root object", "[query][delete_builder]") {
+TEST_CASE("Delete query builder cascades many-to-many persistent objects before root", "[query][delete_builder]") {
   schema scm;
   REQUIRE(scm.attach<ingredient>("ingredients").is_ok());
   REQUIRE(scm.attach<recipe>("recipes").is_ok());

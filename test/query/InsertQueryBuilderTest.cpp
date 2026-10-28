@@ -137,7 +137,7 @@ TEST_CASE("Insert query builder inserts belongs_to dependencies before the root 
   REQUIRE(second_sql.find("INSERT INTO \"flights\"") != std::string::npos);
 }
 
-TEST_CASE("Insert query builder inserts has_many children after parent and links the join column", "[query][insert_builder]") {
+TEST_CASE("Insert query builder inserts has_many children after parent and links column", "[query][insert_builder]") {
   schema scm;
   REQUIRE(scm.attach<department>("departments").is_ok());
   REQUIRE(scm.attach<employee>("employees").is_ok());
@@ -175,7 +175,7 @@ TEST_CASE("Insert query builder inserts has_many children after parent and links
   REQUIRE(bob->dep == dep);
 }
 
-TEST_CASE("Insert query builder inserts many-to-many foreign objects before relation rows", "[query][insert_builder]") {
+TEST_CASE("Insert query builder inserts many-to-many foreign objects before relation", "[query][insert_builder]") {
   schema scm;
   REQUIRE(scm.attach<ingredient>("ingredients").is_ok());
   REQUIRE(scm.attach<recipe>("recipes").is_ok());
