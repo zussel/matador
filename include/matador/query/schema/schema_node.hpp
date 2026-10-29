@@ -16,6 +16,7 @@ namespace matador::query {
 
 class basic_table_info;
 class basic_schema;
+class table;
 
 class schema_node final {
 public:
@@ -50,6 +51,7 @@ public:
   [[nodiscard]] node_ptr prev() const;
 
   [[nodiscard]] const basic_table_info& info() const;
+  [[nodiscard]] const table& table() const;
 
   void update_name(const std::string& name);
 

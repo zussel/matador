@@ -21,6 +21,7 @@ std::shared_ptr<table> table_generator::acquire_table(basic_schema &repo, const 
 
   return repo.provide_table_in_advance(ti, std::make_shared<table>(name));
 }
+
 std::shared_ptr<table> table_generator::acquire_from_repo(const basic_schema &repo, const std::type_index &ti) {
   if (const auto result = repo.basic_info(ti)) {
     return result->get().table();
@@ -30,7 +31,7 @@ std::shared_ptr<table> table_generator::acquire_from_repo(const basic_schema &re
     return repo.table_for_type(ti);
   }
 
-  return nullptr;
+  return std::make_shared<table>("");
 }
 
 std::shared_ptr<table> table_generator::provide_table_in_advance(basic_schema &repo, const std::type_index &ti, const std::shared_ptr<table> &tab) {
@@ -86,5 +87,9 @@ void table_generator::prepare_relation_table(const std::string &join_column, con
   const auto inverse_join_column_index = it->index();
 
   table_->update_relation_columns(join_column_index, inverse_join_column_index);
+}
+
+std::shared_ptr<table> table_generator::acquire_foreign_table(basic_schema &repo, const std::type_index &ti) {
+  return provide_table_in_advance(repo, ti, acquire_from_repo(repo, ti));
 }
 }

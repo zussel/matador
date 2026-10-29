@@ -38,6 +38,10 @@ const basic_table_info &schema_node::info() const {
   return *info_;
 }
 
+const table& schema_node::table() const {
+  return *info_->table();
+}
+
 void schema_node::update_name(const std::string& name) {
   name_ = name;
   info_->update_name(name);
