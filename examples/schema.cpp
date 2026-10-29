@@ -1,6 +1,6 @@
+#include "matador/query/schema/schema.hpp"
 #include "matador/query/relations/collection.hpp"
 #include "matador/query/relations/object_ptr.hpp"
-#include "matador/query/schema.hpp"
 
 #include <iostream>
 

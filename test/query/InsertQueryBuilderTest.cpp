@@ -1,9 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include "matador/query/schema/schema.hpp"
 #include "matador/query/dialect/dialect.hpp"
 #include "matador/query/internal/insert_query_builder.hpp"
 #include "matador/query/internal/schema_utils.hpp"
-#include "matador/query/schema.hpp"
 
 #include "models/department.hpp"
 #include "models/flight.hpp"

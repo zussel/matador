@@ -8,7 +8,7 @@ add_library(matador
     ../include/matador/query/model/relation_endpoint.hpp
     ../include/matador/query/model/relation_type.hpp
     ../include/matador/query/resolver_service.hpp
-    ../include/matador/query/schema.hpp
+    ../include/matador/query/schema/schema.hpp
     ../include/matador/query/schema/basic_schema.hpp
     ../include/matador/query/schema/basic_table_info.hpp
     ../include/matador/utils/flags.hpp

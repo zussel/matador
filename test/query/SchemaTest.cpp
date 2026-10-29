@@ -1,10 +1,10 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/query/schema.hpp"
+#include "matador/query/schema/schema.hpp"
 
 #include "models/department.hpp"
-#include "models/recipe.hpp"
 #include "models/person.hpp"
+#include "models/recipe.hpp"
 
 #include <iostream>
 
