@@ -8,10 +8,13 @@
 #include "models/author.hpp"
 #include "models/airplane.hpp"
 #include "models/book.hpp"
+#include "models/country.hpp"
 #include "models/department.hpp"
 #include "models/flight.hpp"
 #include "models/northwind.hpp"
 #include "models/recipe.hpp"
+#include "models/student.hpp"
+#include "models/user.hpp"
 
 using namespace matador::query;
 using namespace matador::test;
@@ -258,4 +261,166 @@ TEST_CASE("Create sql query data for entity with eager has many belongs to", "[q
     REQUIRE(jd.join_table->table_name() == expected_join_data[index].first);
     ++index;
   }
+}
+
+TEST_CASE("Create sql query data for entity with eager many to many", "[query][entity][builder]") {
+  using namespace matador::test;
+
+  schema scm;
+  auto result = scm.attach<recipe>("recipes")
+    .and_then( [&scm] { return scm.attach<ingredient>("ingredients"); } );
+  REQUIRE(result);
+
+  select_query_builder eqb(scm);
+
+  const auto it = scm.find(typeid(ingredient));
+  REQUIRE(it != scm.end());
+  const auto* col = it->table().find_column("id");
+  REQUIRE(col);
+  auto q = eqb.build<ingredient>(*col == _);
+
+  REQUIRE(q.is_ok());
+  const auto dialect = dialect_builder::make_default();
+  const auto sql = q->str(dialect);
+  const std::string expected_sql = R"(SELECT "t01"."id", "t01"."name", "t03"."id", "t03"."name" FROM "ingredients" "t01" LEFT JOIN "recipe_ingredients" "t02" ON "t01"."id" = "t02"."ingredient_id" LEFT JOIN "recipes" "t03" ON "t02"."recipe_id" = "t03"."id" WHERE "t01"."id" = ? ORDER BY "t01"."id" ASC)";
+  REQUIRE(expected_sql == sql);
+
+  const auto& data = eqb.query_data();
+
+  REQUIRE(data.root_table->table_name() == "ingredients");
+  REQUIRE(data.joins.size() == 2);
+  const auto ingredients = table("ingredients").as("t01");
+  const auto recipes = table("recipes").as("t03");
+  const std::vector<column> expected_columns {
+    column::make_plain(&ingredients, "id", "c01", matador::utils::basic_type::UInt32),
+    column::make_plain(&ingredients, "name", "c02", matador::utils::basic_type::Varchar),
+    column::make_plain(&recipes, "id", "c03", matador::utils::basic_type::UInt32),
+    column::make_plain(&recipes, "name", "c04", matador::utils::basic_type::Varchar),
+  };
+  REQUIRE(data.columns.size() == expected_columns.size());
+  for (size_t i = 0; i != expected_columns.size(); ++i) {
+    REQUIRE(expected_columns[i].equals(data.columns[i]));
+  }
+
+  std::vector<std::pair<std::string, std::string>> expected_join_data {
+    { "recipe_ingredients", R"("t01"."id" = "t02"."ingredient_id")"},
+    { "recipes", R"("t02"."recipe_id" = "t03"."id")"}
+  };
+
+  query_context qc;
+  size_t index{0};
+  criteria_evaluator evaluator(dialect, qc);
+  for (const auto &jd : data.joins) {
+    REQUIRE(jd.join_table->table_name() == expected_join_data[index].first);
+    ++index;
+  }
+}
+
+TEST_CASE("Create sql query data for entity with eager many to many (inverse part)", "[query][entity][builder]") {
+  using namespace matador::test;
+
+  schema scm;
+  auto result = scm.attach<student>("students")
+    .and_then( [&scm] { return scm.attach<course>("courses"); } );
+  REQUIRE(result);
+
+  select_query_builder eqb(scm);
+
+  const auto it = scm.find(typeid(course));
+  REQUIRE(it != scm.end());
+  const auto* col = it->table().find_column("id");
+  REQUIRE(col);
+  auto q = eqb.build<course>(*col == _);
+
+  REQUIRE(q.is_ok());
+  const auto dialect = dialect_builder::make_default();
+  const auto sql = q->str(dialect);
+  const std::string expected_sql = R"(SELECT "t01"."id", "t01"."title", "t03"."id", "t03"."name" FROM "courses" "t01" LEFT JOIN "student_courses" "t02" ON "t01"."id" = "t02"."course_id" LEFT JOIN "students" "t03" ON "t02"."student_id" = "t03"."id" WHERE "t01"."id" = ? ORDER BY "t01"."id" ASC)";
+  REQUIRE(expected_sql == sql);
+
+  const auto& data = eqb.query_data();
+
+  REQUIRE(data.root_table->table_name() == "courses");
+  REQUIRE(data.joins.size() == 2);
+  const auto courses = table("courses").as("t01");
+  const auto students = table("students").as("t03");
+  const std::vector<column> expected_columns {
+    column::make_plain(&courses, "id", "c01", matador::utils::basic_type::UInt32),
+    column::make_plain(&courses, "title", "c02", matador::utils::basic_type::Varchar),
+    column::make_plain(&students, "id", "c03", matador::utils::basic_type::UInt32),
+    column::make_plain(&students, "name", "c04", matador::utils::basic_type::Varchar)
+  };
+  REQUIRE(data.columns.size() == expected_columns.size());
+  for (size_t i = 0; i != expected_columns.size(); ++i) {
+    REQUIRE(expected_columns[i].equals(data.columns[i]));
+  }
+
+  std::vector<std::pair<std::string, std::string>> expected_join_data {
+    { "student_courses", R"("t01"."id" = "t02"."course_id")"},
+    { "students", R"("t02"."student_id" = "t03"."id")"}
+  };
+
+  query_context qc;
+  size_t index{0};
+  criteria_evaluator evaluator(dialect, qc);
+  for (const auto &jd : data.joins) {
+    REQUIRE(jd.join_table->table_name() == expected_join_data[index].first);
+    ++index;
+  }
+}
+
+TEST_CASE("Test eager relationship", "[query][entity][builder]") {
+  using namespace matador::test;
+
+  schema scm;
+  auto result = scm.attach<department>("departments")
+    .and_then( [&scm] { return scm.attach<employee>("employees"); } );
+  REQUIRE(result);
+
+  select_query_builder eqb(scm);
+
+  auto q = eqb.build<department>();
+  REQUIRE(q.is_ok());
+  const auto dialect = dialect_builder::make_default();
+  const auto sql = q->str(dialect);
+  const std::string expected_sql = R"(SELECT "t01"."id", "t01"."name", "t02"."id", "t02"."first_name", "t02"."last_name", "t02"."dep_id" FROM "departments" "t01" LEFT JOIN "employees" "t02" ON "t01"."id" = "t02"."dep_id" ORDER BY "t01"."id" ASC)";
+  REQUIRE(expected_sql == sql);
+}
+
+TEST_CASE("Test has one lazy relationship", "[query][entity][builder][has_one][lazy]") {
+  using namespace matador::test;
+
+  schema scm;
+  auto result = scm.attach<user>("users")
+    .and_then( [&scm] { return scm.attach<user_session>("user_sessions"); } );
+  REQUIRE(result);
+
+  select_query_builder eqb(scm);
+
+  auto q = eqb.build<user>();
+  REQUIRE(q.is_ok());
+  const auto dialect = dialect_builder::make_default();
+  const auto sql = q->str(dialect);
+  const std::string expected_sql = R"(SELECT "t01"."id", "t01"."name", "t01"."password" FROM "users" "t01" ORDER BY "t01"."id" ASC)";
+
+  REQUIRE(expected_sql == sql);
+}
+
+TEST_CASE("Test has one eager relationship", "[query][entity][builder][has_one][eager]") {
+  using namespace matador::test;
+
+  schema scm;
+  auto result = scm.attach<country>("countries")
+    .and_then( [&scm] { return scm.attach<capital>("capitals"); } );
+  REQUIRE(result);
+
+  select_query_builder eqb(scm);
+
+  auto q = eqb.build<country>();
+  REQUIRE(q.is_ok());
+  const auto dialect = dialect_builder::make_default();
+  const auto sql = q->str(dialect);
+  const std::string expected_sql = R"(SELECT "t01"."id", "t01"."name", "t02"."id", "t02"."name", "t02"."country_id" FROM "countries" "t01" LEFT JOIN "capitals" "t02" ON "t01"."id" = "t02"."country_id" ORDER BY "t01"."id" ASC)";
+
+  REQUIRE(expected_sql == sql);
 }
