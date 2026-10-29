@@ -1,7 +1,7 @@
 #ifndef OBJECT_PROXY_HPP
 #define OBJECT_PROXY_HPP
 
-#include "matador/query/primary_key_resolver.hpp"
+#include "matador/query/relations/primary_key_resolver.hpp"
 
 #include "matador/query/relations/object_resolver.hpp"
 
