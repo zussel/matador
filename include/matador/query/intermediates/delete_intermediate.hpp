@@ -18,7 +18,8 @@ public:
    * auto query = remove().from(customers).where("id"_col == 42);
    * @endcode
    */
-  delete_from_intermediate from(const table &tab) const;
+  [[nodiscard]] delete_from_intermediate from(const table &tab) const;
+  [[nodiscard]] delete_from_intermediate from(const std::string &table_name) const;
 };
 }
 

@@ -42,12 +42,12 @@ where_intermediate from_intermediate::where(std::unique_ptr<abstract_criteria>&&
 }
 
 where_intermediate from_intermediate::where_clause(std::unique_ptr<abstract_criteria> &&cond) const {
-  if (cond) {
     auto context = clone_context();
+  if (cond) {
     context->parts.push_back(std::make_shared<internal::query_where_part>(std::move(cond)));
     return {context};
   }
-  return {context_};
+  return {context};
 }
 
 group_by_intermediate from_intermediate::group_by(const column &column) const {

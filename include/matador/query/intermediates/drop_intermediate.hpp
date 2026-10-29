@@ -11,11 +11,12 @@ public:
   drop_intermediate();
 
   /** Drops a table without changing other states derived from this drop state. */
-  executable_query table(const table &tab) const;
+  [[nodiscard]] executable_query table(const std::string &table_name) const;
+  [[nodiscard]] executable_query table(const class table &tab) const;
   /** Drops a sequence without changing other states derived from this drop state. */
-  executable_query sequence(const std::string &sequence_name) const;
+  [[nodiscard]] executable_query sequence(const std::string &sequence_name) const;
   /** Drops a schema without changing other states derived from this drop state. */
-  executable_query schema(const std::string &schema_name) const;
+  [[nodiscard]] executable_query schema(const std::string &schema_name) const;
 };
 
 }

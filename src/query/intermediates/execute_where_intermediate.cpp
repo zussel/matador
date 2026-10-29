@@ -20,6 +20,10 @@ execute_limit_intermediate execute_where_intermediate::limit(size_t limit) const
   return {context};
 }
 
+execute_order_by_intermediate execute_where_intermediate::order_by(const std::string &column_name) const {
+  return order_by(column::make_plain(column_name));
+}
+
 execute_order_by_intermediate execute_where_intermediate::order_by(const column &col) const {
   return order_by({col});
 }

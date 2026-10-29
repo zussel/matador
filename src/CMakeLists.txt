@@ -12,6 +12,7 @@ add_library(matador
     ../include/matador/query/schema/basic_schema.hpp
     ../include/matador/query/schema/basic_table_info.hpp
     ../include/matador/utils/flags.hpp
+    query/builder/builder.cpp
     query/builder/query.cpp
     query/builder/query_builder.cpp
     query/builder/query_part.cpp

@@ -63,6 +63,10 @@ update_intermediate update(const table& table) {
    return update_intermediate{table};
 }
 
+update_intermediate update(const std::string &table_name) {
+  return update_intermediate{table{table_name}};
+}
+
 delete_intermediate remove() {
    return {};
 }

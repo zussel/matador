@@ -18,10 +18,11 @@ public:
   // query_into_intermediate into(const table &tab, const schema &scm) {
     // return into(tab, generator::columns<Type>(scm));
   // }
-  into_intermediate into(const table &tab, std::initializer_list<column> columns) const;
-  into_intermediate into(const table &tab, const std::vector<column> &columns) const;
-  into_intermediate into(const table &tab, const std::vector<std::string> &column_names) const;
-  into_intermediate into(const table &tab) const;
+  [[nodiscard]] into_intermediate into(const table &tab, std::initializer_list<column> columns) const;
+  [[nodiscard]] into_intermediate into(const table &tab, const std::vector<column> &columns) const;
+  [[nodiscard]] into_intermediate into(const std::string &table_name, const std::vector<std::string> &column_names) const;
+  [[nodiscard]] into_intermediate into(const table &tab, const std::vector<std::string> &column_names) const;
+  [[nodiscard]] into_intermediate into(const table &tab) const;
 };
 
 }

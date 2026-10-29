@@ -18,12 +18,13 @@ public:
     return returning(tcv);
   }
 
-  execute_limit_intermediate limit(size_t limit) const;
-  execute_order_by_intermediate order_by(const column &col) const;
-  execute_order_by_intermediate order_by(std::initializer_list<column> columns) const;
+  [[nodiscard]] execute_limit_intermediate limit(size_t limit) const;
+  [[nodiscard]] execute_order_by_intermediate order_by(const std::string &column_name) const;
+  [[nodiscard]] execute_order_by_intermediate order_by(const column &col) const;
+  [[nodiscard]] execute_order_by_intermediate order_by(std::initializer_list<column> columns) const;
 
 private:
-  fetchable_query returning(const std::vector<column> &table_columns) const;
+  [[nodiscard]] fetchable_query returning(const std::vector<column> &table_columns) const;
 };
 }
 

@@ -15,4 +15,8 @@ delete_from_intermediate delete_intermediate::from(const table &tab) const {
   context->parts.push_back(std::make_shared<internal::query_delete_from_part>(tab));
   return {context};
 }
+
+delete_from_intermediate delete_intermediate::from(const std::string &table_name) const {
+  return from(table{table_name});
 }
+} // namespace matador::query

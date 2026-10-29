@@ -7,6 +7,10 @@
 #include "matador/query/intermediates/create_intermediate.hpp"
 #include "matador/query/intermediates/delete_intermediate.hpp"
 #include "matador/query/intermediates/drop_intermediate.hpp"
+#include "matador/query/intermediates/execute_limit_intermediate.hpp"
+#include "matador/query/intermediates/execute_offset_intermediate.hpp"
+#include "matador/query/intermediates/execute_order_direction_intermediate.hpp"
+#include "matador/query/intermediates/execute_order_by_intermediate.hpp"
 #include "matador/query/intermediates/group_by_intermediate.hpp"
 #include "matador/query/intermediates/insert_intermediate.hpp"
 #include "matador/query/intermediates/join_intermediate.hpp"
@@ -86,6 +90,7 @@ column minimum(const std::string &column);
  * @endcode
  */
 [[nodiscard]] update_intermediate update(const table &table);
+[[nodiscard]] update_intermediate update(const std::string &table_name);
 /**
  * Starts a DELETE query.
  *

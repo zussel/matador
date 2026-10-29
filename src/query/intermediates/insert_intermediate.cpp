@@ -20,6 +20,10 @@ into_intermediate insert_intermediate::into(const table &tab, const std::vector<
   return {context};
 }
 
+into_intermediate insert_intermediate::into(const std::string &table_name, const std::vector<std::string> &column_names) const {
+  return into(query::table{table_name}, column_names);
+}
+
 into_intermediate insert_intermediate::into(const table &tab, const std::vector<std::string> &column_names) const {
   std::vector<column> columns;
   columns.reserve(column_names.size());

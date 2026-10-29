@@ -19,6 +19,7 @@ add_executable(MatadorTests
     query/IdentifierTest.cpp
     query/InsertIntermediateTest.cpp
     query/InsertQueryBuilderTest.cpp
+    query/QueryBuilderTest.cpp
     query/QueryResultImplTest.cpp
     query/RelationCompleterTest.cpp
     query/SchemaTest.cpp
@@ -37,9 +38,12 @@ add_executable(MatadorTests
     query/backend/test_result_reader.hpp
     query/backend/test_statement.cpp
     query/backend/test_statement.hpp
+    query/fixtures/QueryFixture.cpp
+    query/fixtures/QueryFixture.hpp
     query/utils/RecordingObserver.cpp
     query/utils/RecordingObserver.hpp
     utils/ConvertTest.cpp
+    utils/DataTypeTest.cpp
     utils/DependencyInjectionTest.cpp
     utils/MessageBusTest.cpp
     utils/ResultTest.cpp

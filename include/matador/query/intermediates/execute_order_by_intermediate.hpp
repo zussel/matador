@@ -10,8 +10,8 @@ class execute_order_by_intermediate : public intermediate {
 public:
   using intermediate::intermediate;
 
-  execute_order_direction_intermediate asc() const;
-  execute_order_direction_intermediate desc() const;
+  [[nodiscard]] execute_order_direction_intermediate asc() const;
+  [[nodiscard]] execute_order_direction_intermediate desc() const;
 };
 }
 

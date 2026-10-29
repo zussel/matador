@@ -16,6 +16,10 @@ update_intermediate update_intermediate::set(const column &col, column_expressio
   return {context};
 }
 
+update_intermediate update_intermediate::set(const std::string &column_name, column_expression &&expression) const {
+  return set(column::make_plain(column_name), std::move(expression));
+}
+
 execute_where_intermediate update_intermediate::where(std::unique_ptr<abstract_criteria> cond) const {
   return where_clause(std::move(cond));
 }

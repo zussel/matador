@@ -4,10 +4,15 @@
 #include "matador/query/internal/query_parts.hpp"
 
 namespace matador::query {
-executable_query query_add_foreign_key_constraint_intermediate::references( const table& tab, const std::vector<column>& columns) {
-  context_->parts.push_back(std::make_unique<internal::query_add_foreign_key_reference_part>(tab, columns));
+executable_query
+query_add_foreign_key_constraint_intermediate::references(const std::string &table_name, const std::vector<column> &columns) const {
+  return references(query::table{table_name}, columns);
+}
 
-  return {context_};
+executable_query query_add_foreign_key_constraint_intermediate::references( const table& tab, const std::vector<column>& columns) const {
+  auto context = clone_context();
+  context->parts.push_back(std::make_unique<internal::query_add_foreign_key_reference_part>(tab, columns));
+  return {context};
 }
 
 add_primary_key_constraint_intermediate add_key_constraint_intermediate::primary_key(const column& col) const {
@@ -15,9 +20,10 @@ add_primary_key_constraint_intermediate add_key_constraint_intermediate::primary
 }
 
 add_primary_key_constraint_intermediate add_key_constraint_intermediate::primary_keys( const std::vector<column>& columns) const {
-  context_->parts.push_back(std::make_unique<internal::query_add_primary_key_constraint_part>(columns));
+  auto context = clone_context();
+  context->parts.push_back(std::make_unique<internal::query_add_primary_key_constraint_part>(columns));
 
-  return {context_};
+  return {context};
 }
 
 query_add_foreign_key_constraint_intermediate add_key_constraint_intermediate::foreign_key(const column& col) const {
@@ -25,30 +31,35 @@ query_add_foreign_key_constraint_intermediate add_key_constraint_intermediate::f
 }
 
 query_add_foreign_key_constraint_intermediate add_key_constraint_intermediate::foreign_keys(const std::vector<column>& columns) const {
-  context_->parts.push_back(std::make_unique<internal::query_add_foreign_key_constraint_part>(columns));
+  auto context = clone_context();
+  context->parts.push_back(std::make_unique<internal::query_add_foreign_key_constraint_part>(columns));
 
-  return {context_};
+  return {context};
 }
 
-executable_query alter_table_intermediate::add_constraint(const constraint &c) {
-  context_->parts.push_back(std::make_unique<internal::add_constraint_part_by_constraint>(c));
+executable_query alter_table_intermediate::add_constraint(const constraint &c) const {
+  auto context = clone_context();
+  context->parts.push_back(std::make_unique<internal::add_constraint_part_by_constraint>(c));
 
-  return {context_};
+  return {context};
 }
 
-add_key_constraint_intermediate alter_table_intermediate::add_constraint(const std::string& name) {
-    context_->parts.push_back(std::make_unique<internal::query_add_key_constraint_part>(name));
+add_key_constraint_intermediate alter_table_intermediate::add_constraint(const std::string& name) const {
+  auto context = clone_context();
+    context->parts.push_back(std::make_unique<internal::query_add_key_constraint_part>(name));
 
-    return {context_};
+    return {context};
 }
 
-executable_query alter_table_intermediate::drop_constraint(const constraint &c) {
-  context_->parts.push_back(std::make_unique<internal::query_drop_key_constraint_part_by_constraint>(c));
-  return {context_};
+executable_query alter_table_intermediate::drop_constraint(const constraint &c) const {
+  auto context = clone_context();
+  context->parts.push_back(std::make_unique<internal::query_drop_key_constraint_part_by_constraint>(c));
+  return {context};
 }
 
-executable_query alter_table_intermediate::drop_constraint(const std::string& name) {
-    context_->parts.push_back(std::make_unique<internal::query_drop_key_constraint_part_by_name>(name));
-    return {context_};
+executable_query alter_table_intermediate::drop_constraint(const std::string& name) const {
+  auto context = clone_context();
+  context->parts.push_back(std::make_unique<internal::query_drop_key_constraint_part_by_name>(name));
+  return {context};
 }
 }

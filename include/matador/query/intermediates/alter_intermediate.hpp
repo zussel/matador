@@ -9,7 +9,8 @@ class alter_intermediate : public intermediate {
 public:
   alter_intermediate();
 
-  [[nodiscard]] alter_table_intermediate table(const table &tab) const;
+  [[nodiscard]] alter_table_intermediate table(const std::string &table_name) const;
+  [[nodiscard]] alter_table_intermediate table(const class table &tab) const;
 };
 }
 #endif //MATADOR_QUERY_ALTER_INTERMEDIATE_HPP

@@ -9,6 +9,10 @@ drop_intermediate::drop_intermediate() {
   context_->parts.push_back(std::make_unique<internal::query_drop_part>());
 }
 
+executable_query drop_intermediate::table(const std::string &table_name) const {
+  return this->table(query::table{table_name});
+}
+
 executable_query drop_intermediate::table(const class table &tab) const {
   auto context = clone_context();
   context->parts.push_back(std::make_shared<internal::query_drop_table_part>(tab));

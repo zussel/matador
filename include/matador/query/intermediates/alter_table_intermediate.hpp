@@ -15,7 +15,8 @@ class query_add_foreign_key_constraint_intermediate final : public intermediate 
 public:
     using intermediate::intermediate;
 
-    executable_query references(const table& tab, const std::vector<column>& columns = {});
+    [[nodiscard]] executable_query references(const std::string& table_name, const std::vector<column>& columns = {}) const;
+    [[nodiscard]] executable_query references(const table& tab, const std::vector<column>& columns = {}) const;
 
 private:
     std::vector<column> columns_;
@@ -35,10 +36,10 @@ class alter_table_intermediate final : public intermediate {
 public:
     using intermediate::intermediate;
 
-    executable_query add_constraint(const constraint& c);
-    add_key_constraint_intermediate add_constraint(const std::string& name);
-    executable_query drop_constraint(const constraint& c);
-    executable_query drop_constraint(const std::string& name);
+    executable_query add_constraint(const constraint& c) const;
+    add_key_constraint_intermediate add_constraint(const std::string& name) const;
+    executable_query drop_constraint(const constraint& c) const;
+    executable_query drop_constraint(const std::string& name) const;
 };
 }
 

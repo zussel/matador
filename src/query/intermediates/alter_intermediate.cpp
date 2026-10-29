@@ -7,9 +7,13 @@ namespace matador::query {
 alter_intermediate::alter_intermediate() {
   context_->parts.push_back(std::make_unique<internal::query_alter_part>());
 }
+alter_table_intermediate alter_intermediate::table(const std::string &table_name) const {
+  return this->table(query::table(table_name));
+}
 
 alter_table_intermediate alter_intermediate::table(const class table& tab) const {
-  context_->parts.push_back(std::make_unique<internal::query_alter_table_part>(tab));
-  return {context_};
+  auto context = clone_context();
+  context->parts.push_back(std::make_unique<internal::query_alter_table_part>(tab));
+  return {context};
 }
 }

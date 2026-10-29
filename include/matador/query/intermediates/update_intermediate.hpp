@@ -31,6 +31,7 @@ public:
 
   /** Adds an assignment without changing states previously derived from this update. */
   update_intermediate set(const column &col, column_expression &&expression) const;
+  update_intermediate set(const std::string &column_name, column_expression &&expression) const;
   // template<class Type>
   // query_set_intermediate set(const Type &obj) {
   // return set(generator::column_value_pairs(obj));
@@ -40,7 +41,7 @@ public:
   // return set(generator::column_value_pairs<Type>());
   // }
   /** Appends a WHERE clause without changing states previously derived from this update. */
-  execute_where_intermediate where(std::unique_ptr<abstract_criteria> cond) const;
+  [[nodiscard]] execute_where_intermediate where(std::unique_ptr<abstract_criteria> cond) const;
 
 private:
   execute_where_intermediate where_clause(std::unique_ptr<abstract_criteria> &&cond) const;

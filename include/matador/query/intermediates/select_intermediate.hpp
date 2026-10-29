@@ -29,7 +29,7 @@ public:
    * auto query = select().nextval("customer_id_seq");
    * @endcode
    */
-  fetchable_query nextval(const std::string& sequence_name) const;
+  [[nodiscard]] fetchable_query nextval(const std::string& sequence_name) const;
   /**
    * Creates a query that returns the current value of a sequence.
    *
@@ -40,7 +40,7 @@ public:
    * auto query = select().currval("customer_id_seq");
    * @endcode
    */
-  fetchable_query currval(const std::string& sequence_name) const;
+  [[nodiscard]] fetchable_query currval(const std::string& sequence_name) const;
 
   /**
    * Appends a FROM clause and transitions to the fetchable from state.
@@ -54,16 +54,29 @@ public:
    * @endcode
    */
   template<typename... Tables>
-  from_intermediate from(const Tables&... tables) const {
+  [[nodiscard]] from_intermediate from(Tables&&... tables) const {
     if constexpr (sizeof...(tables) == 0) {
       throw std::invalid_argument("SELECT requires at least one table in FROM");
     }
-    std::vector<table> v { tables... };
+
+    std::vector<table> v;
+    v.reserve(sizeof...(tables));
+    (v.emplace_back(to_table(std::forward<Tables>(tables))), ...);
+
     return from(v);
   }
 
+  [[nodiscard]] from_intermediate from(std::initializer_list<std::string_view> tables) const;
+
 private:
-  from_intermediate from(const std::vector<table>& tables) const;
+  [[nodiscard]] from_intermediate from(const std::vector<table>& tables) const;
+
+  [[nodiscard]] static table to_table(const table& tab);
+  [[nodiscard]] static table to_table(table&& tab);
+  [[nodiscard]] static table to_table(const std::string& table_name);
+  [[nodiscard]] static table to_table(std::string&& table_name);
+  [[nodiscard]] static table to_table(std::string_view table_name);
+  [[nodiscard]] static table to_table(const char* table_name);
 };
 
 }
