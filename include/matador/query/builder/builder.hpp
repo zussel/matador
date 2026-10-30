@@ -43,7 +43,7 @@ private:
   std::string column_name_;
   std::string ref_table_name_;
   std::string ref_column_name_;
-  column_constraints type_{};
+  column_constraint type_{};
 };
 
 constraint_builder constraint(std::string name);

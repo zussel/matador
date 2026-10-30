@@ -36,10 +36,10 @@ class alter_table_intermediate final : public intermediate {
 public:
     using intermediate::intermediate;
 
-    executable_query add_constraint(const constraint& c) const;
-    add_key_constraint_intermediate add_constraint(const std::string& name) const;
-    executable_query drop_constraint(const constraint& c) const;
-    executable_query drop_constraint(const std::string& name) const;
+    [[nodiscard]] executable_query add_constraint(const class constraint& c) const;
+    [[nodiscard]] add_key_constraint_intermediate add_constraint(const std::string& name) const;
+    [[nodiscard]] executable_query drop_constraint(const class constraint& c) const;
+    [[nodiscard]] executable_query drop_constraint(const std::string& name) const;
 };
 }
 

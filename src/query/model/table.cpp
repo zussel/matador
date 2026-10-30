@@ -294,7 +294,7 @@ void table::rebind_columns() {
 
 void table::rebind_constraints() {
   for (auto& c : constraints_) {
-    c.table_ = this;
+    c.rebind_table(*this);
   }
 }
 

@@ -55,8 +55,10 @@ constraint_builder& constraint_builder::references( std::string table, std::stri
 }
 
 constraint_builder::operator class constraint() const {
-  return constraint::make_column_constraint()
-  return {constraint_name_, column_name_, ref_table_name_, type_, ref_table_name_, ref_column_name_};
+  if (ref_table_name_.empty()) {
+    return constraint::make_column_constraint(constraint_name_, column_name_, type_);
+  }
+  return constraint::make_fk_constraint(constraint_name_, column_name_, ref_table_name_, ref_column_name_);
 }
 
 constraint_builder constraint( std::string name ) {

@@ -462,25 +462,25 @@ void prepare_prototype(std::vector<column> &prototype, const std::string &column
 
 std::string build_constraint(const constraint& cons, const dialect& d) {
   std::string result;
-  if (!cons.column().column_name().empty()) {
-    result.append(d.constraint()).append(" ").append(cons.column().column_name()).append(" ");
+  if (!cons.column_name().empty()) {
+    result.append(d.constraint()).append(" ").append(cons.column_name()).append(" ");
   }
   if (cons.is_primary_key_constraint()) {
     result
       .append(d.primary_key())
       .append(" (")
-      .append(cons.column().column_name())
+      .append(cons.column_name())
       .append(")");
   } else if (cons.is_foreign_key_constraint()) {
     result
       .append(d.foreign_key())
       .append(" (")
-      .append(cons.column().column_name())
+      .append(cons.column_name())
       .append(") ")
       .append(d.references()).append(" ")
-      .append(cons.ref_table().name())
+      .append(cons.ref_table_name())
       .append(" (")
-      .append(cons.ref_column().column_name())
+      .append(cons.ref_column_name())
       .append(")");
   } else {
     // handle error
@@ -507,13 +507,13 @@ std::string query_builder::build_table_name(const dialect& d, const table& t) {
 std::string query_builder::build_add_constraint_string(const constraint& c) const {
   std::string result = " " + dialect_->add_constraint() + " " + build_constraint_name(c) + " ";
   if (c.is_primary_key_constraint()) {
-    result.append(dialect_->primary_key()).append(" (").append(c.column().column_name()).append(")");
+    result.append(dialect_->primary_key()).append(" (").append(c.column_name()).append(")");
   } else if (c.is_foreign_key_constraint()) {
-    result.append(dialect_->foreign_key()).append(" (").append(c.column().column_name()).append(") ").
-           append(dialect_->references()).append(" ").append(c.ref_table().name()).append(" (").append(
-             c.ref_column().column_name()).append(")");
+    result.append(dialect_->foreign_key()).append(" (").append(c.column_name()).append(") ").
+           append(dialect_->references()).append(" ").append(c.ref_table_name()).append(" (").append(
+             c.ref_column_name()).append(")");
   } else if (c.is_unique_constraint()) {
-    result.append(dialect_->unique()).append(" (").append(c.column().column_name()).append(")");
+    result.append(dialect_->unique()).append(" (").append(c.column_name()).append(")");
   }
   return result;
 }
@@ -524,13 +524,13 @@ std::string query_builder::build_drop_constraint_string(const constraint& c) con
 
 std::string query_builder::build_constraint_name(const constraint& c) {
   if (c.is_primary_key_constraint()) {
-    return "PK_" + c.table().table_name();
+    return "PK_" + c.table_name();
   }
   if (c.is_foreign_key_constraint()) {
-    return "FK_" + c.column().column_name() + "_" + c.table().table_name();
+    return "FK_" + c.column_name() + "_" + c.table_name();
   }
   if (c.is_unique_constraint()) {
-    return "UK_" + c.column().column_name() + "_" + c.table().table_name();
+    return "UK_" + c.column_name() + "_" + c.table_name();
   }
   return "";
 }

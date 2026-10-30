@@ -106,9 +106,8 @@ TEST_CASE("Table: constraints retain their table and column identity", "[query][
 
   const auto& primary_key = constraints[0];
   REQUIRE(primary_key.kind() == column_constraint::PrimaryKey);
-  REQUIRE(primary_key.table() == orders);
-  REQUIRE(&primary_key.column() == &orders.columns()[0]);
-  REQUIRE(primary_key.column_index() == 0);
+  REQUIRE(primary_key.table_name() == orders.table_name());
+  REQUIRE(primary_key.column_name() == orders.columns()[0].column_name());
   REQUIRE(primary_key.is_primary_key_constraint());
   REQUIRE_FALSE(primary_key.is_foreign_key_constraint());
   REQUIRE_FALSE(primary_key.is_not_null_constraint());
@@ -116,32 +115,26 @@ TEST_CASE("Table: constraints retain their table and column identity", "[query][
   const auto& not_null = constraints[1];
   REQUIRE(not_null.kind() == column_constraint::NotNull);
   REQUIRE(not_null.is_not_null_constraint());
-  REQUIRE(not_null.column_index() == 0);
 
   const auto& foreign_key = constraints[2];
   REQUIRE(foreign_key.kind() == column_constraint::ForeignKey);
   REQUIRE(foreign_key.is_foreign_key_constraint());
-  REQUIRE(foreign_key.column_index() == 1);
 
   const auto& unique = constraints[3];
   REQUIRE(unique.kind() == column_constraint::Unique);
   REQUIRE(unique.is_unique_constraint());
-  REQUIRE(unique.column_index() == 2);
 
   const auto& index = constraints[4];
   REQUIRE(index.kind() == column_constraint::Index);
   REQUIRE(index.is_index_constraint());
-  REQUIRE(index.column_index() == 3);
 
   const auto& identity = constraints[5];
   REQUIRE(identity.kind() == column_constraint::Identity);
   REQUIRE(identity.is_identity_constraint());
-  REQUIRE(identity.column_index() == 4);
 
   const auto& default_value = constraints[6];
   REQUIRE(default_value.kind() == column_constraint::Default);
   REQUIRE(default_value.is_default_constraint());
-  REQUIRE(default_value.column_index() == 5);
 
   const table copied{orders};
   const table aliased = orders.as("o");
@@ -150,8 +143,8 @@ TEST_CASE("Table: constraints retain their table and column identity", "[query][
   for (const auto* derived : {&copied, &aliased, &moved}) {
     const auto derived_constraints = derived->constraints();
     REQUIRE(derived_constraints.size() == constraints.size());
-    REQUIRE(&derived_constraints.front().table() == derived);
-    REQUIRE(&derived_constraints.front().column() == &derived->columns().front());
+    REQUIRE(derived_constraints.front().table_name() == derived->table_name());
+    REQUIRE(derived_constraints.front().column_name() == derived->columns().front().column_name());
   }
 }
 
