@@ -35,7 +35,7 @@ TEST_CASE_METHOD(QueryFixture, "Test alter table sql statement", "[query][alter]
 
 TEST_CASE_METHOD(QueryFixture, "Test create table sql statement string", "[query]") {
   auto result = create()
-    .table({"person"})
+    .table("person")
     .columns({
         col("id", basic_type::UInt32),
         col("name", basic_type::Varchar, 255),
@@ -49,7 +49,7 @@ TEST_CASE_METHOD(QueryFixture, "Test create table sql statement string", "[query
   REQUIRE(result == R"##(CREATE TABLE "person" ("id" BIGINT NOT NULL, "name" VARCHAR(255) NOT NULL, "age" INTEGER NOT NULL, CONSTRAINT PK_person PRIMARY KEY (id)))##");
 
   result = create()
-    .table({"person"})
+    .table("person")
     .columns({
         col("id", basic_type::UInt32).primary_key().identity(),
         col("name", basic_type::Varchar, 255),

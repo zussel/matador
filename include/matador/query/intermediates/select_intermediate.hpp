@@ -63,13 +63,13 @@ public:
     v.reserve(sizeof...(tables));
     (v.emplace_back(to_table(std::forward<Tables>(tables))), ...);
 
-    return from(v);
+    return from_v(v);
   }
 
   [[nodiscard]] from_intermediate from(std::initializer_list<std::string_view> tables) const;
 
 private:
-  [[nodiscard]] from_intermediate from(const std::vector<table>& tables) const;
+  [[nodiscard]] from_intermediate from_v(const std::vector<table>& tables) const;
 
   [[nodiscard]] static table to_table(const table& tab);
   [[nodiscard]] static table to_table(table&& tab);

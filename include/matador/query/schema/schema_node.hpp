@@ -51,7 +51,7 @@ public:
   [[nodiscard]] node_ptr prev() const;
 
   [[nodiscard]] const basic_table_info& info() const;
-  [[nodiscard]] const table& table() const;
+  [[nodiscard]] const class table& table() const;
 
   void update_name(const std::string& name);
 

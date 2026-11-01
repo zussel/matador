@@ -74,6 +74,9 @@ public:
   // ReSharper disable once CppNonExplicitConversionOperator
   operator const std::vector<query::column>&() const; // NOLINT(*-explicit-constructor)
 
+  /** Finds a column by its index, or returns nullptr. */
+  const column* operator[](size_t index) const;
+  [[nodiscard]] const column* find_column(size_t index) const;
   /** Finds a column by its unqualified schema name, or returns nullptr. */
   const column* operator[](const std::string& column_name) const;
   [[nodiscard]] const column* find_column(std::string_view column_name) const;

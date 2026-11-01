@@ -3,6 +3,7 @@
 #include "matador/query/model/table.hpp"
 
 #include <stdexcept>
+#include <utility>
 
 namespace matador::query {
 
@@ -24,30 +25,55 @@ bool is_valid_constraint_kind(const column_constraint kind) {
 }
 } // namespace
 
-constraint constraint::make_column_constraint(
-  const query::table& table,
-  const std::size_t column_index,
-  const column_constraint kind
-) {
-  return constraint{indexed_column_ref{&table, column_index}, kind};
+constraint constraint::make_column_constraint(const query::table &table,
+                                              const std::size_t column_index,
+                                              const column_constraint kind) {
+  if (column_index >= table.columns().size()) {
+    throw std::out_of_range("Column index is out of range");
+  }
+  if (!table.columns()[column_index].constraints().has(kind)) {
+    throw std::invalid_argument("Constraint kind is not declared for the referenced column");
+  }
+  return make_column_constraint(table.table_name(), table.find_column(column_index)->column_name(), kind);
 }
 
 constraint constraint::make_column_constraint(
+  std::string name,
   std::string table_name,
   std::string column_name,
   const column_constraint kind
 ) {
-  return constraint{
-    named_column_ref{std::move(table_name), std::move(column_name)},
-    kind
-  };
+  if (!is_valid_constraint_kind(kind)) {
+    throw std::invalid_argument("Constraint kind must be a single declared column constraint");
+  }
+
+  return constraint{std::move(name), {std::move(table_name), std::move(column_name)}, kind};
 }
+
+constraint constraint::make_column_constraint(std::string table_name,
+                                              std::string column_name,
+                                              const column_constraint kind) {
+  if (!is_valid_constraint_kind(kind)) {
+    throw std::invalid_argument("Constraint kind must be a single declared column constraint");
+  }
+
+  return constraint{std::nullopt, {std::move(table_name), std::move(column_name)}, kind};
+}
+
 constraint constraint::make_fk_constraint(
   const query::table& table,
   const std::size_t column_index,
   const class table& ref_table
 ) {
-  return make_fk_constraint(table, column_index, ref_table, 0);
+  if (column_index >= table.columns().size()) {
+    throw std::out_of_range("Column index is out of range");
+  }
+
+  if (!ref_table.primary_key_column()) {
+    throw std::invalid_argument("Referenced table must have a primary key");
+  }
+
+  return make_fk_constraint(table, column_index, ref_table, ref_table.primary_key_column()->index());
 }
 
 constraint constraint::make_fk_constraint(
@@ -57,62 +83,41 @@ constraint constraint::make_fk_constraint(
   const std::size_t ref_column_index
 ) {
   return constraint{
-    indexed_column_ref{&table, column_index},
+    std::nullopt,
+    {table.table_name(), table.find_column(column_index)->column_name()},
     column_constraint::ForeignKey,
-    indexed_column_ref{&ref_table, ref_column_index}
+    column_ref{ref_table.table_name(), ref_table.find_column(ref_column_index)->column_name()}
   };
 }
 
 constraint constraint::make_fk_constraint(
+  std::string name,
   std::string table_name,
   std::string column_name,
   std::string ref_table_name,
   std::string ref_column_name
 ) {
   return constraint{
-    named_column_ref{std::move(table_name), std::move(column_name)},
+    std::move(name),
+    {std::move(table_name), std::move(column_name)},
     column_constraint::ForeignKey,
-    named_column_ref{std::move(ref_table_name), std::move(ref_column_name)}
+    column_ref{std::move(ref_table_name), std::move(ref_column_name)}
   };
 }
 
-constraint::constraint(column_ref column, const column_constraint kind, optional_column_ref ref_column)
-: column_(std::move(column))
+constraint::constraint(std::optional<std::string> name, column_ref column, const column_constraint kind, std::optional<column_ref> ref_column)
+: name_(std::move(name))
+, column_(std::move(column))
 , ref_column_(std::move(ref_column))
 , kind_(kind) {
-  if (!is_valid_constraint_kind(kind)) {
-    throw std::invalid_argument("Constraint kind must be a single declared column constraint");
-  }
+}
 
-  std::visit([kind](const auto& ref) {
-    using ref_type = std::decay_t<decltype(ref)>;
+bool constraint::has_name() const {
+  return name_.has_value();
+}
 
-    if constexpr (std::is_same_v<ref_type, indexed_column_ref>) {
-      validate_indexed_column_ref(ref, kind);
-    } else if constexpr (std::is_same_v<ref_type, named_column_ref>) {
-      validate_named_column_ref(ref);
-    }
-  }, column_);
-
-  if (kind != column_constraint::ForeignKey && !std::holds_alternative<std::monostate>(ref_column_)) {
-    throw std::invalid_argument("Only foreign key constraints may reference another table");
-  }
-
-  std::visit([](const auto& ref) {
-    using ref_type = std::decay_t<decltype(ref)>;
-
-    if constexpr (std::is_same_v<ref_type, indexed_column_ref>) {
-      if (ref.table == nullptr) {
-        throw std::invalid_argument("Referenced constraint table must not be null");
-      }
-
-      if (ref.column_index >= ref.table->columns().size()) {
-        throw std::out_of_range("Referenced constraint column index is out of range");
-      }
-    } else if constexpr (std::is_same_v<ref_type, named_column_ref>) {
-      validate_named_column_ref(ref);
-    }
-  }, ref_column_);
+std::string constraint::name() const {
+  return name_.value_or("");
 }
 
 column_constraint constraint::kind() const {
@@ -120,27 +125,11 @@ column_constraint constraint::kind() const {
 }
 
 std::string constraint::table_name() const {
-  return std::visit([](const auto& ref) -> std::string {
-    using ref_type = std::decay_t<decltype(ref)>;
-
-    if constexpr (std::is_same_v<ref_type, indexed_column_ref>) {
-      return ref.table->name();
-    } else {
-      return ref.table_name;
-    }
-  }, column_);
+  return column_.table_name;
 }
 
 std::string constraint::column_name() const {
-  return std::visit([](const auto& ref) -> std::string {
-    using ref_type = std::decay_t<decltype(ref)>;
-
-    if constexpr (std::is_same_v<ref_type, indexed_column_ref>) {
-      return ref.table->columns().at(ref.column_index).column_name();
-    } else {
-      return ref.column_name;
-    }
-  }, column_);
+  return column_.column_name;
 }
 
 bool constraint::is_index_constraint() const {
@@ -172,80 +161,20 @@ bool constraint::is_not_null_constraint() const {
 }
 
 bool constraint::has_ref_table() const {
-  return !std::holds_alternative<std::monostate>(ref_column_);
+  return ref_column_.has_value();
 }
 
 std::string constraint::ref_table_name() const {
-  return std::visit([](const auto& ref) -> std::string {
-    using ref_type = std::decay_t<decltype(ref)>;
-
-    if constexpr (std::is_same_v<ref_type, std::monostate>) {
-      return {};
-    } else if constexpr (std::is_same_v<ref_type, indexed_column_ref>) {
-      return ref.table->name();
-    } else {
-      return ref.table_name;
-    }
-  }, ref_column_);
+  return ref_column_.value_or({}).table_name;
 }
 
 std::string constraint::ref_column_name() const {
-  return std::visit([](const auto& ref) -> std::string {
-    using ref_type = std::decay_t<decltype(ref)>;
-
-    if constexpr (std::is_same_v<ref_type, std::monostate>) {
-      return {};
-    } else if constexpr (std::is_same_v<ref_type, indexed_column_ref>) {
-      return ref.table->columns().at(ref.column_index).column_name();
-    } else {
-      return ref.column_name;
-    }
-  }, ref_column_);
-}
-
-const constraint::indexed_column_ref& constraint::as_indexed_ref(const column_ref& ref) {
-  const auto* indexed = std::get_if<indexed_column_ref>(&ref);
-  if (indexed == nullptr) {
-    throw std::logic_error("Constraint is not bound to a table object");
-  }
-  return *indexed;
-}
-
-const constraint::indexed_column_ref& constraint::as_indexed_ref(const optional_column_ref& ref) {
-  const auto* indexed = std::get_if<indexed_column_ref>(&ref);
-  if (indexed == nullptr) {
-    throw std::logic_error("Constraint reference is not bound to a table object");
-  }
-  return *indexed;
-}
-
-void constraint::validate_indexed_column_ref(const indexed_column_ref& ref, const column_constraint kind) {
-  if (ref.table == nullptr) {
-    throw std::invalid_argument("Constraint table must not be null");
-  }
-
-  if (ref.column_index >= ref.table->columns().size()) {
-    throw std::out_of_range("Constraint column index is out of range");
-  }
-
-  if (!ref.table->columns()[ref.column_index].constraints().has(kind)) {
-    throw std::invalid_argument("Constraint kind is not declared for the referenced column");
-  }
-}
-
-void constraint::validate_named_column_ref(const named_column_ref& ref) {
-  if (ref.table_name.empty()) {
-    throw std::invalid_argument("Constraint table name must not be empty");
-  }
-
-  if (ref.column_name.empty()) {
-    throw std::invalid_argument("Constraint column name must not be empty");
-  }
+  return ref_column_.value_or({}).column_name;
 }
 
 void constraint::rebind_table(const class table& table) {
-  if (auto* ref = std::get_if<indexed_column_ref>(&column_)) {
-    ref->table = &table;
-  }
+  // if (auto* ref = std::get_if<indexed_column_ref>(&column_)) {
+    // ref->table = &table;
+  // }
 }
 } // namespace matador::query

@@ -462,7 +462,9 @@ void prepare_prototype(std::vector<column> &prototype, const std::string &column
 
 std::string build_constraint(const constraint& cons, const dialect& d) {
   std::string result;
-  if (!cons.column_name().empty()) {
+  if (cons.has_name()) {
+    result.append(d.constraint()).append(" ").append(cons.name()).append(" ");
+  } else if (!cons.column_name().empty()) {
     result.append(d.constraint()).append(" ").append(cons.column_name()).append(" ");
   }
   if (cons.is_primary_key_constraint()) {
@@ -523,6 +525,9 @@ std::string query_builder::build_drop_constraint_string(const constraint& c) con
 }
 
 std::string query_builder::build_constraint_name(const constraint& c) {
+  if (c.has_name()) {
+    return c.name();
+  }
   if (c.is_primary_key_constraint()) {
     return "PK_" + c.table_name();
   }

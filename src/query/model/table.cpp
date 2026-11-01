@@ -183,6 +183,14 @@ table::operator const std::vector<query::column>&() const {
   return columns_;
 }
 
+const column *table::operator[](const size_t index) const {
+  return find_column(index);
+}
+
+const column *table::find_column(const size_t index) const {
+  return index < columns_.size() ? &columns_[index] : nullptr;
+}
+
 const column* table::operator[](const std::string &column_name) const {
   return find_column(column_name);
 }

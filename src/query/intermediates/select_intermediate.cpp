@@ -26,7 +26,7 @@ fetchable_query select_intermediate::currval(const std::string &sequence_name) c
 
 from_intermediate
 select_intermediate::from(const std::initializer_list<std::string_view> tables) const {
-  if (tables.empty()) {
+  if (tables.size() == 0) {
     throw std::invalid_argument("SELECT requires at least one table in FROM");
   }
 
@@ -37,10 +37,10 @@ select_intermediate::from(const std::initializer_list<std::string_view> tables) 
     v.emplace_back(std::string{table_name});
   }
 
-  return from(v);
+  return from_v(v);
 }
 
-from_intermediate select_intermediate::from(const std::vector<table> &tables) const {
+from_intermediate select_intermediate::from_v(const std::vector<table> &tables) const {
   if (tables.empty()) {
     throw std::invalid_argument("SELECT requires at least one table in FROM");
   }
