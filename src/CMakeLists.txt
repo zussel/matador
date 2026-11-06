@@ -122,6 +122,7 @@ add_library(matador
     query/schema/schema_node.cpp
     query/schema/schema_node_iterator.cpp
     query/schema/table_generator.cpp
+    utils/date.cpp
     utils/default_type_traits.cpp
     utils/error.cpp
     utils/error_exception.cpp
@@ -130,6 +131,7 @@ add_library(matador
     utils/message_bus.cpp
     utils/os.cpp
     utils/string.cpp
+    utils/timestamp.cpp
     utils/types.cpp
     utils/version.cpp
 )
