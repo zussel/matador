@@ -216,6 +216,47 @@ TEST_CASE("Insert query builder inserts many-to-many foreign objects before rela
   REQUIRE(second_relation_sql.find("INSERT INTO \"recipe_ingredients\"") != std::string::npos);
 }
 
+TEST_CASE("Insert query builder inserts many-to-many foreign objects before relation rev", "[query][insert_builder]") {
+  schema scm;
+  REQUIRE(scm.attach<recipe>("recipes").is_ok());
+  REQUIRE(scm.attach<ingredient>("ingredients").is_ok());
+
+  const auto dialect = dialect_builder::make_default();
+  const auto contexts = make_contexts(scm, dialect);
+
+  insert_query_builder<ingredient> builder(scm, contexts);
+
+  const auto flour = make_object<ingredient>(1U, "flour");
+  const auto pancakes = make_object<recipe>(2U, "pancakes");
+  const auto bread = make_object<recipe>(3U, "bread");
+
+  flour->recipes.push_back(pancakes);
+  flour->recipes.push_back(bread);
+
+  const auto result = builder.build(flour);
+
+  REQUIRE(result.is_ok());
+  REQUIRE(result->size() == 5);
+
+  const auto root_sql = insert_sql(*(*result)[0]);
+  const auto first_recipe_sql = insert_sql(*(*result)[1]);
+  const auto second_recipe_sql = insert_sql(*(*result)[2]);
+  const auto first_relation_sql = (*result)[3]->ctx().sql;
+  const auto second_relation_sql = (*result)[4]->ctx().sql;
+
+  INFO(root_sql);
+  INFO(first_recipe_sql);
+  INFO(second_recipe_sql);
+  INFO(first_relation_sql);
+  INFO(second_relation_sql);
+
+  REQUIRE(root_sql.find("INSERT INTO \"ingredients\"") != std::string::npos);
+  REQUIRE(first_recipe_sql.find("INSERT INTO \"recipes\"") != std::string::npos);
+  REQUIRE(second_recipe_sql.find("INSERT INTO \"recipes\"") != std::string::npos);
+  REQUIRE(first_relation_sql.find("INSERT INTO \"recipe_ingredients\"") != std::string::npos);
+  REQUIRE(second_relation_sql.find("INSERT INTO \"recipe_ingredients\"") != std::string::npos);
+}
+
 TEST_CASE("Insert query builder can be reused without leaking visited relation state", "[query][insert_builder]") {
   schema scm;
   REQUIRE(scm.attach<ingredient>("ingredients").is_ok());

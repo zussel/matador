@@ -262,3 +262,45 @@ TEST_CASE("Delete query builder ignores transient many-to-many objects", "[query
   INFO(sql);
   REQUIRE(sql.find("DELETE FROM \"ingredients\"") != std::string::npos);
 }
+
+TEST_CASE("Test delete builder has many to many", "[query][delete_query_builder][many_to_many]") {
+  schema scm;
+  const auto result = scm.attach<recipe>("recipes")
+    .and_then( [&scm] { return scm.attach<ingredient>("ingredients"); } );
+  REQUIRE(result.is_ok());
+
+  std::vector ingredients {
+    make_object<ingredient>(1, "Apple"),
+    make_object<ingredient>(2, "Strawberry"),
+    make_object<ingredient>(3, "Pineapple"),
+    make_object<ingredient>(4, "Sugar"),
+    make_object<ingredient>(5, "Flour"),
+    make_object<ingredient>(6, "Butter"),
+    make_object<ingredient>(7, "Beans")
+  };
+
+  for (auto &i : ingredients) {
+    i.change_state(object_state::Persistent);
+  }
+
+  std::vector recipes {
+    make_object<recipe>(1, "Apple Pie", std::vector{ingredients[0], ingredients[3], ingredients[4]}),
+    make_object<recipe>(2, "Strawberry Cake", std::vector{ingredients[5], ingredients[6]}),
+    make_object<recipe>(3, "Pineapple Pie", std::vector{ingredients[0], ingredients[1], ingredients[2]})
+  };
+
+  for (auto &r : recipes) {
+    r.change_state(object_state::Persistent);
+  }
+
+  const auto dialect = dialect_builder::make_default();
+  const auto contexts = make_contexts(scm, dialect);
+  delete_query_builder<recipe> dqb(scm, contexts);
+
+  auto build_result = dqb.build(recipes[0]);
+  REQUIRE(build_result.is_ok());
+
+  const auto& stmts = *build_result;
+  REQUIRE_FALSE(stmts.empty());
+  REQUIRE(stmts.size() == 7);
+}
