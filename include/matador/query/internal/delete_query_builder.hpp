@@ -132,7 +132,7 @@ public:
       return;
     }
 
-    using relation_value_type = many_to_many_relation<ForeignType, ObjectType>;
+    using relation_value_type = many_to_many_relation<ObjectType, ForeignType>;
     const std::type_index foreign_type{typeid(ForeignType)};
     const std::type_index local_type{typeid(ObjectType)};
     on_many_to_many_objects<relation_value_type>(
@@ -157,7 +157,7 @@ public:
       return;
     }
 
-    using relation_value_type = many_to_many_relation<ObjectType, ForeignType>;
+    using relation_value_type = many_to_many_relation<ForeignType, ObjectType>;
     const std::type_index foreign_type{typeid(ForeignType)};
     const std::type_index local_type{typeid(ObjectType)};
     on_many_to_many_objects<relation_value_type>(

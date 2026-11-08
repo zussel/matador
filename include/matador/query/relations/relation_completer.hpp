@@ -229,8 +229,8 @@ void relation_completer<Type, Observers...>::on_has_many_to_many(const char *id,
                                                    const char *join_column,
                                                    const char *inverse_join_column,
                                                    const foreign_key_options &/*attr*/) {
-  using ForeignType = typename CollectionType::value_type::value_type;
   using LocalType = Type;
+  using ForeignType = typename CollectionType::value_type::value_type;
 
   ensure_foreign_node_announced<ForeignType>();
 
@@ -247,20 +247,20 @@ void relation_completer<Type, Observers...>::on_has_many_to_many(const char *id,
 template<typename Type, template<typename> typename... Observers>
 template<class CollectionType>
 void relation_completer<Type, Observers...>::on_has_many_to_many(const char *id,
-                                                   CollectionType &collection,
-                                                   const foreign_key_options &attr) {
+                                                   CollectionType &/*collection*/,
+                                                   const foreign_key_options &/*attr*/) {
   using LocalType = typename CollectionType::value_type::value_type;
   using ForeignType = Type;
 
   ensure_foreign_node_announced<LocalType>();
 
   resolve_actions_.push_back([this, id = std::string(id)] {
-    const auto join_columns = join_columns_collector_.collect<typename CollectionType::value_type::value_type>();
+    const auto join_columns = join_columns_collector_.collect<LocalType>();
 
-    resolve_has_many_to_many<ForeignType, LocalType>(
+    resolve_has_many_to_many<LocalType, ForeignType>(
       id,
-      join_columns.inverse_join_column.c_str(),
-      join_columns.join_column.c_str());
+      join_columns.join_column.c_str(),
+      join_columns.inverse_join_column.c_str());
   });
 }
 
@@ -473,7 +473,11 @@ template<typename LocalType, typename ForeignType>
 void relation_completer<Type, Observers...>::attach_relation_node(const std::string &name, const std::string &join_column, const std::string &inverse_join_column) {
   using relation_value_type = many_to_many_relation<LocalType, ForeignType>;
 
-  auto &foreign_node = require_node(typeid(ForeignType), "relation completer: foreign node not found");
+  const std::type_index local_type_index = typeid(LocalType);
+  const std::type_index foreign_type_index = typeid(ForeignType);
+
+  auto &local_node = local_type_index == current_node_->type_index() ? *current_node_ : require_node(local_type_index, "relation completer: foreign node not found");
+  auto &foreign_node = require_node(foreign_type_index, "relation completer: foreign node not found");
 
   if (const auto it = repo_.find_node(name); it != repo_.end()) {
     return;
@@ -498,15 +502,15 @@ void relation_completer<Type, Observers...>::attach_relation_node(const std::str
 
   auto *attached_node = result.value();
   const auto local_endpoint = std::make_shared<relation_endpoint>(name, relation_type::HasMany, *attached_node);
-  const auto join_endpoint = std::make_shared<relation_endpoint>(join_column, relation_type::BelongsTo, *current_node_);
+  const auto join_endpoint = std::make_shared<relation_endpoint>(join_column, relation_type::BelongsTo, local_node);
   const auto inverse_join_endpoint = std::make_shared<relation_endpoint>(inverse_join_column, relation_type::BelongsTo, foreign_node);
   const auto foreign_endpoint = std::make_shared<relation_endpoint>(name, relation_type::HasMany, *attached_node);
 
-  current_node_->info_->register_relation_endpoint(typeid(ForeignType), local_endpoint);
-  foreign_node.info_->register_relation_endpoint(current_node_->type_index(), foreign_endpoint);
+  local_node.info_->register_relation_endpoint(foreign_type_index, local_endpoint);
+  foreign_node.info_->register_relation_endpoint(local_node.type_index(), foreign_endpoint);
 
-  attached_node->info_->register_relation_endpoint(current_node_->type_index(), join_endpoint);
-  attached_node->info_->register_relation_endpoint(typeid(ForeignType), inverse_join_endpoint);
+  attached_node->info_->register_relation_endpoint(local_node.type_index(), join_endpoint);
+  attached_node->info_->register_relation_endpoint(foreign_type_index, inverse_join_endpoint);
 
   link_relation_endpoints(local_endpoint, join_endpoint);
   link_relation_endpoints(foreign_endpoint, inverse_join_endpoint);

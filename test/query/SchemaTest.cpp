@@ -6,8 +6,6 @@
 #include "models/person.hpp"
 #include "models/recipe.hpp"
 
-#include <iostream>
-
 using namespace matador;
 
 namespace {
@@ -96,11 +94,47 @@ TEST_CASE("Test one to many", "[relation][one-to-many]") {
   auto result = repo.basic_info("departments");
   REQUIRE(!result->get().endpoints_empty());
   REQUIRE(result->get().endpoints_size() == 1);
-  // std::cout << *result->get().table();
   result = repo.basic_info("employees");
   REQUIRE(!result->get().endpoints_empty());
   REQUIRE(result->get().endpoints_size() == 1);
-  // std::cout << *result->get().object();
+}
+
+static void require_endpoint(const query::basic_table_info& info, const std::type_index& ti, query::relation_type type, const std::string& field_name) {
+  const auto eit = info.find_relation_endpoint(ti);
+  REQUIRE(eit != info.endpoint_end());
+  const auto& ep = *eit->second;
+  REQUIRE(eit->first == ti);
+  REQUIRE(ep.type() == type);
+  REQUIRE(ep.field_name() == field_name);
+}
+
+static void require_schema(query::schema& repo) {
+  REQUIRE(repo.size() == 3);
+  REQUIRE(repo.contains("ingredients"));
+  REQUIRE(repo.contains("recipes"));
+  REQUIRE(repo.contains("recipe_ingredients"));
+
+  auto result = repo.basic_info("ingredients");
+  REQUIRE(result);
+  const auto& recipe_info = result->get();
+  REQUIRE(!recipe_info.endpoints_empty());
+  REQUIRE(recipe_info.endpoints_size() == 1);
+  require_endpoint(recipe_info, typeid(test::recipe), query::relation_type::HasMany, "recipe_ingredients");
+
+  result = repo.basic_info("recipes");
+  REQUIRE(result);
+  const auto& ingredients_info = result->get();
+  REQUIRE(!ingredients_info.endpoints_empty());
+  REQUIRE(ingredients_info.endpoints_size() == 1);
+  require_endpoint(ingredients_info, typeid(test::ingredient), query::relation_type::HasMany, "recipe_ingredients");
+
+  result = repo.basic_info("recipe_ingredients");
+  REQUIRE(result);
+  const auto& recipe_ingredients_info = result->get();
+  REQUIRE(!recipe_ingredients_info.endpoints_empty());
+  REQUIRE(recipe_ingredients_info.endpoints_size() == 2);
+  require_endpoint(recipe_ingredients_info, typeid(test::recipe), query::relation_type::BelongsTo, "recipe_id");
+  require_endpoint(recipe_ingredients_info, typeid(test::ingredient), query::relation_type::BelongsTo, "ingredient_id");
 }
 
 TEST_CASE("Test many to many relation", "[relation][many-to-many]") {
@@ -108,47 +142,20 @@ TEST_CASE("Test many to many relation", "[relation][many-to-many]") {
 
   REQUIRE(repo.empty());
 
+  const std::type_index ti = typeid(query::many_to_many_relation<test::ingredient, test::recipe>);
   REQUIRE(repo.attach<test::ingredient>("ingredients").is_ok());
   REQUIRE(repo.attach<test::recipe>("recipes").is_ok());
 
-  REQUIRE(repo.size() == 3);
-  REQUIRE(repo.contains("ingredients"));
-  REQUIRE(repo.contains("recipes"));
-  REQUIRE(repo.contains("recipe_ingredients"));
-
-  auto it = repo.find("recipe_ingredients");
-  REQUIRE(it != repo.end());
-
-  query::schema::dump(std::cout, *it);
-
-  auto result = repo.basic_info("ingredients");
-  REQUIRE(result);
-  const auto tab = result->get().table();
-  REQUIRE(!result->get().endpoints_empty());
-  REQUIRE(result->get().endpoints_size() == 1);
-  result = repo.basic_info("recipes");
-  REQUIRE(!result->get().endpoints_empty());
-  REQUIRE(result->get().endpoints_size() == 1);
-  result = repo.basic_info("recipe_ingredients");
-  REQUIRE(!result->get().endpoints_empty());
-  REQUIRE(result->get().endpoints_size() == 2);
+  require_schema(repo);
 
   repo.clear();
 
   REQUIRE(repo.empty());
 
-  REQUIRE(repo.attach<test::ingredient>("ingredients").is_ok());
   REQUIRE(repo.attach<test::recipe>("recipes").is_ok());
+  REQUIRE(repo.attach<test::ingredient>("ingredients").is_ok());
 
-  REQUIRE(repo.size() == 3);
-  REQUIRE(repo.contains("ingredients"));
-  REQUIRE(repo.contains("recipes"));
-  REQUIRE(repo.contains("recipe_ingredients"));
-
-  it = repo.find("recipe_ingredients");
-  REQUIRE(it != repo.end());
-
-  query::schema::dump(std::cout, *it);
+  require_schema(repo);
 }
 
 TEST_CASE("Test one to many reverse", "[relation][one-to-many][reverse]") {

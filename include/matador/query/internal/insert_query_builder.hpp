@@ -199,7 +199,7 @@ public:
       return;
     }
 
-    using relation_value_type = many_to_many_relation<ForeignType, ObjectType>;
+    using relation_value_type = many_to_many_relation<ObjectType, ForeignType>;
     const std::type_index foreign_type{typeid(ForeignType)};
     const std::type_index local_type{typeid(ObjectType)};
     insert_many_to_many_relations<relation_value_type>(
@@ -210,7 +210,7 @@ public:
         return {std::string{relation_name}, local_type, foreign_type};
       },
       [this, join_column, inverse_join_column](const auto &obj) {
-        return make_object<relation_value_type>(inverse_join_column, join_column, obj, ptr_);
+        return make_object<relation_value_type>(inverse_join_column, join_column, ptr_, obj);
       });
   }
 
@@ -226,7 +226,7 @@ public:
       return;
     }
 
-    using relation_value_type = many_to_many_relation<ObjectType, ForeignType>;
+    using relation_value_type = many_to_many_relation<ForeignType, ObjectType>;
     const std::type_index foreign_type{typeid(ForeignType)};
     const std::type_index local_type{typeid(ObjectType)};
     insert_many_to_many_relations<relation_value_type>(
@@ -237,7 +237,7 @@ public:
         return {std::string{relation_name}, foreign_type, local_type};
       },
       [this, join_columns = std::move(join_columns)](const auto &obj) {
-        return make_object<relation_value_type>(join_columns.join_column, join_columns.inverse_join_column, ptr_, obj);
+        return make_object<relation_value_type>(join_columns.join_column, join_columns.inverse_join_column, obj, ptr_);
       });
   }
 

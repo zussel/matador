@@ -302,5 +302,8 @@ TEST_CASE("Test delete builder has many to many", "[query][delete_query_builder]
 
   const auto& stmts = *build_result;
   REQUIRE_FALSE(stmts.empty());
+  for (const auto &stmt : stmts) {
+    std::cout << stmt->ctx().sql << std::endl;
+  }
   REQUIRE(stmts.size() == 7);
 }

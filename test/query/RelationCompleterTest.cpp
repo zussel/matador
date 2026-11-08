@@ -8,6 +8,8 @@
 #include "matador/query/resolver/producer_creator.hpp"
 #include "matador/query/runtime/error_code.hpp"
 
+#include "models/recipe.hpp"
+
 #include <string>
 #include <typeindex>
 
@@ -17,6 +19,7 @@ using matador::query::collection;
 using matador::query::object_ptr;
 using matador::query::schema;
 using matador::query::relation_type;
+using namespace matador::test;
 
 template<typename Type>
 auto require_info(schema &repo) {
@@ -157,37 +160,6 @@ struct account {
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar63);
     field::has_many(op, "roles", roles, "account_id", matador::CascadeAllFetchLazy);
-  }
-};
-
-struct recipe;
-struct ingredient;
-
-struct recipe {
-  unsigned int id{};
-  std::string name;
-  collection<object_ptr<ingredient>> ingredients;
-
-  template<typename Operator>
-  void process(Operator &op) {
-    namespace field = matador::query::access;
-    field::primary_key(op, "id", id);
-    field::attribute(op, "name", name, matador::VarChar255);
-    field::has_many_to_many(op, "recipe_ingredients", ingredients, "recipe_id", "ingredient_id", matador::CascadeAllFetchLazy);
-  }
-};
-
-struct ingredient {
-  unsigned int id{};
-  std::string name;
-  collection<object_ptr<recipe>> recipes;
-
-  template<typename Operator>
-  void process(Operator &op) {
-    namespace field = matador::query::access;
-    field::primary_key(op, "id", id);
-    field::attribute(op, "name", name, matador::VarChar255);
-    field::has_many_to_many(op, "recipe_ingredients", recipes, "ingredient_id", "recipe_id", matador::CascadeAllFetchLazy);
   }
 };
 
@@ -464,9 +436,7 @@ TEST_CASE("relation_completer creates many_to_many relation table", "[relation_c
   schema repo;
 
   auto result = repo.attach<recipe>("recipes")
-    .and_then([&repo] {
-      return repo.attach<ingredient>("ingredients");
-    });
+    .and_then([&repo] { return repo.attach<ingredient>("ingredients"); });
 
   REQUIRE(result.is_ok());
 
