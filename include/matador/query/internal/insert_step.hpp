@@ -64,6 +64,8 @@ public:
       return failure(exec_result.err());
     }
 
+    owner_info_setter_.set(*ptr_, id_);
+
     ptr_.change_state(object_state::Persistent);
     return ok<void>();
   }
@@ -106,6 +108,7 @@ public:
       return failure(res.err());
     }
     pk_accessor_.set(*ptr_, id_);
+    owner_info_setter_.set(*ptr_, id_);
 
     ptr_.change_state(object_state::Persistent);
     return ok<void>();
@@ -137,6 +140,8 @@ public:
     }
 
     id_ = primary_key_resolver::resolve_object(*ptr_).pk;
+    owner_info_setter_.set(*ptr_, id_);
+
     ptr_.change_state(object_state::Persistent);
     return ok<void>();
   }

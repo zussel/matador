@@ -56,6 +56,10 @@ public:
     return proxy_;
   }
 
+  void owner_info(const std::pair<std::type_index, identifier>& info) {
+    proxy_->owner_info(info);
+  }
+
 private:
   std::shared_ptr<abstract_collection_proxy<Type>> proxy_;
 };

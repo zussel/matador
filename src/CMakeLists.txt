@@ -134,6 +134,7 @@ add_library(matador
     utils/timestamp.cpp
     utils/types.cpp
     utils/version.cpp
+  ../include/matador/query/internal/collection_owner_info_setter.hpp
 )
 
 include(GenerateExportHeader)

@@ -3,6 +3,7 @@
 
 #include "matador/query/relations/object_cache.hpp"
 #include "matador/query/builder/query_context.hpp"
+#include "matador/query/internal/collection_owner_info_setter.hpp"
 #include "matador/query/internal/primary_key_accessor.hpp"
 #include "matador/query/model/identifier.hpp"
 
@@ -29,6 +30,7 @@ public:
 protected:
   identifier id_;
   primary_key_accessor pk_accessor_;
+  collection_owner_info_setter owner_info_setter_;
   query_context ctx_;
 };
 }

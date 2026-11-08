@@ -129,6 +129,10 @@ public:
 
   [[nodiscard]] virtual const identifier& owner_id() const = 0;
 
+  void owner_info(const std::pair<std::type_index, identifier>& info) {
+    owner_info_ = info;
+  }
+
 protected:
   abstract_collection_proxy() = default;
   explicit abstract_collection_proxy(const std::vector<value_type>& items)
@@ -136,6 +140,7 @@ protected:
 
 protected:
   std::vector<value_type> items_;
+  std::pair<std::type_index, identifier> owner_info_{typeid(void), {}};
 };
 
 template<typename Type>
