@@ -137,7 +137,7 @@ void basic_schema::dump(std::ostream &os) const {
 
 void basic_schema::dump( std::ostream& os, const schema_node& node ) {
     os << "node [" << node.name() << "] (type index: " << node.info().type_index().name() << ")\n";
-    for (auto it = node.info().endpoint_begin(); it != node.info().endpoint_end(); ++it) {
+    for (auto it = node.info().endpoints_begin(); it != node.info().endpoints_end(); ++it) {
         os << "  " << node.name() << "::" << it->second->field_name() << " (" << it->second->type_name() << ")";
         if (it->second->foreign_endpoint()) {
             os << " <---> " << it->second->node().name() << "::" << it->second->foreign_endpoint()->field_name() << " (" << it->second->foreign_endpoint()->type_name() << ")\n";

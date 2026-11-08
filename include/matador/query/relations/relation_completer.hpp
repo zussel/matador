@@ -300,7 +300,7 @@ void relation_completer<Type, Observers...>::resolve_object_has_many(std::string
     "relation completer: foreign node not found"
   );
 
-  if (const auto it = foreign_node.info_->find_relation_endpoint(typeid(Type)); it != foreign_node.info().endpoint_end()) {
+  if (const auto it = foreign_node.info_->find_relation_endpoint(typeid(Type)); it != foreign_node.info().endpoints_end()) {
     if (!it->second->is_belongs_to()) {
       throw error_exception(error_code::InvalidArgument, "relation completer: has_many can only be linked to belongs_to");
     }
@@ -388,12 +388,12 @@ void relation_completer<Type, Observers...>::resolve_has_one(std::string id) con
   );
 
   auto local_it = current_node_->info().find_relation_endpoint(typeid(value_type));
-  if (local_it == current_node_->info().endpoint_end()) {
+  if (local_it == current_node_->info().endpoints_end()) {
     const auto local_endpoint = std::make_shared<relation_endpoint>(id, relation_type::HasOne, foreign_node);
     local_it = current_node_->info_->register_relation_endpoint(typeid(value_type), local_endpoint);
   }
 
-  if (const auto foreign_it = foreign_node.info().find_relation_endpoint(typeid(Type)); foreign_it != foreign_node.info().endpoint_end()) {
+  if (const auto foreign_it = foreign_node.info().find_relation_endpoint(typeid(Type)); foreign_it != foreign_node.info().endpoints_end()) {
     if (!foreign_it->second->is_belongs_to()) {
       throw error_exception(error_code::InvalidArgument, "relation completer: has_one can only be linked to belongs_to");
     }
@@ -413,7 +413,7 @@ void relation_completer<Type, Observers...>::resolve_belongs_to(std::string id) 
     "relation completer: foreign node not found"
   );
 
-  if (const auto it = foreign_node.info_->find_relation_endpoint(current_node_->type_index()); it != foreign_node.info().endpoint_end()) {
+  if (const auto it = foreign_node.info_->find_relation_endpoint(current_node_->type_index()); it != foreign_node.info().endpoints_end()) {
     if (it->second->is_has_one() || it->second->is_has_many()) {
       const auto endpoint = std::make_shared<relation_endpoint>(id, relation_type::BelongsTo, foreign_node);
       current_node_->info_->register_relation_endpoint(ti, endpoint);

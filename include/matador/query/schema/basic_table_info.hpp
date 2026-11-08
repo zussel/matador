@@ -45,11 +45,11 @@ public:
   [[nodiscard]] const_endpoint_iterator find_relation_endpoint(const std::string &field) const;
   endpoint_iterator find_relation_endpoint(const std::string &field);
 
-  endpoint_iterator endpoint_begin();
-  [[nodiscard]] const_endpoint_iterator endpoint_begin() const;
+  endpoint_iterator endpoints_begin();
+  [[nodiscard]] const_endpoint_iterator endpoints_begin() const;
 
-  endpoint_iterator endpoint_end();
-  [[nodiscard]] const_endpoint_iterator endpoint_end() const;
+  endpoint_iterator endpoints_end();
+  [[nodiscard]] const_endpoint_iterator endpoints_end() const;
 
   [[nodiscard]] std::size_t endpoints_size() const;
   [[nodiscard]] bool endpoints_empty() const;

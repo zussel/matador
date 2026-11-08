@@ -101,7 +101,7 @@ TEST_CASE("Test one to many", "[relation][one-to-many]") {
 
 static void require_endpoint(const query::basic_table_info& info, const std::type_index& ti, query::relation_type type, const std::string& field_name) {
   const auto eit = info.find_relation_endpoint(ti);
-  REQUIRE(eit != info.endpoint_end());
+  REQUIRE(eit != info.endpoints_end());
   const auto& ep = *eit->second;
   REQUIRE(eit->first == ti);
   REQUIRE(ep.type() == type);

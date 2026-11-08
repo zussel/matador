@@ -44,7 +44,7 @@ template<typename OwnerType, typename TargetType>
 auto require_endpoint(schema &repo) {
   auto info = require_info<OwnerType>(repo);
   auto it = info->get().find_relation_endpoint(std::type_index(typeid(TargetType)));
-  REQUIRE(it != info->get().endpoint_end());
+  REQUIRE(it != info->get().endpoints_end());
   REQUIRE(it->second);
   return it->second;
 }
@@ -418,13 +418,13 @@ TEST_CASE("relation_completer creates relation table for has_many with value typ
   require_endpoint_count(roles_info, 1);
 
   auto account_endpoint = account_info->get().find_relation_endpoint(std::type_index(typeid(std::string)));
-  REQUIRE(account_endpoint != account_info->get().endpoint_end());
+  REQUIRE(account_endpoint != account_info->get().endpoints_end());
   REQUIRE(account_endpoint->second);
   REQUIRE(account_endpoint->second->type() == relation_type::HasMany);
   REQUIRE(account_endpoint->second->field_name() == "roles");
 
   auto roles_endpoint = roles_info->get().find_relation_endpoint(std::type_index(typeid(account)));
-  REQUIRE(roles_endpoint != roles_info->get().endpoint_end());
+  REQUIRE(roles_endpoint != roles_info->get().endpoints_end());
   REQUIRE(roles_endpoint->second);
   REQUIRE(roles_endpoint->second->type() == relation_type::BelongsTo);
   REQUIRE(roles_endpoint->second->field_name() == "account_id");

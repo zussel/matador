@@ -79,19 +79,19 @@ basic_table_info::endpoint_iterator basic_table_info::find_relation_endpoint(con
   });
 }
 
-basic_table_info::endpoint_iterator basic_table_info::endpoint_begin() {
+basic_table_info::endpoint_iterator basic_table_info::endpoints_begin() {
   return relation_endpoints_.begin();
 }
 
-basic_table_info::const_endpoint_iterator basic_table_info::endpoint_begin() const {
+basic_table_info::const_endpoint_iterator basic_table_info::endpoints_begin() const {
   return relation_endpoints_.begin();
 }
 
-basic_table_info::endpoint_iterator basic_table_info::endpoint_end() {
+basic_table_info::endpoint_iterator basic_table_info::endpoints_end() {
   return relation_endpoints_.end();
 }
 
-basic_table_info::const_endpoint_iterator basic_table_info::endpoint_end() const {
+basic_table_info::const_endpoint_iterator basic_table_info::endpoints_end() const {
   return relation_endpoints_.end();
 }
 
