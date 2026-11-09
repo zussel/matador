@@ -43,10 +43,6 @@ public:
       return failure(error{error_code::UnknownType, "Unknown type"});
     }
 
-    if (const auto &info = it->info(); !info.has_primary_key()) {
-      return failure(error{error_code::MissingPrimaryKey, "Type " + info.name() + " has no primary key"});
-    }
-
     try {
       access::process(*this, *ptr_);
     } catch (const error_exception &ex) {
@@ -58,7 +54,9 @@ public:
       return failure(error{error_code::UnknownType, "Unknown type"});
     }
 
-    if (as_relation_step) {
+    if (const auto &info = it->info(); !info.has_primary_key()) {
+      ctx_.relation_steps_.push_back(std::make_unique<delete_step_relation<ObjectType>>(cit->second.delete_one, ptr_));
+    } else if (as_relation_step) {
       ctx_.relation_steps_.push_back(std::make_unique<delete_step_object<ObjectType>>(cit->second.delete_one, ptr_));
     } else {
       ctx_.steps_.push_back(std::make_unique<delete_step_object<ObjectType>>(cit->second.delete_one, ptr_));
@@ -135,12 +133,15 @@ public:
     using relation_value_type = many_to_many_relation<ObjectType, ForeignType>;
     const std::type_index foreign_type{typeid(ForeignType)};
     const std::type_index local_type{typeid(ObjectType)};
-    on_many_to_many_objects<relation_value_type>(
+    delete_many_to_many_relations<relation_value_type>(
       id,
       objects,
       attr,
       [foreign_type, local_type](const char* relation_name) -> processing_many_to_many_key {
         return {std::string{relation_name}, local_type, foreign_type};
+      },
+      [this, join_column, inverse_join_column](const auto &obj) {
+        return make_object<relation_value_type>(inverse_join_column, join_column, ptr_, obj);
       });
   }
 
@@ -153,19 +154,23 @@ public:
     }
 
     join_columns_collector collector;
-    if (auto join_columns = collector.collect<ForeignType>(); join_columns.join_column.empty() || join_columns.inverse_join_column.empty()) {
+    auto join_columns = collector.collect<ForeignType>();
+    if (join_columns.join_column.empty() || join_columns.inverse_join_column.empty()) {
       return;
     }
 
     using relation_value_type = many_to_many_relation<ForeignType, ObjectType>;
     const std::type_index foreign_type{typeid(ForeignType)};
     const std::type_index local_type{typeid(ObjectType)};
-    on_many_to_many_objects<relation_value_type>(
+    delete_many_to_many_relations<relation_value_type>(
       id,
       objects,
       attr,
       [foreign_type, local_type](const char* relation_name) -> processing_many_to_many_key {
          return {std::string{relation_name}, foreign_type, local_type};
+      },
+      [this, join_columns = std::move(join_columns)](const auto &obj) {
+        return make_object<relation_value_type>(join_columns.join_column, join_columns.inverse_join_column, obj, ptr_);
       });
   }
 
@@ -184,11 +189,12 @@ private:
     }
   }
 
-  template<class LocalType, class ForeignType, class RelationKeyFactory>
-  void on_many_to_many_objects(const char *id,
-                               collection<object_ptr<ForeignType>> &objects,
-                               const foreign_key_options &attr,
-                               RelationKeyFactory make_relation_key) {
+  template<class RelationType, class ForeignType, class RelationKeyFactory, class RelationFactory>
+  void delete_many_to_many_relations(const char *id,
+                                     collection<object_ptr<ForeignType>> &objects,
+                                     const foreign_key_options &attr,
+                                     RelationKeyFactory make_relation_key,
+                                     RelationFactory make_relation) {
     if (!attr.cascade().has(cascade_type::Remove)) {
       return;
     }
@@ -203,9 +209,7 @@ private:
       throw error_exception(error_code::UnknownType, "Unknown type for relation " + std::string{id});
     }
 
-    const auto node_type_name = it->info().type_index().name();
-    const auto local_type_name = std::type_index(typeid(LocalType)).name();
-    if (std::type_index(typeid(LocalType)) != it->info().type_index()) {
+    if (std::type_index(typeid(RelationType)) != it->info().type_index()) {
       throw error_exception(error_code::InvalidRelationType, "Invalid relation type for " + std::string{id});
     }
 
@@ -216,16 +220,24 @@ private:
     std::ignore = ctx_.processing_many_to_many_relations_.insert(key);
     std::vector<std::unique_ptr<execute_step>> delete_relation_steps;
     delete_step_processor<ForeignType> processor{ctx_};
+    delete_step_processor<RelationType> relation_processor{ctx_};
     for (auto &obj : objects) {
       if (!obj) {
         continue;
       }
 
-      if (obj.is_persistent()) {
-        auto result = processor.build(obj, true);
-        if (!result) {
-          throw error_exception(result.release_error());
-        }
+      if (!obj.is_persistent()) {
+        continue;
+      }
+      auto rel = make_relation(obj);
+
+      auto result = relation_processor.build(rel, true);
+      if (!result) {
+        throw error_exception(result.release_error());
+      }
+      result = processor.build(obj, true);
+      if (!result) {
+        throw error_exception(result.release_error());
       }
     }
   }

@@ -223,11 +223,11 @@ TEST_CASE("Delete query builder cascades many-to-many persistent objects before 
   const auto result = builder.build(flour);
 
   REQUIRE(result.is_ok());
-  REQUIRE(result->size() == 3);
+  REQUIRE(result->size() == 5);
 
-  const auto first_recipe_sql = delete_sql(*(*result)[0]);
-  const auto second_recipe_sql = delete_sql(*(*result)[1]);
-  const auto root_sql = delete_sql(*(*result)[2]);
+  const auto first_recipe_sql = delete_sql(*(*result)[1]);
+  const auto second_recipe_sql = delete_sql(*(*result)[3]);
+  const auto root_sql = delete_sql(*(*result)[4]);
 
   INFO(first_recipe_sql);
   INFO(second_recipe_sql);
