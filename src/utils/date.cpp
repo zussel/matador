@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-namespace matatdor {
+namespace matador {
 date::date()
 : date(now()) {}
 

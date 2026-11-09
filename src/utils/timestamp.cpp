@@ -3,7 +3,7 @@
 #include <chrono>
 #include <ctime>
 
-namespace matatdor {
+namespace matador {
 timestamp::timestamp()
 : timestamp(now())
 {

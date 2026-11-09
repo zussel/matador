@@ -4,7 +4,7 @@
 #include <optional>
 #include <tuple>
 
-namespace matatdor {
+namespace matador {
 class date {
 public:
   class year_type {

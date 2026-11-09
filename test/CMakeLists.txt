@@ -44,6 +44,7 @@ add_executable(MatadorTests
     query/utils/RecordingObserver.hpp
     utils/ConvertTest.cpp
     utils/DataTypeTest.cpp
+    utils/DateTest.cpp
     utils/DependencyInjectionTest.cpp
     utils/MessageBusTest.cpp
     utils/ResultTest.cpp

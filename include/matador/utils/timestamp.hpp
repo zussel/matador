@@ -6,7 +6,7 @@
 #include <optional>
 #include <tuple>
 
-namespace matatdor {
+namespace matador {
 class timestamp {
 public:
   using year_type = date::year_type;
