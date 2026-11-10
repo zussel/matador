@@ -14,6 +14,7 @@
 #include "matador/query/runtime/error_code.hpp"
 #include "matador/query/runtime/statement.hpp"
 #include "matador/query/runtime/statement_cache.hpp"
+#include "matador/query/runtime/transaction.hpp"
 #include "matador/query/schema/basic_schema.hpp"
 
 #include <unordered_map>
@@ -38,6 +39,8 @@ struct session_context {
 class session final /*: public executor*/ {
 public:
   session(session_context &&ctx, const basic_schema &scm);
+
+  transaction begin();
 
   /**
    * Insert the given object into the session.
@@ -97,6 +100,10 @@ public:
    * @return Reference to the basic_schema object
    */
   [[nodiscard]] const basic_schema &schema() const;
+private:
+  friend class transaction;
+
+  void finish_transaction(const std::shared_ptr<transaction::transaction_context>& ctx);
 
 private:
   connection_pool pool_;
@@ -108,7 +115,8 @@ private:
   const basic_schema &schema_;
   mutable std::unordered_map<std::string, std::vector<column> > prototypes_;
   std::shared_ptr<resolver_service> resolver_service_;
-  std::unordered_map<std::type_index, query::query_contexts> contexts_by_type_;
+  std::unordered_map<std::type_index, query_contexts> contexts_by_type_;
+  std::shared_ptr<transaction::transaction_context> transaction_context_;
 };
 
 template<typename Type>
@@ -126,6 +134,11 @@ result<object_ptr<Type>, error> session::insert(object_ptr<Type> obj) {
   auto steps = iqb.build(obj);
   if (!steps.is_ok()) {
     return failure(make_error(error_code::FailedToBuildQuery, "Failed to build insert dependency queries."));
+  }
+
+  if (transaction_context_ != nullptr) {
+    transaction_context_->add_insert_steps(std::move(*steps));
+    return ok(obj);
   }
 
   // Execute all steps; for Identity steps read RETURNING and write pk back into the object
@@ -254,6 +267,11 @@ result<void, error> session::remove(const object_ptr<Type> &obj) {
     return failure(make_error(error_code::FailedToBuildQuery, "Failed to build delete dependency queries."));
   }
 
+  if (transaction_context_ != nullptr) {
+    transaction_context_->add_remove_steps(std::move(*steps));
+    return ok(obj);
+  }
+
   for (auto &step : *steps) {
     const auto conn = pool_.acquire();
     if (!conn.valid()) {
@@ -283,24 +301,6 @@ result<void, error> session::remove(const object_ptr<Type> &obj) {
   }
 
   return ok<void>();
-  // using namespace matador::utils;
-  // using namespace matador::query;
-  //
-  // const auto col = table_column(it->second.node().info().primary_key_attribute()->name());
-  // const auto cit = contexts_by_type_.find(it->second.node().info().type_index());
-  // if (cit == contexts_by_type_.end()) {
-  //   return failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
-  // }
-  // auto stmt = cache_.acquire(cit->second.delete_one);
-  // if (!stmt.is_ok()) {
-  //   return failure(stmt.err());
-  // }
-  //
-  // pk_object_binder binder(*stmt, stmt->bind_pos());
-  // if (const auto update_result = binder.bind(*obj).execute(); !update_result.is_ok()) {
-  //   return failure(update_result.err());
-  // }
-  // return ok<void>();
 }
 
 template<typename Type, typename PrimaryKeyType>
@@ -362,5 +362,5 @@ result<query_result<Type>, error> session::find(criteria_ptr clause) {
 
   return stmt->template fetch<Type>();
 }
-}
+} // namespace matador::query
 #endif //QUERY_SESSION_HPP

@@ -117,6 +117,7 @@ add_library(matador
     query/runtime/session.cpp
     query/runtime/statement.cpp
     query/runtime/statement_cache.cpp
+    query/runtime/transaction.cpp
     query/schema/basic_schema.cpp
     query/schema/basic_table_info.cpp
     query/schema/schema_node.cpp

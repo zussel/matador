@@ -35,6 +35,7 @@ enum class error_code : uint8_t {
   InvalidConstraint,
   InvalidDataType,
   InvalidObject,
+  InvalidOperation,
   InvalidValue,
   InvalidRelationType,
   MissingPrimaryKey,

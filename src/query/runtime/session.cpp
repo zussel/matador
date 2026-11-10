@@ -89,7 +89,18 @@ session::session(session_context&& ctx, const basic_schema &scm)
   }
 }
 
+transaction session::begin() {
+  transaction_context_ = std::make_shared<transaction::transaction_context>();
+  return transaction(*this, transaction_context_);
+}
+
 const basic_schema & session::schema() const {
   return schema_;
 }
+
+void session::finish_transaction(const std::shared_ptr<transaction::transaction_context>& ctx) {
+  if (transaction_context_ == ctx) {
+    transaction_context_.reset();
+  }
 }
+} // namespace matador::query

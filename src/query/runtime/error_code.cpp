@@ -64,6 +64,8 @@ std::string query_category_impl::message(const int ev) const {
       return "Invalid data type";
     case error_code::InvalidObject:
       return "Invalid object";
+    case error_code::InvalidOperation:
+      return "Invalid operation";
     case error_code::InvalidValue:
       return "Invalid value";
     case error_code::InvalidRelationType:
