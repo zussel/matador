@@ -27,6 +27,7 @@ add_executable(MatadorTests
     query/SelectQueryBuilderTest.cpp
     query/StatementCacheTest.cpp
     query/TableTest.cpp
+    query/TransactionTest.cpp
     query/UpdateIntermediateTest.cpp
     query/backend/test_backend_service.cpp
     query/backend/test_backend_service.hpp
@@ -40,6 +41,8 @@ add_executable(MatadorTests
     query/backend/test_statement.hpp
     query/fixtures/QueryFixture.cpp
     query/fixtures/QueryFixture.hpp
+    query/fixtures/SessionFixture.cpp
+    query/fixtures/SessionFixture.hpp
     query/utils/RecordingObserver.cpp
     query/utils/RecordingObserver.hpp
     utils/ConvertTest.cpp
