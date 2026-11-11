@@ -7,11 +7,34 @@
 #include "matador/utils/result.hpp"
 
 #include <memory>
+#include <typeindex>
 #include <vector>
 
 namespace matador::query {
-
 class session;
+class basic_schema;
+
+// Eindeutiger Schlüssel für die Identity Map (Typ + ID)
+struct EntityKey {
+  std::type_index type;
+  identifier id; // Einfachheitshalber als String, alternativ std::any mit Custom Comparator
+
+  bool operator==(const EntityKey& other) const {
+    return type == other.type && id == other.id;
+  }
+};
+
+// Hash-Funktion für EntityKey, damit er in unordered_map genutzt werden kann
+struct EntityKeyHash {
+  std::size_t operator()(const EntityKey& k) const {
+    return k.type.hash_code() ^ k.id.hash();
+  }
+};
+
+struct tracked_entity {
+  std::shared_ptr<void> entity;
+  std::type_index type;
+};
 
 class transaction final {
 public:
