@@ -48,43 +48,24 @@ result<void, error> transaction::commit() const {
 
   auto conn = session_.pool_.acquire();
   if (!conn.valid()) {
-    return failure(make_error(
-      error_code::FailedToAcquirePool,
-      "Failed to acquire connection for transaction."));
+    return failure(make_error(error_code::FailedToAcquirePool,"Failed to acquire connection for transaction."));
   }
 
-  if (auto result = conn->begin(); !result) {
-    return failure(result.err());
-  }
+  return conn->begin()
+    .and_then([this, &conn] { return execute_steps(*conn, context_->insert_steps_); })
+    .and_then([this, &conn] { return execute_steps(*conn, context_->update_steps_); })
+    .and_then([this, &conn] { return execute_steps(*conn, context_->remove_steps_); })
+    .and_then([&conn] { return conn->commit(); })
+    .and_then([this] { return finalize_steps(context_->insert_steps_); })
+    .and_then([this] { return finalize_steps(context_->update_steps_); })
+    .and_then([this] { return finalize_steps(context_->remove_steps_); })
+    .and_then([this] {
+      context_->active_ = false;
+      session_.finish_transaction(context_);
 
-  if (auto result = execute_steps(*conn, context_->insert_steps_); !result) {
-    std::ignore = conn->rollback();
-    return failure(result.err());
-  }
-
-  if (auto result = execute_steps(*conn, context_->update_steps_); !result) {
-    std::ignore = conn->rollback();
-    return failure(result.err());
-  }
-
-  if (auto result = execute_steps(*conn, context_->remove_steps_); !result) {
-    std::ignore = conn->rollback();
-    return failure(result.err());
-  }
-
-  if (auto result = conn->commit(); !result) {
-    std::ignore = conn->rollback();
-    return failure(result.err());
-  }
-
-  finalize_steps(context_->insert_steps_);
-  finalize_steps(context_->update_steps_);
-  finalize_steps(context_->remove_steps_);
-
-  context_->active_ = false;
-  session_.finish_transaction(context_);
-
-  return ok<void>();}
+      return result<void, error>();
+    });
+}
 
 result<void, error> transaction::rollback() const {
   if (!context_->active_) {
