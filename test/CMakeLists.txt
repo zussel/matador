@@ -45,6 +45,7 @@ add_executable(MatadorTests
     query/fixtures/SessionFixture.hpp
     query/utils/RecordingObserver.cpp
     query/utils/RecordingObserver.hpp
+    utils/ByteBufferTest.cpp
     utils/ConvertTest.cpp
     utils/DataTypeTest.cpp
     utils/DateTest.cpp
