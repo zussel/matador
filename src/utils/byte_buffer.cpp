@@ -2,6 +2,8 @@
 
 #include <cstring>
 #include <cstddef>
+#include <utility>
+#include <vector>
 
 namespace matador::utils {
 byte_buffer::byte_buffer() {
@@ -91,6 +93,15 @@ std::size_t byte_buffer::size() const noexcept {
     return 0;
   }
   return (chunk_list_.size() * CHUNK_SIZE) - chunk_list_.back().available() - chunk_list_.front().released();
+}
+
+buffer_view byte_buffer::view() const {
+  std::vector<char> bytes(size());
+  if (!bytes.empty()) {
+    auto copy = *this;
+    copy.release(bytes.data(), bytes.size());
+  }
+  return buffer_view(std::move(bytes));
 }
 
 bool byte_buffer::empty() const noexcept {

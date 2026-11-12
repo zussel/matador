@@ -1,14 +1,52 @@
-#ifndef BYTE_BUFFER_HPP
-#define BYTE_BUFFER_HPP
+#ifndef MATADOR_BYTE_BUFFER_HPP
+#define MATADOR_BYTE_BUFFER_HPP
 
 #include "matador_export.h"
 
 #include <array>
+#include <cstddef>
 #include <list>
+#include <memory>
 #include <string_view>
 #include <type_traits>
+#include <utility>
+#include <vector>
 
 namespace matador::utils {
+class buffer_view {
+public:
+  buffer_view() = default;
+  explicit buffer_view(std::vector<char> bytes)
+  : bytes_(std::make_shared<const std::vector<char>>(std::move(bytes))) {}
+
+  [[nodiscard]] const char *data() const noexcept {
+    return bytes_ ? bytes_->data() : nullptr;
+  }
+
+  [[nodiscard]] std::size_t size() const noexcept {
+    return bytes_ ? bytes_->size() : 0;
+  }
+
+  [[nodiscard]] bool empty() const noexcept {
+    return size() == 0;
+  }
+
+  [[nodiscard]] const char *begin() const noexcept {
+    return data();
+  }
+
+  [[nodiscard]] const char *end() const noexcept {
+    return data() ? data() + size() : nullptr;
+  }
+
+  [[nodiscard]] std::string_view as_string_view() const noexcept {
+    return bytes_ ? std::string_view(bytes_->data(), bytes_->size()) : std::string_view{};
+  }
+
+private:
+  std::shared_ptr<const std::vector<char>> bytes_;
+};
+
 /**
  * @class byte_buffer
  * @brief FIFO buffer for byte streams organized in fixed-size chunks.
@@ -80,6 +118,11 @@ public:
   [[nodiscard]] std::size_t size() const noexcept;
 
   /**
+   * Return an immutable, independently owned view of the current bytes.
+   */
+  [[nodiscard]] buffer_view view() const;
+
+  /**
    * Returns true if the buffer is empty.
    *
    * @return True if buffer is empty
@@ -108,4 +151,4 @@ private:
 };
 }
 
-#endif /* BYTE_BUFFER_HPP */
+#endif /* MATADOR_BYTE_BUFFER_HPP */

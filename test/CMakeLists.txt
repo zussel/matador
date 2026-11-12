@@ -8,6 +8,7 @@ CPMAddPackage(
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
 add_executable(MatadorTests
+    query/BinarySerializerTest.cpp
     query/ColumnExpressionTest.cpp
     query/ColumnTest.cpp
     query/ConnectionTest.cpp
