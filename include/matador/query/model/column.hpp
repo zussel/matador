@@ -122,6 +122,7 @@ public:
   [[nodiscard]] const std::string& result_name() const;
 
   [[nodiscard]] utils::basic_type type() const;
+  [[nodiscard]] bool type(utils::basic_type t);
 
   /**
    * Returns constraints declared for this schema column.

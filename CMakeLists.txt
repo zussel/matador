@@ -186,6 +186,12 @@ endif()
 
 include(CTest)
 
+option(MATADOR_BUILD_POSTGRESQL "Build the PostgreSQL backend" OFF)
+if(MATADOR_BUILD_POSTGRESQL)
+  find_package(PostgreSQL REQUIRED)
+  add_subdirectory(src/backends/postgres)
+endif()
+
 add_subdirectory(src)
 add_subdirectory(doc)
 add_subdirectory(test)

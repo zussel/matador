@@ -207,6 +207,16 @@ utils::basic_type column::type() const {
   return plain_column == nullptr ? utils::basic_type::Unknown : plain_column->type;
 }
 
+bool column::type(const utils::basic_type t) {
+  auto* plain_column = plain();
+  if (plain_column == nullptr) {
+    return false;
+  }
+
+  plain_column->type = t;
+  return true;
+}
+
 column_constraints column::constraints() const {
   return options_.constraints();
 }
