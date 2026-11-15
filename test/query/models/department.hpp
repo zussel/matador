@@ -18,14 +18,14 @@ struct department {
     unsigned int id{};
     std::string name;
     query::collection<query::object_ptr<employee>> employees{};
-    // object::object_ptr<employee> manager;
+    query::object_ptr<employee> manager;
 
     template<typename Operator>
     void process(Operator &op) {
         query::access::primary_key(op, "id", id);
         query::access::attribute(op, "name", name, UniqueVarChar63);
         query::access::has_many(op, "employees", employees, "dep_id", CascadeAllFetchEager);
-        // field::belongs_to(op, "manager_id", manager, utils::fetch_type::EAGER);
+        query::access::belongs_to(op, "manager_id", manager, query::fetch_type::Eager);
     }
 };
 

@@ -74,3 +74,7 @@ if(ENABLE_CODE_COVERAGE)
             DEPENDENCIES unit_tests
     )
 endif()
+
+if(MATADOR_BUILD_POSTGRESQL)
+    add_subdirectory(backends/postgres)
+endif()

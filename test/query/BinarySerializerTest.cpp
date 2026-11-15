@@ -170,7 +170,7 @@ TEST_CASE("Binary deserializer resolves string primary keys in relations", "[que
   REQUIRE(restored->target->name == "named target");
 }
 
-TEST_CASE("Binary deserializer restores empty collections and rejects missing or malformed instances", "[query][binary_deserializer]") {
+TEST_CASE("Binary deserializer restores empty collections and rejects invalid instances", "[query][binary_deserializer]") {
   matador::query::binary_serializer serializer;
   matador::test::author original{3, "Ada", "Lovelace", "1815-12-10", 1815, true};
   serializer.serialize(original);

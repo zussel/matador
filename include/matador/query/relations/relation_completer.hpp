@@ -408,10 +408,7 @@ void relation_completer<Type, Observers...>::resolve_belongs_to(std::string id) 
   using value_type = typename ForeignPointerType::value_type;
 
   const auto ti = std::type_index(typeid(value_type));
-  auto &foreign_node = require_node(
-    ti,
-    "relation completer: foreign node not found"
-  );
+  auto &foreign_node = require_node(ti, "relation completer: foreign node not found");
 
   if (const auto it = foreign_node.info_->find_relation_endpoint(current_node_->type_index()); it != foreign_node.info().endpoints_end()) {
     if (it->second->is_has_one() || it->second->is_has_many()) {
@@ -426,16 +423,10 @@ void relation_completer<Type, Observers...>::resolve_belongs_to(std::string id) 
       throw error_exception(error_code::Failure, "relation completer: relation endpoint is not linked");
     }
 
-    if (foreign_endpoint->node().type_index() != typeid(many_to_many_relation<Type, value_type>)) {
+    if (foreign_endpoint->node().type_index() != ti) {
       throw error_exception(error_code::InvalidArgument, "relation completer: incompatible relation endpoint");
     }
 
-    if (auto detach_result = repo_.detach(foreign_endpoint->node_); !detach_result) {
-      throw error_exception(detach_result.release_error());
-    }
-
-    foreign_endpoint->node_ = &foreign_node;
-    current_node_->info_->register_relation_endpoint(ti, foreign_endpoint);
     return;
   }
 
