@@ -12,6 +12,7 @@ endif()
 set(TEST_SOURCES
   ../tests/ConnectionTest.cpp
   ../tests/QueryBasicTest.cpp
+  ../tests/QueryRecordTest.cpp
   ../tests/fixtures/QueryFixture.cpp
 
   # Backend-agnostic tests from ../ can be added here, e.g. ../ColorEnumTraits.cpp

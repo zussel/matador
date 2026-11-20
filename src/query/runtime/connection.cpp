@@ -163,7 +163,7 @@ connection::sequence_exists(const std::string &sequence_name) const {
 
 static bool has_unknown_columns(const std::vector<column> &columns) {
   return std::any_of(std::begin(columns), std::end(columns),
-                     [](const auto &col) { return col.type() == utils::basic_type::Null; });
+                     [](const auto &col) { return col.type() == utils::basic_type::Unknown; });
 }
 
 result<std::unique_ptr<query_result_impl>, error> connection::fetch(const query_context &ctx) const {
@@ -184,7 +184,7 @@ result<statement, error> connection::prepare(const query_context &ctx) const {
     return failure(result.err());
   }
 
-  return ok<statement>(statement(std::make_shared<connection_statement_proxy>(result.release()), logger_));
+  return ok(statement(std::make_shared<connection_statement_proxy>(result.release()), logger_));
 }
 
 std::string connection::str(const query_context &ctx) const {
@@ -213,9 +213,8 @@ connection::perform_prepare(const query_context &ctx) const {
               return value.name() == col.name() ||
                      ctx.table_name + "." + value.name() == col.name();
             });
-        if (col.type() == utils::basic_type::Null && rit != result->end()) {
-          // TODO: Add change_type
-          // const_cast<column&>(col).change_type(rit->type());
+        if (col.type() == utils::basic_type::Unknown && rit != result->end()) {
+          std::ignore = const_cast<column&>(col).type(rit->type());
         }
       }
     }
