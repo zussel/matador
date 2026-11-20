@@ -4,7 +4,7 @@
 
 #include "matador/query/model/field.hpp"
 #include "matador/query/runtime/executor.hpp"
-// #include "matador/query/statement.hpp"
+#include "matador/query/runtime/statement.hpp"
 
 namespace matador::query {
 result<query_result<record>, error> fetchable_query::fetch_all(const executor &exec) const {
@@ -24,22 +24,22 @@ result<std::optional<record>, error> fetchable_query::fetch_one(const executor &
   ctx.resolver = exec.resolver();
   auto fetch_result = exec.fetch(ctx);
   if (!fetch_result.is_ok()) {
-    return failure<error>(fetch_result.err());
+    return failure(fetch_result.err());
   }
 
   const auto prototype = fetch_result.value()->prototype();
   auto records_result = query_result<record>::make_query_result(std::move(*fetch_result), prototype);
   if (!records_result.is_ok()) {
-    return failure<error>(records_result.err());
+    return failure(records_result.err());
   }
 
   auto records = records_result.release();
   auto first = records.begin();
   if (first == records.end()) {
-    return ok<std::optional<record>>(std::optional<record>{std::nullopt});
+    return ok(std::optional<record>{std::nullopt});
   }
 
-  return ok<std::optional<record>>(std::optional{std::move(*first)});
+  return ok(std::optional{std::move(*first)});
 }
 
 std::string fetchable_query::str(const dialect &d) const {
@@ -58,10 +58,10 @@ result<std::unique_ptr<query_result_impl>, error> fetchable_query::fetch(const e
   return exec.fetch(ctx);
 }
 
-// result<statement, error> fetchable_query::prepare(executor &exec) const {
-  // auto ctx = compile(exec.dialect());
-  // ctx.resolver = exec.resolver();
-  // return exec.prepare(ctx);
-// }
+result<statement, error> fetchable_query::prepare(const executor &exec) const {
+  auto ctx = compile(exec.dialect());
+  ctx.resolver = exec.resolver();
+  return exec.prepare(ctx);
+}
 
 }

@@ -116,6 +116,7 @@ add_library(matador
   query/runtime/connection_pool.cpp
   query/runtime/error_code.cpp
   query/runtime/query_result.cpp
+  query/runtime/schema_manager.cpp
   query/runtime/session.cpp
   query/runtime/statement.cpp
   query/runtime/statement_cache.cpp
@@ -159,6 +160,7 @@ target_include_directories(matador
 # Compiler warnings based on target platform
 if (MSVC)
   target_compile_options(matador PRIVATE /W4 /permissive-)
+  target_compile_options(matador PUBLIC /Zc:preprocessor)
 else ()
   target_compile_options(matador PRIVATE -Wall -Wextra -Wpedantic -Wconversion)
 endif ()

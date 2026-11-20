@@ -1,3 +1,5 @@
+include(GNUInstallDirs)
+
 set(HEADER
   include/postgres_connection.hpp
   include/postgres_error.hpp
@@ -40,5 +42,5 @@ target_link_libraries(${LIBRARY_TARGET}
   matador
   ${CMAKE_DL_LIBS}
   ${CMAKE_THREAD_LIBS_INIT}
-  ${PostgreSQL_LIBRARIES}
+    PostgreSQL::PostgreSQL
 )

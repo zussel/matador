@@ -63,7 +63,7 @@ public:
   [[nodiscard]] const std::string& schema_name() const;
   [[nodiscard]] std::string qualified_name() const;
   [[nodiscard]] const std::vector<column>& columns() const;
-  [[nodiscard]] const std::vector<constraint>& constraints() const;
+  [[nodiscard]] const std::vector<class constraint>& constraints() const;
 
   void update_name(const std::string& name);
   void update_primary_key_index(size_t index);
@@ -107,7 +107,7 @@ private:
 
   std::string schema_name_;
   std::vector<column> columns_;
-  std::vector<constraint> constraints_;
+  std::vector<class constraint> constraints_;
 
   std::optional<std::size_t> pk_column_index_;
   std::optional<join_column_info> join_column_info_{};

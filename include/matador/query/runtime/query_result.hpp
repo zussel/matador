@@ -136,6 +136,10 @@ public:
     return &value_;
   }
 
+  pointer get() {
+    return &value_;
+  }
+
 private:
   void read_next() {
     if (result_ == nullptr) {

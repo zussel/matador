@@ -266,6 +266,41 @@ bool column::is_identity() const {
   return options_.constraints().has(column_constraint::Identity);
 }
 
+bool column::is_integer() const {
+  auto* plain_column = plain();
+  return plain_column == nullptr ? false : plain_column->type >= utils::basic_type::Int8 && plain_column->type <= utils::basic_type::UInt64;
+}
+
+bool column::is_floating_point() const {
+  auto* plain_column = plain();
+  return plain_column == nullptr ? false : plain_column->type == utils::basic_type::Float || plain_column->type == utils::basic_type::Double;
+}
+
+bool column::is_bool() const {
+  auto* plain_column = plain();
+  return plain_column == nullptr ? false : plain_column->type == utils::basic_type::Boolean;
+}
+
+bool column::is_string() const {
+  auto* plain_column = plain();
+  return plain_column == nullptr ? false : plain_column->type == utils::basic_type::Text;
+}
+
+bool column::is_varchar() const {
+  auto* plain_column = plain();
+  return plain_column == nullptr ? false : plain_column->type == utils::basic_type::Varchar;
+}
+
+bool column::is_blob() const {
+  auto* plain_column = plain();
+  return plain_column == nullptr ? false : plain_column->type == utils::basic_type::Blob;
+}
+
+bool column::is_null() const {
+  auto* plain_column = plain();
+  return plain_column == nullptr ? false : plain_column->type == utils::basic_type::Null;
+}
+
 query_functions column::function() const {
   const auto* function = std::get_if<query_function>(&value_);
   return function == nullptr ? query_functions::None : function->function;

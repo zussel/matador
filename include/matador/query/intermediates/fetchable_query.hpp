@@ -104,7 +104,7 @@ public:
     return ok<std::optional<Type>>(std::optional<Type>{std::nullopt});
   }
 
-  // [[nodiscard]] result<statement, error> prepare(executor &exec) const;
+  [[nodiscard]] result<statement, error> prepare(const executor &exec) const;
 
   /**
    * Compiles this query to SQL for a dialect.

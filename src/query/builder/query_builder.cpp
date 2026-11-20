@@ -398,7 +398,7 @@ void query_builder::visit(internal::query_drop_table_part& part) {
 }
 
 void build_create_column(std::string& out, const column& col, const dialect& d) {
-  prepare_identifier_string_append(out, col.canonical_name(), d);
+  prepare_identifier_string_append(out, col.column_name(), d);
   out += " " + d.data_type_at(col.type());
   if (col.size() > 0) {
     out.append("(" + std::to_string(col.size()) + ")");

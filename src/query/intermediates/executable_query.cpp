@@ -3,7 +3,7 @@
 
 #include "matador/query/runtime/execute_result.hpp"
 #include "matador/query/runtime/executor.hpp"
-// #include "matador/sql/statement.hpp"
+#include "matador/query/runtime/statement.hpp"
 
 namespace matador::query {
 
@@ -12,10 +12,10 @@ result<execute_result, error> executable_query::execute(const executor &exec) co
   return exec.execute(compiler.build(*context_, exec.dialect(), std::nullopt));
 }
 
-// result<statement, error> executable_query::prepare(executor &exec) const {
-  // query_builder compiler;
-  // return exec.prepare(compiler.build(*context_, exec.dialect(), std::nullopt));
-// }
+result<statement, error> executable_query::prepare(const executor &exec) const {
+  query_builder compiler;
+  return exec.prepare(compiler.build(*context_, exec.dialect(), std::nullopt));
+}
 
 query_context executable_query::compile(const dialect& d) const {
   query_builder compiler;

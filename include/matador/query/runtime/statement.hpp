@@ -191,16 +191,19 @@ result<object_ptr<Type>, error> statement::fetch_one() {
   }
   auto resolver = statement_proxy_->statement_->query_.resolver->resolver<Type>();
   const auto prototype = result.value()->prototype();
-  auto records = query_result<Type>(
+  auto records = query_result<Type>::make_query_result(
     result.release(),
     resolver,
     [] { return std::make_shared<Type>(); });
-  auto first = records.begin();
-  if (first == records.end()) {
+  if (!records) {
+    return failure(records.err());
+  }
+  auto first = records->begin();
+  if (first == records->end()) {
     return failure(error{error_code::FetchFailed,"Failed to find entity."});
   }
 
-  return ok(first.optr());
+  return ok(*first);
 }
 
 template<class Type>

@@ -23,7 +23,7 @@ public:
   [[nodiscard]] std::string name() const;
   [[nodiscard]] std::shared_ptr<class table> table() const;
   [[nodiscard]] const std::vector<column>& columns() const;
-  [[nodiscard]] const std::vector<constraint>& constraints() const;
+  [[nodiscard]] const std::vector<class constraint>& constraints() const;
 
   [[nodiscard]] abstract_pk_generator& pk_generator() const;
 

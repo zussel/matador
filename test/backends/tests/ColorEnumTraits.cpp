@@ -1,7 +1,7 @@
 #include "ColorEnumTraits.hpp"
 
-#include "matador/utils/attribute_writer.hpp"
 #include "matador/utils/attribute_reader.hpp"
+#include "matador/utils/attribute_writer.hpp"
 
 namespace matador::utils {
 

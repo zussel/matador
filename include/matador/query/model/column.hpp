@@ -146,6 +146,14 @@ public:
   [[nodiscard]] bool is_unique() const;
   [[nodiscard]] bool is_identity() const;
 
+  [[nodiscard]] bool is_integer() const;
+  [[nodiscard]] bool is_floating_point() const;
+  [[nodiscard]] bool is_bool() const;
+  [[nodiscard]] bool is_string() const;
+  [[nodiscard]] bool is_varchar() const;
+  [[nodiscard]] bool is_blob() const;
+  [[nodiscard]] bool is_null() const;
+
   [[nodiscard]] query_functions function() const;
 
   [[nodiscard]] bool has_alias() const;

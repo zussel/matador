@@ -10,7 +10,10 @@ if(NOT POSTGRES_CONNECTION_STRING)
 endif()
 
 set(TEST_SOURCES
-  ConnectionTest.cpp
+  ../tests/ConnectionTest.cpp
+  ../tests/QueryBasicTest.cpp
+  ../tests/fixtures/QueryFixture.cpp
+
   # Backend-agnostic tests from ../ can be added here, e.g. ../ColorEnumTraits.cpp
 )
 

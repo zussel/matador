@@ -42,6 +42,10 @@ select_intermediate select(const std::initializer_list<column> columns) {
   return select(std::vector<column>{columns});
 }
 
+select_intermediate select(std::initializer_list<std::string> column_names) {
+  return select(std::vector<std::string>{column_names});
+}
+
 select_intermediate select(const std::vector<column>& columns) {
   return select_intermediate{columns};
 }

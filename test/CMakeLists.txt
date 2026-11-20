@@ -20,6 +20,7 @@ add_executable(MatadorTests
     query/IdentifierTest.cpp
     query/InsertIntermediateTest.cpp
     query/InsertQueryBuilderTest.cpp
+    query/MetaTableMacroTest.cpp
     query/QueryBuilderTest.cpp
     query/QueryResultImplTest.cpp
     query/RelationCompleterTest.cpp

@@ -10,12 +10,12 @@ public:
   using executable_query::executable_query;
 
   template<typename... Columns>
-  fetchable_query returning(const Columns&... columns) const {
+  [[nodiscard]] fetchable_query returning(const Columns&... columns) const {
     return returning(std::vector<column>{columns...});
   }
 
 private:
-  fetchable_query returning(const std::vector<column>& columns) const;
+  [[nodiscard]] fetchable_query returning(const std::vector<column>& columns) const;
 };
 }
 

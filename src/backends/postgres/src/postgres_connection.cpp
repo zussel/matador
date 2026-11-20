@@ -101,7 +101,7 @@ result<std::unique_ptr<query::query_result_impl>, error> postgres_connection::fe
     return failure(err);
   }
   for (int i = 0; i < num_col; ++i) {
-    if (prototype.at(i).type() != utils::basic_type::Null) {
+    if (prototype.at(i).type() != utils::basic_type::Unknown) {
       continue;
     }
     const auto type = oid2type(PQftype(res, i));
@@ -273,8 +273,7 @@ result<std::vector<query::column>, error> postgres_connection::describe(const st
   return ok(prototype);
 }
 
-result<bool, error> postgres_connection::exists(const std::string &schema_name,
-                                                              const std::string &table_name) {
+result<bool, error> postgres_connection::exists(const std::string &schema_name, const std::string &table_name) {
   std::string stmt("SELECT 1 FROM information_schema.tables WHERE table_name = '" + table_name + "'");
   if (!schema_name.empty()) {
     stmt += " AND table_schema = '" + schema_name + "'";

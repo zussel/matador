@@ -61,6 +61,7 @@ column minimum(const std::string &column);
  * @endcode
  */
 [[nodiscard]] select_intermediate select(std::initializer_list<column> columns);
+[[nodiscard]] select_intermediate select(std::initializer_list<std::string> column_names);
 /** Starts a query with the given projection. See select(std::initializer_list<column>). */
 [[nodiscard]] select_intermediate select(const std::vector<column>& columns);
 /** Starts a query by converting every column name into a plain column. */
