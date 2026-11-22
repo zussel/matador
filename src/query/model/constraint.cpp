@@ -171,10 +171,4 @@ std::string constraint::ref_table_name() const {
 std::string constraint::ref_column_name() const {
   return ref_column_.value_or({}).column_name;
 }
-
-void constraint::rebind_table(const class table& table) {
-  // if (auto* ref = std::get_if<indexed_column_ref>(&column_)) {
-    // ref->table = &table;
-  // }
-}
 } // namespace matador::query

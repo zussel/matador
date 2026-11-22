@@ -62,7 +62,6 @@ table::table(std::string name, std::vector<column> columns, options opts)
 
   rebind_columns();
   create_constraints();
-  rebind_constraints();
 }
 
 table::table(const table &other)
@@ -74,7 +73,6 @@ table::table(const table &other)
 , pk_column_index_(other.pk_column_index_)
 , join_column_info_(other.join_column_info_) {
   rebind_columns();
-  rebind_constraints();
 }
 
 table & table::operator=(const table &other) {
@@ -98,7 +96,6 @@ table::table(table &&other) noexcept
       plain->index = index;
     }
   }
-  rebind_constraints();
   other.constraints_.clear();
   other.columns_.clear();
   other.pk_column_index_ = std::nullopt;
@@ -123,7 +120,6 @@ table & table::operator=(table &&other) noexcept {
       plain->index = index;
     }
   }
-  rebind_constraints();
   other.constraints_.clear();
   other.columns_.clear();
   other.pk_column_index_ = std::nullopt;
@@ -297,12 +293,6 @@ void table::rebind_columns() {
 
     plain->table = this;
     plain->index = index;
-  }
-}
-
-void table::rebind_constraints() {
-  for (auto& c : constraints_) {
-    c.rebind_table(*this);
   }
 }
 

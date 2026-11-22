@@ -19,9 +19,6 @@ namespace {
 class typed_orders final : public typed_query_table<typed_orders> {
 public:
   using typed_query_table::typed_query_table;
-
-  explicit typed_orders(table source)
-  : typed_query_table(std::move(source)) {}
 };
 
 } // namespace

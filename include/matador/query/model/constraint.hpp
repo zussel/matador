@@ -74,8 +74,6 @@ private:
 
   constraint(std::optional<std::string> name, column_ref column, column_constraint kind, std::optional<column_ref> ref_column = std::nullopt);
 
-  void rebind_table(const class table& table);
-
   friend class table;
 
   std::optional<std::string> name_;

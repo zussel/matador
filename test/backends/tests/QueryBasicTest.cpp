@@ -360,39 +360,8 @@ struct pk {
 };
 }
 
-// META_TABLE(pks, PK, id, name);
+META_TABLE(pks, PK, id, name);
 
-namespace matador::query::meta {
-namespace internal {
-class pks_table : public typed_query_table<pks_table> {
-public:
-  pks_table() : typed_query_table<
-                  pks_table>("pks", {column::make_plain("id"), column::make_plain("name"),}),
-                id(*column_by_name(*this, "id")), name(*column_by_name(*this, "name")) {
-  }
-
-  pks_table(const pks_table &other) : typed_query_table<pks_table>(other),
-                                      id(*column_by_name(*this, "id")),
-                                      name(*column_by_name(*this, "name")) {
-  }
-
-  pks_table(pks_table &&other) noexcept : typed_query_table<pks_table>(std::move(other)),
-                                          id(*column_by_name(*this, "id")),
-                                          name(*column_by_name(*this, "name")) {
-  }
-
-  pks_table &operator=(const pks_table &) = delete;
-  pks_table &operator=(pks_table &&) = delete;
-  const matador::query::column &id;
-  const matador::query::column &name;
-};
-}
-
-inline static const internal::pks_table &PK() {
-  static const internal::pks_table table;
-  return table;
-}
-}
 TEST_CASE_METHOD(QueryFixture, "Test primary key", "[query][primary key]") {
   using namespace matador::test::temporary;
   using namespace matador::query;

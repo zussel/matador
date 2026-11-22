@@ -99,7 +99,6 @@ private:
 
   static void validate_schema(const std::vector<column>& columns);
   void rebind_columns();
-  void rebind_constraints();
   void create_constraints();
 
   std::string name_;
@@ -118,8 +117,14 @@ class typed_query_table : public table {
 public:
   using table::table;
 
-  explicit typed_query_table(table source)
+  explicit typed_query_table(const table& source)
+  : table(source) {}
+
+  explicit typed_query_table(table&& source)
   : table(std::move(source)) {}
+
+  typed_query_table(const typed_query_table&) = default;
+  typed_query_table(typed_query_table&&) noexcept = default;
 
   [[nodiscard]] Type as(const std::string& alias) const {
     static_assert(std::is_constructible_v<Type, table>,
