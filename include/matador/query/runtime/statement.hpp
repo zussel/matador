@@ -5,6 +5,7 @@
 #include "matador/query/runtime/error_code.hpp"
 #include "matador/query/runtime/execute_result.hpp"
 #include "matador/query/runtime/query_result.hpp"
+#include "matador/query/relations/object_ptr.hpp"
 #include "matador/query/interface/statement_proxy.hpp"
 
 #include "matador/utils/error.hpp"
@@ -174,10 +175,11 @@ result<query_result<Type>, error> statement::fetch() {
   .and_then([this](std::unique_ptr<query_result_impl> &&value) -> result<query_result<Type>, error> {
     auto resolver = statement_proxy_->statement_->query_.resolver->resolver<Type>();
     const auto prototype = value->prototype();
-    return ok(query_result<Type>::make_query_result(
+    return query_result<Type>::make_query_result(
       std::forward<decltype(value)>(value),
       resolver,
-      [] { return std::make_shared<Type>(); }));
+      [] { return std::make_shared<Type>(); }
+    );
   });
 }
 

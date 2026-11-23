@@ -3,13 +3,13 @@
 #include <utility>
 
 namespace matador::query::internal {
-column_value_pair::column_value_pair(column col, column_expression_ptr expression)
-: column_(std::move(col))
+column_value_pair::column_value_pair(std::string column_name, column_expression_ptr expression)
+: column_name_(std::move(column_name))
 , expression_(std::move(expression)){
 }
 
-const column &column_value_pair::col() const {
-  return column_;
+const std::string &column_value_pair::column_name() const {
+  return column_name_;
 }
 
 const abstract_column_expression& column_value_pair::expression() const {
@@ -17,7 +17,7 @@ const abstract_column_expression& column_value_pair::expression() const {
 }
 
 bool operator==( const column_value_pair& lhs, const column_value_pair& rhs ) {
-  return lhs.column_.equals(rhs.column_) && lhs.expression_ == rhs.expression_;
+  return lhs.column_name_ == rhs.column_name_ && lhs.expression_ == rhs.expression_;
 }
 
 bool operator!=( const column_value_pair& lhs, const column_value_pair& rhs ) {

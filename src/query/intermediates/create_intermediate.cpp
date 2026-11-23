@@ -33,10 +33,10 @@ executable_query create_intermediate::schema( const std::string& schema_name ) c
 }
 
 executable_query create_table_columns_intermediate::constraints(const std::initializer_list<constraint> constraints) const {
-  return this->constraints(std::list(constraints));
+  return this->constraints(std::vector(constraints));
 }
 
-executable_query create_table_columns_intermediate::constraints(const std::list<constraint>& constraints) const {
+executable_query create_table_columns_intermediate::constraints(const std::vector<constraint>& constraints) const {
   auto context = clone_context();
   context->parts.push_back(std::make_unique<internal::query_create_table_constraints_part>(constraints));
   return {context};

@@ -2,10 +2,11 @@
 #define QUERY_UPDATE_INTERMEDIATE_HPP
 
 #include "matador/query/intermediates/execute_where_intermediate.hpp"
+#include "matador/query/intermediates/set_intermediate.hpp"
 
 #include "matador/query/criteria/abstract_criteria.hpp"
 #include "matador/query/expression/column_expression.hpp"
-// #include "matador/query/generator.hpp"
+#include "matador/query/mapping/generators.hpp"
 
 #include "matador/query/internal/column_value_pair.hpp"
 
@@ -32,19 +33,20 @@ public:
   /** Adds an assignment without changing states previously derived from this update. */
   update_intermediate set(const column &col, column_expression &&expression) const;
   update_intermediate set(const std::string &column_name, column_expression &&expression) const;
-  // template<class Type>
-  // query_set_intermediate set(const Type &obj) {
-  // return set(generator::column_value_pairs(obj));
-  // }
-  // template<class Type>
-  // query_set_intermediate set() {
-  // return set(generator::column_value_pairs<Type>());
-  // }
+  template<class Type>
+  set_intermediate set(const Type &obj) {
+    return set(column_value_pairs(obj));
+  }
+  template<class Type>
+  set_intermediate set() {
+    return set(column_value_pairs<Type>());
+  }
   /** Appends a WHERE clause without changing states previously derived from this update. */
   [[nodiscard]] execute_where_intermediate where(std::unique_ptr<abstract_criteria> cond) const;
 
 private:
   execute_where_intermediate where_clause(std::unique_ptr<abstract_criteria> &&cond) const;
+  set_intermediate set(std::vector<internal::column_value_pair> &&key_value_pairs);
 };
 }
 

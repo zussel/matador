@@ -95,13 +95,13 @@ TEST_CASE_METHOD(QueryFixture, "Insert and select basic datatypes", "[query][dat
     };
 
     auto res = insert()
-      .into(TYPE(), TYPE().columns())
+      .into(TYPE, TYPE.columns())
       .values(t)
       .execute(db);
     REQUIRE(res.is_ok());
     REQUIRE(res->affected_rows == 1);
 
-    auto result = select(TYPE().columns())
+    auto result = select(TYPE.columns())
       .from("types")
       .fetch_one<types>(db);
     REQUIRE(result.is_ok());
@@ -373,14 +373,14 @@ TEST_CASE_METHOD(QueryFixture, "Test primary key", "[query][primary key]") {
   pk pk1{ 7, "george" };
 
   auto res = insert()
-    .into(PK(), PK().columns())
+    .into(PK, PK.columns())
     .values(pk1)
     .execute(db);
   REQUIRE(res.is_ok());
   REQUIRE(res->affected_rows == 1);
 
-  auto row = select(PK().columns())
-    .from(PK())
+  auto row = select(PK.columns())
+    .from(PK)
     .fetch_one<pk>(db);
   REQUIRE(row.is_ok());
   REQUIRE(row->get() != nullptr);
@@ -397,7 +397,7 @@ TEST_CASE_METHOD(QueryFixture, "Test primary key prepared", "[query][primary key
   pk pk1{ 7, "george" };
 
   auto stmt = insert()
-    .into(PK(), PK().columns())
+    .into(PK, PK.columns())
     .values(placeholders<pk>())
     .prepare(db);
   REQUIRE(stmt);
@@ -407,8 +407,8 @@ TEST_CASE_METHOD(QueryFixture, "Test primary key prepared", "[query][primary key
   REQUIRE(res.is_ok());
   REQUIRE(res->affected_rows == 1);
 
-  stmt = select(PK().columns())
-    .from(PK())
+  stmt = select(PK.columns())
+    .from(PK)
     .prepare(db);
   REQUIRE(stmt);
 

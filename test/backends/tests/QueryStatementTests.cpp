@@ -1,31 +1,32 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/sql/connection.hpp"
+#include "matador/query/runtime/connection.hpp"
 
 #include "matador/query/criteria.hpp"
-#include "matador/query/query.hpp"
-#include "matador/query/table_column.hpp"
+#include "matador/query/builder/query.hpp"
+#include "matador/query/mapping/generators.hpp"
+#include "matador/query/model/column.hpp"
+#include "matador/query/meta_table_macro.hpp"
 
 #include "models/person.hpp"
-#include "models/model_metas.hpp"
 
 #include "fixtures/QueryFixture.hpp"
 
 #include <algorithm>
 #include <vector>
 
-using namespace matador::sql;
-using namespace matador::object;
+META_TABLE(persons, PERSON, id, name, age, image)
+
 using namespace matador::query;
 using namespace matador::query::meta;
 using namespace matador::utils;
 using namespace matador::test;
 
 TEST_CASE_METHOD(QueryFixture, "Test create statement", "[query][statement][create]") {
-  const auto obj = object_generator::generate<person>(repo.repo(), "persons");
+  const auto obj = table_generator::generate<person>(repo, "persons");
   auto stmt = create()
     .table(obj->name())
-    .columns(obj->attributes())
+    .columns(obj->columns())
     .constraints(obj->constraints())
     .prepare(db);
   REQUIRE(stmt);
@@ -48,7 +49,7 @@ TEST_CASE_METHOD(QueryFixture, "Test create statement", "[query][statement][crea
 TEST_CASE_METHOD(QueryFixture, "Test insert statement", "[query][statement][insert]") {
 
   REQUIRE(repo.attach<person>("persons")
-    .and_then([this] { return repo.create(db);}));
+    .and_then([this] { return manager.create(db);}));
 
   check_table_exists(PERSON.table_name());
 
@@ -56,7 +57,7 @@ TEST_CASE_METHOD(QueryFixture, "Test insert statement", "[query][statement][inse
 
   auto stmt = insert()
     .into(PERSON, {PERSON.id, PERSON.name, PERSON.age, PERSON.image})
-    .values(generator::placeholders<person>())
+    .values(placeholders<person>())
     .prepare(db);
   REQUIRE(stmt);
 
@@ -79,7 +80,7 @@ TEST_CASE_METHOD(QueryFixture, "Test insert statement", "[query][statement][inse
 
 TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][update]") {
   REQUIRE(repo.attach<person>("persons")
-    .and_then([this] { return repo.create(db);}));
+    .and_then([this] { return manager.create(db);}));
 
   check_table_exists(PERSON.table_name());
 
@@ -87,7 +88,7 @@ TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][upda
 
   auto stmt = insert()
     .into(PERSON, {PERSON.id, PERSON.name, PERSON.age, PERSON.image})
-    .values(generator::placeholders<person>())
+    .values(placeholders<person>())
     .prepare(db);
   REQUIRE(stmt);
 
@@ -135,13 +136,13 @@ TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][upda
 
 TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][delete]") {
   REQUIRE(repo.attach<person>("persons")
-    .and_then([this] { return repo.create(db);}));
+    .and_then([this] { return manager.create(db);}));
 
   check_table_exists(PERSON.table_name());
 
   auto stmt = insert()
     .into(PERSON, {PERSON.id, PERSON.name, PERSON.age, PERSON.image})
-    .values(generator::placeholders<person>())
+    .values(placeholders<person>())
     .prepare(db);
   REQUIRE(stmt);
 
@@ -208,13 +209,13 @@ TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][dele
 
 TEST_CASE_METHOD(QueryFixture, "Test reuse prepared statement", "[query][statement][reuse]") {
   REQUIRE(repo.attach<matador::test::person>("persons")
-    .and_then([this] { return repo.create(db);}));
+    .and_then([this] { return manager.create(db);}));
 
   check_table_exists(PERSON.table_name());
 
   auto stmt = insert()
     .into(PERSON, {PERSON.id, PERSON.name, PERSON.age, PERSON.image})
-    .values(generator::placeholders<person>())
+    .values(placeholders<person>())
     .prepare(db);
   REQUIRE(stmt);
 

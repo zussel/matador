@@ -29,4 +29,9 @@ execute_where_intermediate update_intermediate::where_clause(std::unique_ptr<abs
   context->parts.push_back(std::make_shared<internal::query_where_part>(std::move(cond)));
   return {context};
 }
+
+set_intermediate update_intermediate::set(std::vector<internal::column_value_pair> &&key_value_pairs) {
+  context_->parts.push_back(std::make_unique<internal::query_set_part>(std::move(key_value_pairs)));
+  return {context_};
 }
+} // namespace matador::query

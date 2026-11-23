@@ -433,12 +433,12 @@ void query_create_table_columns_part::accept(query_part_visitor &visitor) {
 }
 
 query_create_table_constraints_part::query_create_table_constraints_part(
-  const std::list<class constraint> &constraints)
+  const std::vector<class constraint> &constraints)
 : query_part(dialect_token::Constraint)
 , constraints_(constraints) {
 }
 
-const std::list<class constraint> &query_create_table_constraints_part::constraints() const {
+const std::vector<class constraint> &query_create_table_constraints_part::constraints() const {
   return constraints_;
 }
 

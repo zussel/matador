@@ -414,14 +414,14 @@ private:
 
 class query_create_table_constraints_part final : public query_part {
 public:
-  explicit query_create_table_constraints_part(const std::list<constraint> &constraints);
+  explicit query_create_table_constraints_part(const std::vector<constraint> &constraints);
 
-  [[nodiscard]] const std::list<constraint> &constraints() const;
+  [[nodiscard]] const std::vector<constraint> &constraints() const;
 
   void accept(query_part_visitor &visitor) override;
 
 private:
-  std::list<constraint> constraints_;
+  std::vector<constraint> constraints_;
 };
 
 class query_create_sequence_part final : public query_part {

@@ -36,10 +36,7 @@ TABLE_NAME##_table& operator=(const TABLE_NAME##_table&) = delete; \
 TABLE_NAME##_table& operator=(TABLE_NAME##_table&&) = delete; \
 MAP(FIELD, __VA_ARGS__) \
 }; } \
-inline static const internal::TABLE_NAME##_table& VARIABLE_NAME() { \
-  static const internal::TABLE_NAME##_table table; \
-  return table; \
-} \
+inline const internal::TABLE_NAME##_table VARIABLE_NAME; \
 }
 
 #define META_TYPED_TABLE(TABLE_NAME, VARIABLE_NAME, ...) \
@@ -66,10 +63,7 @@ TABLE_NAME##_table& operator=(const TABLE_NAME##_table&) = delete; \
 TABLE_NAME##_table& operator=(TABLE_NAME##_table&&) = delete; \
 MAP_PAIR(TYPED_FIELD, __VA_ARGS__) \
 }; } \
-inline static const internal::TABLE_NAME##_table& VARIABLE_NAME() { \
-  static const internal::TABLE_NAME##_table table; \
-  return table; \
-} \
+inline const internal::TABLE_NAME##_table VARIABLE_NAME; \
 }
 
 #endif //MATADOR_META_TABLE_MACRO_HPP

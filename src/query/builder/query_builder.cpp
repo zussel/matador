@@ -362,29 +362,11 @@ void query_builder::visit(internal::query_set_part& part) {
     if (!first) {
       query_.sql.append(", ");
     }
-    query_.sql.append(prepare_identifier_string(column_value.col().column_name(), *dialect_) + "=");
+    query_.sql.append(prepare_identifier_string(column_value.column_name(), *dialect_) + "=");
     query_.sql.append(determine_value(*dialect_, query_, column_value.expression()));
     first = false;
   }
   has_set_clause_ = true;
-
-  // if (part.column_values().size() < 2) {
-  //   for (const auto &column_value: part.column_values()) {
-  //     result.append(dialect_->prepare_identifier_string(column_value.col().name()) + "=");
-  //     result.append(determine_value(visitor, column_value.value()));
-  //   }
-  // } else {
-  //   auto it = part.column_values().begin();
-  //   result.append(dialect_->prepare_identifier_string(it->col().name()) + "=");
-  //   result.append(determine_value(visitor, (it++)->value()));
-  //   for (; it != part.column_values().end(); ++it) {
-  //     result.append(", ");
-  //     result.append(dialect_->prepare_identifier_string(it->col().name()) + "=");
-  //     result.append(determine_value(visitor, it->value()));
-  //   }
-  // }
-  //
-  // query_.sql += result;
 }
 
 void query_builder::visit(internal::query_drop_sequence_part& part) {
