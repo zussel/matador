@@ -2,9 +2,9 @@
 
 #include "matador/query/schema/schema.hpp"
 
+#include "../models/department.hpp"
 #include "../models/person.hpp"
-#include "models/department.hpp"
-#include "models/recipe.hpp"
+#include "../models/recipe.hpp"
 
 using namespace matador;
 

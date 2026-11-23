@@ -5,9 +5,9 @@
 #include "matador/query/internal/delete_query_builder.hpp"
 #include "matador/query/internal/schema_utils.hpp"
 
-#include "models/department.hpp"
-#include "models/flight.hpp"
-#include "models/recipe.hpp"
+#include "../models/department.hpp"
+#include "../models/flight.hpp"
+#include "../models/recipe.hpp"
 
 #include <string>
 #include <typeindex>

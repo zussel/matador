@@ -8,7 +8,7 @@
 #include "matador/query/resolver/producer_creator.hpp"
 #include "matador/query/runtime/error_code.hpp"
 
-#include "models/recipe.hpp"
+#include "../models/recipe.hpp"
 
 #include <string>
 #include <typeindex>

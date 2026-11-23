@@ -3,8 +3,8 @@
 #include "matador/query/mapping/binary_deserializer.hpp"
 #include "matador/query/mapping/binary_serializer.hpp"
 
-#include "models/author.hpp"
-#include "models/recipe.hpp"
+#include "../models/author.hpp"
+#include "../models/recipe.hpp"
 
 #include <cstdint>
 #include <optional>

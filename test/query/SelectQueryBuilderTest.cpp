@@ -5,15 +5,15 @@
 #include "matador/query/dialect/dialect.hpp"
 #include "matador/query/internal/select_query_builder.hpp"
 
-#include "models/author.hpp"
-#include "models/airplane.hpp"
-#include "models/book.hpp"
-#include "models/country.hpp"
+#include "../models/airplane.hpp"
+#include "../models/author.hpp"
+#include "../models/book.hpp"
+#include "../models/country.hpp"
+#include "../models/flight.hpp"
+#include "../models/northwind.hpp"
+#include "../models/recipe.hpp"
+#include "../models/student.hpp"
 #include "models/department.hpp"
-#include "models/flight.hpp"
-#include "models/northwind.hpp"
-#include "models/recipe.hpp"
-#include "models/student.hpp"
 #include "models/user.hpp"
 
 using namespace matador::query;

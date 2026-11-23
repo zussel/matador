@@ -1,12 +1,12 @@
 #include "catch2/catch_test_macros.hpp"
 
-#include "matador/query/builder.hpp"
+#include "matador/query/builder/builder.hpp"
 #include "matador/query/criteria.hpp"
-#include "matador/query/generator.hpp"
-#include "matador/query/query.hpp"
+#include "matador/query/mapping/generators.hpp"
+#include "matador/query/builder/query.hpp"
 #include "matador/query/meta_table_macro.hpp"
 
-#include "QueryFixture.hpp"
+#include "fixtures/QueryFixture.hpp"
 
 #include "models/airplane.hpp"
 #include "models/author.hpp"
@@ -18,16 +18,15 @@
 #include "models/shipment.hpp"
 #include "models/model_metas.hpp"
 
-#include "../test/utils/RecordPrinter.hpp"
+#include "../../query/utils/RecordPrinter.hpp"
 
-using namespace matador::object;
+using namespace matador;
 using namespace matador::query;
-using namespace matador::sql;
 using namespace matador::test;
 using namespace matador::utils;
 using namespace matador::query::meta;
 
-void initialize_resolver(const basic_schema& repo, connection& db) {
+static void initialize_resolver(const basic_schema& repo, connection& db) {
   for (const auto &pair : repo.resolver_producers()) {
     auto res = pair.second->build_query(db.dialect()).and_then([&db](query_context&& query_ctx) -> result<statement, error> {
       query_ctx.resolver = db.resolver();
@@ -66,7 +65,7 @@ void initialize_resolver(const basic_schema& repo, connection& db) {
 TEST_CASE_METHOD(QueryFixture, "Create table with foreign key relation", "[query][foreign][relation]") {
   const auto result = repo.attach<airplane>("airplane")
     .and_then([this] { return repo.attach<flight>("flight");})
-    .and_then([this] {return repo.create(db); });
+    .and_then([this] {return manager.create(db); });
   REQUIRE(result.is_ok());
 
   check_table_exists("airplane");
@@ -75,7 +74,7 @@ TEST_CASE_METHOD(QueryFixture, "Create table with foreign key relation", "[query
 
 TEST_CASE_METHOD(QueryFixture, "Execute select statement with where clause", "[query][where]") {
   REQUIRE(repo.attach<person>("persons"));
-  auto result = repo.create(db);
+  auto result = manager.create(db);
   REQUIRE(result.is_ok());
 
   check_table_exists(PERSON.table_name());
@@ -126,7 +125,7 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with where clause", "[q
 
 TEST_CASE_METHOD(QueryFixture, "Execute insert with returning", "[query][insert][returning]") {
   REQUIRE(repo.attach<person>("persons"));
-  auto result = repo.create(db);
+  auto result = manager.create(db);
   REQUIRE(result.is_ok());
 
   check_table_exists(PERSON.table_name());
@@ -171,9 +170,9 @@ TEST_CASE_METHOD(QueryFixture, "Execute insert statement", "[query][insert]") {
   auto res = create()
     .table("person")
     .columns({
-        column("id", matador::utils::basic_type::UInt32),
-        column("name", matador::utils::basic_type::Varchar, 255),
-        column("color", matador::utils::basic_type::Varchar, 63)
+        col("id", basic_type::UInt32),
+        col("name", basic_type::Varchar, 255),
+        col("color", basic_type::Varchar, 63)
     })
     .constraints({
         constraint("PK_person").primary_key("id")
@@ -216,7 +215,7 @@ TEST_CASE_METHOD(QueryFixture, "Execute insert statement", "[query][insert]") {
 TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key", "[query][foreign]") {
   auto result = repo.attach<airplane>("airplanes")
     .and_then( [this] { return repo.attach<flight>("flights");} )
-    .and_then([this] {return repo.create(db); });
+    .and_then([this] {return manager.create(db); });
   REQUIRE(result.is_ok());
 
   REQUIRE(db.exists(AIRPLANE.table_name()));
@@ -266,7 +265,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key", "[query][for
 TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and join_left", "[query][foreign][join_left]") {
   auto result = repo.attach<airplane>("airplanes")
     .and_then( [this] { return repo.attach<flight>("flights");} )
-    .and_then([this] {return repo.create(db); });
+    .and_then([this] {return manager.create(db); });
   REQUIRE(result.is_ok());
 
   REQUIRE(db.exists(AIRPLANE.table_name()));
@@ -345,7 +344,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and join_left"
 TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and for single entity", "[query][join_left][find]") {
   auto result = repo.attach<airplane>("airplanes")
     .and_then([this] { return repo.attach<flight>("flights");})
-    .and_then([this] {return repo.create(db); });
+    .and_then([this] {return manager.create(db); });
   REQUIRE(result.is_ok());
 
   initialize_resolver(repo, db);
@@ -426,7 +425,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and for single
 TEST_CASE_METHOD(QueryFixture, "Select statement with many to many relationship", "[query][join][many_to_many]") {
   auto result = repo.attach<ingredient>("ingredients")
     .and_then( [this] { return repo.attach<recipe>("recipes"); } )
-    .and_then([this] {return repo.create(db); });
+    .and_then([this] {return manager.create(db); });
 
   REQUIRE(db.exists(RECIPE.table_name()));
   REQUIRE(db.exists(INGREDIENT.table_name()));
@@ -572,7 +571,7 @@ void print(std::ostream& out, const record& row) {
 TEST_CASE_METHOD(QueryFixture, "Test load entity with eager has many relation", "[query][has_many][eager]") {
   auto result = repo.attach<package>("packages")
     .and_then([this] { return repo.attach<shipment>("shipments"); })
-    .and_then([this] {return repo.create(db); });
+    .and_then([this] {return manager.create(db); });
   REQUIRE(result.is_ok());
 
   initialize_resolver(repo, db);
@@ -669,7 +668,7 @@ TEST_CASE_METHOD(QueryFixture, "Test load entity with lazy has many relation", "
   auto result = repo.attach<author>("authors")
   .and_then( [this] { return repo.attach<book>("books"); } )
   .and_then([this] {
-    return repo.create(db);
+    return manager.create(db);
   } );
   REQUIRE(result.is_ok());
 
@@ -752,7 +751,7 @@ TEST_CASE_METHOD(QueryFixture, "Test load entity with lazy has many relation", "
 TEST_CASE_METHOD(QueryFixture, "Test load entity with lazy belongs to relation", "[query][belongs_to][lazy]") {
   auto result = repo.attach<department>("departments")
     .and_then([this] { return repo.attach<employee>("employees"); })
-    .and_then([this] {return repo.create(db); });
+    .and_then([this] {return manager.create(db); });
   REQUIRE(result.is_ok());
 
   initialize_resolver(repo, db);
@@ -820,7 +819,7 @@ TEST_CASE_METHOD(QueryFixture, "Test load entity with lazy belongs to relation",
 TEST_CASE_METHOD(QueryFixture, "Test load entity with eager belongs to relation", "[query][belongs_to][eager]") {
   auto result = repo.attach<book>("books")
     .and_then( [this] { return repo.attach<author>("authors"); })
-    .and_then([this] { return repo.create(db); });
+    .and_then([this] { return manager.create(db); });
   REQUIRE(result.is_ok());
 
   const std::vector authors {
@@ -897,7 +896,7 @@ TEST_CASE_METHOD(QueryFixture, "Test load entity with eager belongs to relation"
 TEST_CASE_METHOD(QueryFixture, "Test load entity with eager has many to many relation", "[query][has_many_to_many][eager]") {
   auto result = repo.attach<ingredient>("ingredients")
     .and_then( [this] { return repo.attach<recipe>("recipes"); } )
-    .and_then([this] {return repo.create(db); });
+    .and_then([this] {return manager.create(db); });
 
   REQUIRE(result.is_ok());
 
