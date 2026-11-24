@@ -25,7 +25,7 @@ public:
   object_proxy() = default;
 
   // Lazy
-  object_proxy(std::weak_ptr<object_resolver<Type>> resolver, const identifier& id)
+  object_proxy(std::weak_ptr<object_resolver<Type>> resolver, identifier  id)
   : resolver_(std::move(resolver))
   , pk_(std::move(id))
   , state_(object_state::Persistent) {

@@ -14,7 +14,7 @@ class create_table_columns_intermediate : public executable_query {
 public:
   using executable_query::executable_query;
 
-  [[nodiscard]] executable_query constraints(std::initializer_list<class constraint> constraints) const;
+  // [[nodiscard]] executable_query constraints(std::initializer_list<class constraint> constraints) const;
   [[nodiscard]] executable_query constraints(const std::vector<class constraint> &constraints) const;
 };
 

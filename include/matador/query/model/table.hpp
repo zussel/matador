@@ -127,8 +127,7 @@ public:
   typed_query_table(typed_query_table&&) noexcept = default;
 
   [[nodiscard]] Type as(const std::string& alias) const {
-    static_assert(std::is_constructible_v<Type, table>,
-                  "Type must be constructible from matador::query::table");
+    static_assert(std::is_constructible_v<Type, table>, "Type must be constructible from matador::query::table");
     return Type{table::as(alias)};
   }
 };

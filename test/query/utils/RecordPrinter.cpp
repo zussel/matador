@@ -32,7 +32,7 @@ RecordPrinter::RecordPrinter(std::ostream &os)
   };
 }
 
-void RecordPrinter::print_header(const sql::record &rec) const {
+void RecordPrinter::print_header(const query::record &rec) const {
   for (const auto &f: rec.columns()) {
     os_ << std::left << std::setw(width(f)) << f.name() << " ";
   }
@@ -44,14 +44,14 @@ void RecordPrinter::print_header(const sql::record &rec) const {
   os_ << "\n";
 }
 
-void RecordPrinter::print(const sql::record &rec) const {
+void RecordPrinter::print(const query::record &rec) const {
   for (const auto &f: rec.columns()) {
     os_ << std::left << std::setw(width(f)) << f.str() << " ";
   }
   os_ << "\n";
 }
 
-int RecordPrinter::width(const sql::field &f) {
+int RecordPrinter::width(const query::field &f) {
   // If it's a varchar/string and has a defined size, use it if it's reasonable, 
   // otherwise fall back to type defaults.
   if ((f.is_varchar() || f.is_string()) && f.size() > 0 && f.size() < 100) {

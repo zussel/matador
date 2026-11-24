@@ -154,7 +154,7 @@ std::unique_ptr<schema_node> schema_node::make_relation_node(basic_schema &repo,
   node->info_ = std::make_unique<table_info<Type>>(
     *node,
     table_generator::generate(std::make_unique<Type>(join_column, inverse_join_column), repo, name, join_column, inverse_join_column),
-    nullptr,
+    std::make_unique<null_pk_generator>(),
     std::move(observers),
     std::move(creator)
   );

@@ -1,9 +1,10 @@
 #ifndef MATADOR_QUERY_CONSTRAINT_HPP
 #define MATADOR_QUERY_CONSTRAINT_HPP
 
-#include "column_constraint.hpp"
+#include "matador/query/model/column_constraint.hpp"
 
 #include <cstddef>
+#include <memory>
 #include <optional>
 #include <string>
 #include <variant>
@@ -38,8 +39,8 @@ public:
     std::string name,
     std::string table_name,
     std::string column_name,
-    std::string ref_table_name,
-    std::string ref_column_name
+    const std::string& ref_table_name,
+    const std::string& ref_column_name
   );
 
   constraint& operator=(const constraint& other) = default;
@@ -67,18 +68,39 @@ public:
 
 private:
 
+  struct abstract_ref {
+    virtual ~abstract_ref() = default;
+    [[nodiscard]] virtual std::string table_name() const = 0;
+    [[nodiscard]] virtual std::string column_name() const = 0;
+  };
+
+  struct plain_ref : abstract_ref {
+    plain_ref(std::string tn, std::string cn);
+    [[nodiscard]] std::string table_name() const override;
+    [[nodiscard]] std::string column_name() const override;
+    std::string table_name_;
+    std::string column_name_;
+  };
   struct column_ref {
     std::string table_name;
     std::string column_name;
   };
 
-  constraint(std::optional<std::string> name, column_ref column, column_constraint kind, std::optional<column_ref> ref_column = std::nullopt);
+  struct table_ref : abstract_ref {
+    table_ref(const table &t, size_t index);
+    [[nodiscard]] std::string table_name() const override;
+    [[nodiscard]] std::string column_name() const override;
+    const table& table_;
+    size_t pk_index_;
+  };
+
+  constraint(std::optional<std::string> name, column_ref column, column_constraint kind, std::shared_ptr<abstract_ref> ref = {});
 
   friend class table;
 
   std::optional<std::string> name_;
   column_ref column_;
-  std::optional<column_ref> ref_column_;
+  std::shared_ptr<abstract_ref> ref_;
   column_constraint kind_;
 };
 

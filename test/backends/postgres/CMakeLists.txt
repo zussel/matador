@@ -11,6 +11,7 @@ endif()
 
 set(TEST_SOURCES
   ../tests/ConnectionTest.cpp
+  ../tests/ColorEnumTraits.cpp
   ../tests/QueryTest.cpp
   ../tests/QueryBasicTest.cpp
   ../tests/QueryRecordTest.cpp

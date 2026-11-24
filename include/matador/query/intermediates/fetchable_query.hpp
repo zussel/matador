@@ -57,7 +57,7 @@ public:
   result<object_ptr<Type>, error> fetch_one(executor &exec) {
     auto result = fetch(exec, typeid(Type));
     if (!result.is_ok()) {
-      return failure<error>(result.release_error());
+      return failure(result.release_error());
     }
 
     auto resolver = exec.resolver()->resolver<Type>();
@@ -94,7 +94,7 @@ public:
   result<std::optional<Type>, error> fetch_value(const executor &exec) {
     auto fetch_result = fetch_one(exec);
     if (!fetch_result.is_ok()) {
-      return failure<error>(fetch_result.err());
+      return failure(fetch_result.err());
     }
 
     const auto &record_result = fetch_result.value();

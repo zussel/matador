@@ -19,32 +19,32 @@ struct shipment {
 
   int64_t id{};
   std::string tracking_number;
-  object::collection<object::object_ptr<package> > packages{};
+  query::collection<query::object_ptr<package> > packages{};
 
   template<typename Operator>
   void process(Operator &op) {
     namespace field = query::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "tracking_number", tracking_number, UniqueVarChar255);
-    field::has_many(op, "packages", packages, "shipment_id", utils::CascadeAllFetchEager);
+    field::has_many(op, "packages", packages, "shipment_id", CascadeAllFetchEager);
   }
 };
 
 struct package {
   package() = default;
-  package(const long id, double weight, object::object_ptr<shipment> del)
+  package(const long id, const double weight, query::object_ptr<shipment> del)
   : id(id), weight(weight), delivery(std::move(del)){}
 
   int64_t id{};
   double weight{};
-  object::object_ptr<shipment> delivery{};
+  query::object_ptr<shipment> delivery{};
 
   template<typename Operator>
   void process(Operator &op) {
     namespace field = query::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "weight", weight);
-    field::belongs_to(op, "shipment_id", delivery, utils::CascadeAllFetchLazy);
+    field::belongs_to(op, "shipment_id", delivery, CascadeAllFetchLazy);
   }
 };
 }

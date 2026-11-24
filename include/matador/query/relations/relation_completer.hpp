@@ -481,11 +481,11 @@ void relation_completer<Type, Observers...>::attach_relation_node(const std::str
   auto observers = internal::observer_list_copy_creator<Type, relation_value_type, Observers...>::copy_create(observers_);
 
   auto node = schema_node::make_relation_node<relation_value_type>(repo_,
-                                                                       name,
-                                                                       join_column,
-                                                                       inverse_join_column,
-                                                                       std::move(creator),
-                                                                       std::move(observers));
+                                                                   name,
+                                                                   join_column,
+                                                                   inverse_join_column,
+                                                                   std::move(creator),
+                                                                   std::move(observers));
   auto result = repo_.attach_node(std::move(node), "");
   if (!result) {
     throw error_exception(result.release_error());

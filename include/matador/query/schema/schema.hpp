@@ -323,7 +323,7 @@ public:
         return failure<error>(completer_result.err());
       }
       if (info.has_primary_key()) {
-        resolver_producers_[ti] = std::make_unique<object_resolver_producer<Type>>(*this, *info.table(), info.primary_key_attribute()->name());
+        resolver_producers_[ti] = std::make_unique<object_resolver_producer<Type>>(*this, *info.table(), info.primary_key_attribute()->column_name());
       }
     } else if (!has_node(name)) {
       const auto old_name = it->second->name();
@@ -345,7 +345,7 @@ public:
         return failure<error>(completer_result.err());
       }
       if (info.has_primary_key()) {
-        resolver_producers_[ti] = std::make_unique<object_resolver_producer<Type>>(*this, *info.table(), info.primary_key_attribute()->name());
+        resolver_producers_[ti] = std::make_unique<object_resolver_producer<Type>>(*this, *info.table(), info.primary_key_attribute()->column_name());
       }
       // log_.info("attach: update node name to '%s' (type: %s)", it->second->name().c_str(), it->second->type_index().name());
     } else {

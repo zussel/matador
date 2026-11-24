@@ -185,7 +185,7 @@ TEST_CASE_METHOD(QueryFixture, "Execute insert statement", "[query][insert]") {
   tables_to_drop.emplace("person");
 
   res = insert()
-    .into("person", {{"id", ""}, {"name", ""}, {"color", ""}})
+    .into("person", {"id", "name", "color"})
     .values({7, "george", "green"})
     .execute(db);
   REQUIRE(res.is_ok());
@@ -818,7 +818,7 @@ TEST_CASE_METHOD(QueryFixture, "Test load entity with lazy belongs to relation",
 
 TEST_CASE_METHOD(QueryFixture, "Test load entity with eager belongs to relation", "[query][belongs_to][eager]") {
   auto result = repo.attach<book>("books")
-    .and_then( [this] { return repo.attach<author>("authors"); })
+    .and_then([this] { return repo.attach<author>("authors"); })
     .and_then([this] { return manager.create(db); });
   REQUIRE(result.is_ok());
 

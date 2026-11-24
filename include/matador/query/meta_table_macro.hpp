@@ -32,6 +32,10 @@ TABLE_NAME##_table(TABLE_NAME##_table&& other) noexcept \
 : typed_query_table<TABLE_NAME##_table>(std::move(other)) \
 MAP(INIT_FIELD, __VA_ARGS__) \
 {} \
+TABLE_NAME##_table(matador::query::table source) \
+: typed_query_table<TABLE_NAME##_table>(std::move(source)) \
+MAP(INIT_FIELD, __VA_ARGS__) \
+{} \
 TABLE_NAME##_table& operator=(const TABLE_NAME##_table&) = delete; \
 TABLE_NAME##_table& operator=(TABLE_NAME##_table&&) = delete; \
 MAP(FIELD, __VA_ARGS__) \

@@ -6,7 +6,7 @@
 #include <iosfwd>
 #include <map>
 
-namespace matador::sql {
+namespace matador::query {
 class field;
 class record;
 }
@@ -16,8 +16,8 @@ class RecordPrinter final {
 public:
   explicit RecordPrinter(std::ostream &os);
 
-  void print_header(const sql::record &rec) const;
-  void print(const sql::record &rec) const;
+  void print_header(const query::record &rec) const;
+  void print(const query::record &rec) const;
 
   template < class Type, template <typename ...> class ContainerType >
   void print(ContainerType<Type> &records) const {
@@ -32,7 +32,7 @@ public:
   }
 
 private:
-  [[nodiscard]] static int width(const sql::field &f) ;
+  [[nodiscard]] static int width(const query::field &f) ;
 
 private:
   std::ostream &os_;

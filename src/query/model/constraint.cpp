@@ -86,7 +86,7 @@ constraint constraint::make_fk_constraint(
     std::nullopt,
     {table.table_name(), table.find_column(column_index)->column_name()},
     column_constraint::ForeignKey,
-    column_ref{ref_table.table_name(), ref_table.find_column(ref_column_index)->column_name()}
+    std::make_shared<table_ref>(ref_table, ref_column_index)
   };
 }
 
@@ -94,21 +94,39 @@ constraint constraint::make_fk_constraint(
   std::string name,
   std::string table_name,
   std::string column_name,
-  std::string ref_table_name,
-  std::string ref_column_name
+  const std::string& ref_table_name,
+  const std::string& ref_column_name
 ) {
   return constraint{
     std::move(name),
     {std::move(table_name), std::move(column_name)},
     column_constraint::ForeignKey,
-    column_ref{std::move(ref_table_name), std::move(ref_column_name)}
+    std::make_shared<plain_ref>(ref_table_name, ref_column_name)
   };
 }
 
-constraint::constraint(std::optional<std::string> name, column_ref column, const column_constraint kind, std::optional<column_ref> ref_column)
+constraint::plain_ref::plain_ref(std::string tn, std::string cn)
+: table_name_(std::move(tn)), column_name_(std::move(cn)) {}
+
+std::string constraint::plain_ref::table_name() const {
+  return table_name_;
+}
+std::string constraint::plain_ref::column_name() const {
+  return column_name_;
+}
+constraint::table_ref::table_ref(const table &t, size_t index)
+: table_(t), pk_index_(index) {}
+std::string constraint::table_ref::table_name() const {
+  return table_.table_name();
+}
+std::string constraint::table_ref::column_name() const {
+  return table_.find_column(pk_index_)->column_name();
+}
+
+constraint::constraint(std::optional<std::string> name, column_ref column, const column_constraint kind, std::shared_ptr<abstract_ref> ref)
 : name_(std::move(name))
 , column_(std::move(column))
-, ref_column_(std::move(ref_column))
+, ref_(std::move(ref))
 , kind_(kind) {
 }
 
@@ -161,14 +179,15 @@ bool constraint::is_not_null_constraint() const {
 }
 
 bool constraint::has_ref_table() const {
-  return ref_column_.has_value();
+  return ref_ != nullptr;
 }
 
 std::string constraint::ref_table_name() const {
-  return ref_column_.value_or({}).table_name;
+  return ref_ != nullptr ? ref_->table_name() : "";
 }
 
 std::string constraint::ref_column_name() const {
-  return ref_column_.value_or({}).column_name;
+  return ref_ != nullptr ? ref_->column_name() : "";
 }
+
 } // namespace matador::query

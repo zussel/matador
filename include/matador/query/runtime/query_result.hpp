@@ -261,11 +261,11 @@ query_result_traits<Type>::make_query_result(
   std::shared_ptr<object_resolver<Type>> resolver,
   creator_func&& creator) {
   if (!impl) {
-    return failure<error>(error{error_code::Failure, "query_result requires a valid query_result_impl"});
+    return failure(error{error_code::Failure, "query_result requires a valid query_result_impl"});
   }
 
   if (!creator) {
-    return failure<error>(error{error_code::Failure, "query_result requires a valid creator function"});
+    return failure(error{error_code::Failure, "query_result requires a valid creator function"});
   }
 
   return ok<result_type>(result_type{
@@ -299,10 +299,10 @@ query_result_traits<record>::make_query_result(
   std::unique_ptr<query_result_impl>&& impl,
   std::vector<column> prototype) {
   if (!impl) {
-    return failure<error>(error{error_code::Failure, "query_result<record> requires a valid query_result_impl"});
+    return failure(error{error_code::Failure, "query_result<record> requires a valid query_result_impl"});
   }
 
-  return ok<result_type>(result_type{
+  return ok(result_type{
     std::move(impl),
     storage_type{std::move(prototype)}
   });

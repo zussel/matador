@@ -7,6 +7,7 @@
 #include "matador/query/model/column_options.hpp"
 #include "matador/query/model/foreign_key_options.hpp"
 #include "matador/query/model/primary_key_options.hpp"
+#include "matador/query/relations/object_proxy.hpp"
 
 namespace matador::query {
 
@@ -80,6 +81,9 @@ public:
 
   template <class Type, template <class...> class Pointer>
   void on_belongs_to(const char *id, Pointer<Type> &x, const foreign_key_options & /*attr*/) {
+    if (x.empty()) {
+      x.reset(std::make_shared<object_proxy<Type>>(std::make_shared<Type>()));
+    }
     fk_result_binder_.bind(*x, id, index_++, *binder_);
   }
   template <class Type, template <class...> class Pointer>
