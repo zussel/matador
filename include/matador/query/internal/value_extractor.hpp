@@ -45,13 +45,16 @@ public:
 
   template<class Type, template < class... > class Pointer>
   void on_belongs_to(const char * /*id*/, Pointer<Type> &x, const foreign_key_options &/*attr*/) {
-    values_.emplace_back(fk_value_extractor_.extract(*x));
+    if (!x.empty()) {
+      values_.emplace_back(fk_value_extractor_.extract(*x));
+    }
   }
 
   template<class Type, template < class... > class Pointer>
-  void on_has_one(const char * /*id*/, Pointer<Type> &x, const char * /*join_column*/,
-                  const foreign_key_options &/*attr*/) {
-    values_.emplace_back(fk_value_extractor_.extract(*x));
+  void on_has_one(const char * /*id*/, Pointer<Type> &x, const char * /*join_column*/, const foreign_key_options &/*attr*/) {
+    if (!x.empty()) {
+      values_.emplace_back(fk_value_extractor_.extract(*x));
+    }
   }
 
   template<class ContainerType>

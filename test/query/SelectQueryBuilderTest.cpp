@@ -13,8 +13,8 @@
 #include "../models/northwind.hpp"
 #include "../models/recipe.hpp"
 #include "../models/student.hpp"
-#include "models/department.hpp"
-#include "models/user.hpp"
+#include "../models/department.hpp"
+#include "../models/user.hpp"
 
 using namespace matador::query;
 using namespace matador::test;

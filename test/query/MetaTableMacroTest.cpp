@@ -6,15 +6,15 @@
 #include <string>
 #include <utility>
 
-META_TABLE(meta_table_macro_types, meta_table_macro_types_instance, id, name, age, color);
-META_TABLE(meta_table_macro_single_column, meta_table_macro_single_column_instance, value);
-META_TABLE(meta_table_macro_many_columns, meta_table_macro_many_columns_instance,
+META_TABLE(meta_table_macro_types, META_TABLE_MACRO_TYPES_INSTANCE, id, name, age, color);
+META_TABLE(meta_table_macro_single_column, META_TABLE_MACRO_SINGLE_COLUMN_INSTANCE, value);
+META_TABLE(meta_table_macro_many_columns, META_TABLE_MACRO_MANY_COLUMNS_INSTANCE,
            id, val_char, val_float, val_double, val_short, val_int, val_long_long,
            val_unsigned_char, val_unsigned_short, val_unsigned_int, val_unsigned_long_long,
            val_bool, val_string, val_varchar, val_binary);
 
 TEST_CASE("META_TABLE: supports many fields", "[query][meta-table]") {
-  const auto& table = matador::query::meta::meta_table_macro_many_columns_instance();
+  const auto& table = matador::query::meta::META_TABLE_MACRO_MANY_COLUMNS_INSTANCE;
   const std::array<std::string, 15> names{
     "id", "val_char", "val_float", "val_double", "val_short", "val_int", "val_long_long",
     "val_unsigned_char", "val_unsigned_short", "val_unsigned_int", "val_unsigned_long_long",
@@ -30,7 +30,7 @@ TEST_CASE("META_TABLE: supports many fields", "[query][meta-table]") {
 }
 
 TEST_CASE("META_TABLE: creates columns in declaration order", "[query][meta-table]") {
-  const auto& types = matador::query::meta::meta_table_macro_types_instance();
+  const auto& types = matador::query::meta::META_TABLE_MACRO_TYPES_INSTANCE;
   const std::array<std::string, 4> expected_names{"id", "name", "age", "color"};
 
   REQUIRE(types.table_name() == "meta_table_macro_types");
@@ -46,13 +46,13 @@ TEST_CASE("META_TABLE: creates columns in declaration order", "[query][meta-tabl
   REQUIRE(&types.name == &types.columns()[1]);
   REQUIRE(&types.age == &types.columns()[2]);
   REQUIRE(&types.color == &types.columns()[3]);
-  REQUIRE(&matador::query::meta::meta_table_macro_types_instance() == &types);
+  REQUIRE(&matador::query::meta::META_TABLE_MACRO_TYPES_INSTANCE == &types);
 }
 
 TEST_CASE("META_TABLE: copy and move rebind field references", "[query][meta-table]") {
   using table_type = matador::query::meta::internal::meta_table_macro_types_table;
 
-  const auto& original = matador::query::meta::meta_table_macro_types_instance();
+  const auto& original = matador::query::meta::META_TABLE_MACRO_TYPES_INSTANCE;
   const table_type copied{original};
 
   REQUIRE(&copied.id == &copied.columns()[0]);
@@ -74,7 +74,7 @@ TEST_CASE("META_TABLE: copy and move rebind field references", "[query][meta-tab
 }
 
 TEST_CASE("META_TABLE: supports a single field", "[query][meta-table]") {
-  const auto& single = matador::query::meta::meta_table_macro_single_column_instance();
+  const auto& single = matador::query::meta::META_TABLE_MACRO_SINGLE_COLUMN_INSTANCE;
 
   REQUIRE(single.columns().size() == 1);
   REQUIRE(single.value.column_name() == "value");

@@ -27,16 +27,19 @@ using namespace matador::utils;
 using namespace matador::query::meta;
 
 static void initialize_resolver(const basic_schema& repo, connection& db) {
+  resolver_producer_registry relation_producers;
   for (const auto &pair : repo.resolver_producers()) {
-    auto res = pair.second->build_query(db.dialect()).and_then([&db](query_context&& query_ctx) -> result<statement, error> {
+    pair.second->create_relation_producers(relation_producers);
+
+    auto res = pair.second->build_query(db.dialect()).and_then([&db](query_context&& query_ctx) -> matador::result<statement, error> {
       query_ctx.resolver = db.resolver();
       return db.prepare(query_ctx);
-    }).and_then([&pair, &db](statement&& stmt) -> result<void, error> {
+    }).and_then([&pair, &db](statement&& stmt) -> matador::result<void, error> {
       db.resolver()->register_object_resolver(pair.second->produce(std::move(stmt)));
 
-      return ok<void>();
+      return matador::ok<void>();
     }).or_else([](const auto &err) {
-      return failure(err);
+      return matador::failure<error>(err);
     });
 
     if (!res) {
@@ -44,17 +47,39 @@ static void initialize_resolver(const basic_schema& repo, connection& db) {
     }
   }
 
-  for (const auto &pair : repo.collection_resolver_producers()) {
-    auto res = pair.second->build_query(db.dialect()).and_then([&db](query_context&& query_ctx) -> result<statement, error> {
-      query_ctx.resolver = db.resolver();
-      return db.prepare(query_ctx);
-    }).and_then([&pair, &db](statement&& stmt) -> result<void, error> {
-      db.resolver()->register_collection_resolver(pair.second->produce(std::move(stmt), *db.resolver()));
+  for (const auto &pair : relation_producers.joined_object_producers()) {
+    auto res = pair.second->build_query(db.dialect())
+                   .and_then([&db](query_context &&query_ctx) -> result<statement, error> {
+                     query_ctx.resolver = db.resolver();
+                     return db.prepare(query_ctx);
+                   })
+                   .and_then([&pair, &db](statement &&stmt) -> result<void, error> {
+                     db.resolver()->register_joined_object_resolver(
+                         pair.second->produce(std::move(stmt)), pair.second->root_type(),
+                         pair.second->collection_name());
 
-      return ok<void>();
-    }).or_else([](const auto &err) {
-      return failure(err);
-    });
+                     return ok<void>();
+                   })
+                   .or_else([](const auto &err) { return failure(err); });
+
+    if (!res) {
+      throw std::runtime_error(res.err().message());
+    }
+  }
+
+  for (const auto &pair : relation_producers.collection_producers()) {
+    auto res = pair.second->build_query(db.dialect())
+                   .and_then([&db](query_context &&query_ctx) -> result<statement, error> {
+                     query_ctx.resolver = db.resolver();
+                     return db.prepare(query_ctx);
+                   })
+                   .and_then([&pair, &db](statement &&stmt) -> result<void, error> {
+                     db.resolver()->register_collection_resolver(
+                         pair.second->produce(std::move(stmt), *db.resolver()));
+
+                     return ok<void>();
+                   })
+                   .or_else([](const auto &err) { return failure(err); });
 
     if (!res) {
       throw std::runtime_error(res.err().message());
@@ -768,6 +793,9 @@ TEST_CASE_METHOD(QueryFixture, "Test load entity with lazy belongs to relation",
     make_object<employee>(6, "Otto", "Walkes", deps.at(1)),
     make_object<employee>(7, "Miss", "Marple", deps.at(1))
   };
+
+  // deps[0]->manager = emps[0];
+  // deps[1]->manager = emps[4];
 
   for (const auto &dep: deps) {
     auto res = insert()

@@ -3,6 +3,7 @@
 
 #include "matador/query/builder/query.hpp"
 #include "matador/query/criteria/criteria_operators.hpp"
+#include "matador/query/internal/select_query_builder.hpp"
 #include "matador/query/schema/basic_schema.hpp"
 
 #include "matador/query/resolver/query_object_resolver.hpp"
@@ -187,7 +188,7 @@ public:
 
     auto producer = std::make_unique<
         query_joined_collection_resolver_producer<typename CollectionType::value_type>>(
-        schema_, *it->info().table(), it->info().primary_key_attribute()->name(), root_type_,
+        schema_, *it->info().table(), it->info().primary_key_attribute()->column_name(), root_type_,
         join_column);
     const collection_composite_key key{root_type_, typeid(typename CollectionType::value_type),
                                        join_column};
@@ -259,29 +260,33 @@ void object_resolver_producer<Type>::create_relation_producers(resolver_producer
 }
 
 template <typename Type>
-result<query_context, error>
-object_resolver_producer<Type>::build_query(const dialect &d) {
+result<query_context, error> object_resolver_producer<Type>::build_query(const dialect &d) {
   const auto *pk_column = table_[pk_name_];
-  const auto statement = select(table_.columns())
-      .from(table_)
-      .where(*pk_column == _)
-      .compile(d);
-  return ok(statement);
+  select_query_builder qb(repo_);
+
+  const auto result = qb.build<Type>(*pk_column == _);
+  if (!result) {
+    return failure(result.err());
+  }
+
+  return ok(result->compile(d));
 }
 
 template <typename Type>
-result<query_context, error>
-joined_object_resolver_producer<Type>::build_query(const dialect &d) {
+result<query_context, error> joined_object_resolver_producer<Type>::build_query(const dialect &d) {
   const auto *join_column = table_[collection_name()];
-  const auto statement = select(table_.columns())
-      .from(table_)
-      .where(*join_column == _)
-      .compile(d);
-  return ok(statement);
+  select_query_builder qb(repo_);
+
+  const auto result = qb.build<Type>(*join_column == _);
+  if (!result) {
+    return failure(result.err());
+  }
+
+  return ok(result->compile(d));
 }
+
 template <typename Type>
-result<query_context, error>
-query_joined_collection_resolver_producer<Type>::build_query(const dialect &d) {
+result<query_context, error> query_joined_collection_resolver_producer<Type>::build_query(const dialect &d) {
   const auto *pk_column = table_[pk_name_];
   const auto *join_column = table_[join_column_name()];
 
@@ -289,9 +294,9 @@ query_joined_collection_resolver_producer<Type>::build_query(const dialect &d) {
 
   return ok(stmt);
 }
+
 template <typename Type>
-result<query_context, error>
-query_joined_collection_primitive_resolver_producer<Type>::build_query(const dialect &d) {
+result<query_context, error> query_joined_collection_primitive_resolver_producer<Type>::build_query(const dialect &d) {
   const auto *value_column = table_[value_name_];
   const auto *join_column = table_[join_column_name()];
 
