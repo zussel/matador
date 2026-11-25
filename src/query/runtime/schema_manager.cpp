@@ -44,6 +44,9 @@ result<void, error> schema_manager::drop(const connection &conn) const {
     .and_then([this, &conn]{ return drop_tables(schema_, conn);})
     .and_then([this, &conn]{ return cleanup_primary_key_generator(schema_, conn);});
 }
+result<bool, error> schema_manager::table_exists(const std::string &table_name, const connection &conn) const {
+  return conn.exists(schema_.name(), table_name);
+}
 
 namespace {
 query_context build_add_constraint_context(const schema_node &node,

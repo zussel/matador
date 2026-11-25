@@ -279,7 +279,7 @@ result<void, error> session::remove(const object_ptr<Type> &obj) {
 
   if (transaction_context_ != nullptr) {
     transaction_context_->add_remove_steps(std::move(*steps));
-    return ok(obj);
+    return ok<void>();
   }
 
   for (auto &step : *steps) {

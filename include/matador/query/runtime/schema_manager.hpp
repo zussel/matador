@@ -15,6 +15,8 @@ public:
   [[nodiscard]] result<void, error> create(const connection &conn) const;
   [[nodiscard]] result<void, error> drop(const connection &conn) const;
 
+  [[nodiscard]] result<bool, error> table_exists(const std::string &table_name, const connection &conn) const;
+
 private:
   basic_schema& schema_;
 };

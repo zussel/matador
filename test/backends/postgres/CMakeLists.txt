@@ -16,7 +16,11 @@ set(TEST_SOURCES
   ../tests/QueryBasicTest.cpp
   ../tests/QueryRecordTest.cpp
   ../tests/QueryStatementTests.cpp
+  ../tests/SchemaManagerTest.cpp
+  ../tests/SessionTest.cpp
   ../tests/fixtures/QueryFixture.cpp
+  ../tests/fixtures/SchemaFixture.cpp
+  ../tests/fixtures/SessionFixture.cpp
   ../../query/utils/RecordPrinter.cpp
 
   # Backend-agnostic tests from ../ can be added here, e.g. ../ColorEnumTraits.cpp
