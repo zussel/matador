@@ -28,14 +28,14 @@ public:
   static void on_revision(const char*, uint64_t&) {}
   template<typename T> static void on_attribute(const char*, T&, const column_options&) {}
   template<typename T> static void on_belongs_to(const char*, T&, const foreign_key_options&) {}
-  template<typename PointerType> void on_has_one(const char*, PointerType& ptr, const char*, const foreign_key_options&) {
-    auto resolver = service_->resolver<typename PointerType::value_type>();
+  template<typename PointerType> void on_has_one(const char*, PointerType& ptr, const char* join_column, const foreign_key_options&) {
+    auto resolver = service_->joined_collection_resolver<PointerType>(owner_type_, join_column);
     if (!resolver) {
       missing_resolver_ = true;
       return;
     }
-
-    ptr.proxy()->resolver(resolver);
+    // Todo: attach resolver and pk
+    // ptr.proxy()->res(resolver, pk_);
   }
 
   template<typename T>
