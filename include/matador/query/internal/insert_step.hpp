@@ -3,6 +3,7 @@
 
 #include "matador/query/mapping/abstract_pk_generator.hpp"
 #include "matador/query/internal/execute_step.hpp"
+#include "matador/query/internal/collection_resolver_attacher.hpp"
 #include "matador/query/runtime/error_code.hpp"
 
 #include "matador/query/relations/object_cache.hpp"
@@ -34,6 +35,11 @@ result<void, error> finalize_inserted_object(object_ptr<ObjectType> &ptr,
     return failure(error(error_code::FailedToFindObject, "Object cache already contains another live proxy for inserted object."));
   }
 
+  collection_resolver_attacher attacher;
+  if (auto result = attacher.attach(*ptr, pk, *resolver_service); !result.is_ok()) {
+    return failure(result.err());
+  }
+
   ptr.change_state(object_state::Persistent);
   return ok<void>();
 }
@@ -53,6 +59,7 @@ public:
     }
     id_ = *result;
     pk_accessor_.set(*ptr_, id_);
+    id_ = primary_key_resolver::resolve_object(*ptr_).pk;
 
     return ok<void>();
   }

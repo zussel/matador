@@ -26,6 +26,7 @@ public:
   [[nodiscard]] const std::vector<class constraint>& constraints() const;
 
   [[nodiscard]] abstract_pk_generator& pk_generator() const;
+  void update_pk_generator(const std::string& name, generator_type gt);
 
   [[nodiscard]] bool has_primary_key() const;
   // [[nodiscard]] const identifier& primary_key() const;

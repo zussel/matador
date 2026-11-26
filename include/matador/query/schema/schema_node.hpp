@@ -26,16 +26,16 @@ public:
 
   template < typename Type, template<typename> typename... Observers >
   static std::unique_ptr<schema_node> make_node(basic_schema& repo,
-                                                    const std::string& name,
-                                                    creator_func<Type> creator,
-                                                    std::vector<std::unique_ptr<observer<Type>>>&& observers);
+                                                const std::string& name,
+                                                creator_func<Type> creator,
+                                                std::vector<std::unique_ptr<observer<Type>>>&& observers);
   template < typename Type, template<typename> typename... Observers >
   static std::unique_ptr<schema_node> make_relation_node(basic_schema& repo,
-                                                             const std::string& name,
-                                                             const std::string& join_column,
-                                                             const std::string& inverse_join_column,
-                                                             creator_func<Type> creator,
-                                                             std::vector<std::unique_ptr<observer<Type>>>&& observers);
+                                                         const std::string& name,
+                                                         const std::string& join_column,
+                                                         const std::string& inverse_join_column,
+                                                         creator_func<Type> creator,
+                                                         std::vector<std::unique_ptr<observer<Type>>>&& observers);
 
   explicit schema_node(basic_schema& repo);
   schema_node(const schema_node& other) = delete;
@@ -111,8 +111,8 @@ std::unique_ptr<schema_node> schema_node::make_node(basic_schema &repo,
   internal::observer_list_creator<Type, Observers...>::create_missing(observers);
 
   internal::primary_key_generator_finder finder;
-  const Type obj;
-  const auto generator_type = finder.find(obj);
+  auto obj = creator();
+  const auto generator_type = finder.find(*obj);
   std::unique_ptr<abstract_pk_generator> pk_generator;
   switch (generator_type) {
   case generator_type::Identity:
@@ -130,7 +130,7 @@ std::unique_ptr<schema_node> schema_node::make_node(basic_schema &repo,
 
   node->info_ = std::make_unique<table_info<Type>>(
     *node,
-    table_generator::generate<Type>(repo, name),
+    table_generator::generate<Type>(std::move(obj), repo, name),
     std::move(pk_generator),
     std::move(observers),
     std::move(creator)

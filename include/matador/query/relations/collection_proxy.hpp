@@ -6,6 +6,7 @@
 
 #include "matador/query/model/identifier.hpp"
 
+#include <algorithm>
 #include <atomic>
 #include <mutex>
 #include <vector>
@@ -112,6 +113,8 @@ public:
 
   virtual ~abstract_collection_proxy() = default;
 
+  virtual void attach(std::weak_ptr<collection_resolver<Type>> resolver, identifier owner_id) = 0;
+
   virtual void push_back(const value_type& value) = 0;
 
   virtual iterator begin() = 0;
@@ -172,6 +175,20 @@ public:
 
   [[nodiscard]] collection_proxy_state state() const {
     return state_;
+  }
+
+  void attach(std::weak_ptr<collection_resolver<Type>> resolver, identifier owner_id) override {
+    std::lock_guard lock(mutex_);
+    if (state_ != collection_proxy_state::transient) {
+      return;
+    }
+    if (resolver.expired() || !owner_id.is_valid()) {
+      throw std::invalid_argument("Collection proxy requires a resolver and a valid owner id");
+    }
+    owner_id_ = std::move(owner_id);
+    resolver_ = std::move(resolver);
+    state_ = collection_proxy_state::attached;
+    loaded_ = false;
   }
 
   iterator begin() override {
@@ -245,19 +262,33 @@ private:
 
     auto resolver = resolver_.lock();
     if (!resolver) {
-      if (state_ == collection_proxy_state::attached) {
+      if (state_ != collection_proxy_state::transient) {
         state_ = collection_proxy_state::detached;
         throw std::runtime_error("Detached collection proxy: resolver expired (session may have ended)");
       }
       return;
     }
 
-    this->items_ = resolver->resolve(owner_id_);
+    auto resolved = resolver->resolve(owner_id_);
+    auto merged = this->items_;
+    for (const auto &item : resolved) {
+      if constexpr (is_object_ptr<Type>::value) {
+        const auto key = item.primary_key();
+        if (item.is_persistent() && key.is_valid() &&
+            std::any_of(merged.begin(), merged.end(), [&key](const auto &existing) {
+              return existing.is_persistent() && existing.primary_key() == key;
+            })) {
+          continue;
+        }
+      }
+      merged.push_back(item);
+    }
+    this->items_ = std::move(merged);
     loaded_ = true;
   }
 
 private:
-  const identifier owner_id_;
+  identifier owner_id_;
   std::atomic_bool loaded_{false};
   std::weak_ptr<collection_resolver<Type>> resolver_{};
   mutable std::mutex mutex_{};

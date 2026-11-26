@@ -33,6 +33,27 @@ const std::vector<constraint>& basic_table_info::constraints() const {
 abstract_pk_generator &basic_table_info::pk_generator() const {
   return *pk_generator_;
 }
+void basic_table_info::update_pk_generator(const std::string &name, const generator_type gt) {
+  std::unique_ptr<abstract_pk_generator> pk_generator;
+  switch (gt) {
+  case generator_type::Identity:
+    pk_generator = std::make_unique<identity_pk_generator>();
+    break;
+  case generator_type::Sequence:
+    pk_generator = std::make_unique<sequence_pk_generator>(name + "_pk_seq");
+    break;
+  case generator_type::Table:
+    pk_generator = std::make_unique<table_pk_generator>("sequence_table", name);
+    break;
+  case generator_type::Manual:
+    pk_generator = std::make_unique<manual_pk_generator>();
+    break;
+  default:
+    pk_generator = std::make_unique<null_pk_generator>();
+  }
+
+  pk_generator_ = std::move(pk_generator);
+}
 
 bool basic_table_info::has_primary_key() const {
   return table_->is_primary_key_table();

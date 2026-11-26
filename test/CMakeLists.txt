@@ -11,6 +11,7 @@ add_executable(MatadorTests
     query/BinarySerializerTest.cpp
     query/ColumnExpressionTest.cpp
     query/ColumnTest.cpp
+    query/CollectionProxyTest.cpp
     query/ConnectionTest.cpp
     query/CriteriaTests.cpp
     query/DeleteIntermediateTest.cpp

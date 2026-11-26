@@ -313,7 +313,7 @@ public:
 
       auto result = attach_node(std::move(node), parent);
       if (!result) {
-        return failure<error>(result.err());
+        return failure(result.err());
       }
 
       schema_node* attached_node = result.value();
@@ -329,7 +329,7 @@ public:
       const auto old_name = it->second->name();
 
       if (!old_name.empty()) {
-        return failure<error>(make_error(
+        return failure(make_error(
           error_code::NodeAlreadyExists,
           "Type '" + std::string(ti.name()) + "' is already attached as node '" + old_name + "'"
         ));

@@ -64,19 +64,19 @@ public:
     }
 
     template < class Type >
-    static std::shared_ptr<table> generate(std::unique_ptr<Type>&& t,
+    static std::shared_ptr<table> generate(std::unique_ptr<Type>&& obj,
                                             basic_schema &repo,
                                             const std::string &name,
                                             const std::string &join_column = "",
                                             const std::string &inverse_join_column = "") {
         const std::type_index ti(typeid(Type));
-        auto obj = acquire_table(repo, ti, name);
-        table_generator gen(repo, obj);
-        access::process(gen, *t);
+        auto tab = acquire_table(repo, ti, name);
+        table_generator gen(repo, tab);
+        access::process(gen, *obj);
         if (!join_column.empty() && !inverse_join_column.empty()) {
             gen.prepare_relation_table(join_column, inverse_join_column);
         }
-        return obj;
+        return tab;
     }
 
     template<typename BaseType>
