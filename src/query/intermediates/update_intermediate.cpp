@@ -11,7 +11,7 @@ update_intermediate::update_intermediate(const table &tab) {
 update_intermediate update_intermediate::set(const column &col, column_expression &&expression) const {
   auto context = clone_context();
   std::vector<internal::column_value_pair> key_value_pairs;
-  key_value_pairs.emplace_back(col, std::move(expression));
+  key_value_pairs.emplace_back(col.column_name(), std::move(expression));
   context->parts.push_back(std::make_shared<internal::query_set_part>(std::move(key_value_pairs)));
   return {context};
 }

@@ -25,7 +25,7 @@ query_contexts to_query_contexts(const schema_node& node, const dialect &d) {
     // UPDATE one
     auto update_set = query::update(tab);
     for (const auto &col: tab.columns()) {
-      update_set.set(col, _);
+      update_set = update_set.set(col, _);
     }
     queries.update_one = update_set.where(*tab.primary_key_column() == _)
       .compile(d);
