@@ -41,6 +41,56 @@ struct author {
     field::has_many(op, "books", books, "author_id", CascadeAllFetchLazy);
   }
 };
+
+template<const query::primary_key_options &PkAttribute>
+struct book_pk_generator;
+
+template<const query::primary_key_options &PkAttribute>
+struct author_pk_generator {
+  unsigned int id{};
+  std::string name;
+  query::collection<query::object_ptr<book_pk_generator<PkAttribute>>> books;
+
+  author_pk_generator() = default;
+  explicit author_pk_generator(std::string name)
+  : name(std::move(name)) {}
+
+  template<typename Operator>
+  void process(Operator &op) {
+    namespace field = query::access;
+    field::primary_key(op, "id", id, PkAttribute);
+    field::attribute(op, "name", name, VarChar63);
+    field::has_many(op, "books", books, "author_id", CascadeAllFetchLazy);
+  }
+};
+
+template<const query::primary_key_options &PkAttribute>
+struct book_pk_generator {
+  unsigned int id{};
+  std::string title;
+  query::object_ptr<author_pk_generator<PkAttribute>> book_author;
+  unsigned short published_in{};
+
+  book_pk_generator() = default;
+  book_pk_generator(std::string title, query::object_ptr<author_pk_generator<PkAttribute>> author, const unsigned short published_in)
+  : title(std::move(title)), book_author(std::move(author)), published_in(published_in) {}
+
+  template<typename Operator>
+  void process(Operator &op) {
+    namespace field = query::access;
+    field::primary_key(op, "id", id, PkAttribute);
+    field::attribute(op, "title", title, VarChar511);
+    field::belongs_to(op, "author_id", book_author, CascadeAllFetchEager);
+    field::attribute(op, "published_in", published_in);
+  }
+};
+
+using author_identity = author_pk_generator<query::Identity>;
+using author_sequence = author_pk_generator<query::Sequence>;
+using author_table = author_pk_generator<query::Table>;
+using book_identity = book_pk_generator<query::Identity>;
+using book_sequence = book_pk_generator<query::Sequence>;
+using book_table = book_pk_generator<query::Table>;
 }
 
 #endif //QUERY_AUTHOR_HPP

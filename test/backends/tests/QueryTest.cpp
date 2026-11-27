@@ -3,6 +3,7 @@
 #include "matador/query/builder/builder.hpp"
 #include "matador/query/criteria.hpp"
 #include "matador/query/mapping/generators.hpp"
+#include "matador/query/mapping/table_pk_generator.hpp"
 #include "matador/query/builder/query.hpp"
 #include "matador/query/meta_table_macro.hpp"
 
@@ -189,6 +190,29 @@ TEST_CASE_METHOD(QueryFixture, "Test sequence", "[query][sequence]") {
     .sequence("person_seq")
     .execute(db);
   REQUIRE(result.is_ok());
+}
+
+TEST_CASE_METHOD(QueryFixture, "Test table primary key generator", "[query][table-pk-generator]") {
+  auto created = create().table("test_sequence_table").columns({
+    col("name", basic_type::Varchar, 255).not_null().primary_key(),
+    col("next_id", basic_type::Int64)
+  }).execute(db);
+  REQUIRE(created.is_ok());
+  tables_to_drop.emplace("test_sequence_table");
+  REQUIRE(insert().into("test_sequence_table", {"name", "next_id"}).values({"books", 1}).execute(db).is_ok());
+
+  table_pk_generator generator("test_sequence_table", "books");
+  auto first = generator.next_id(db);
+  REQUIRE(first.is_ok());
+  REQUIRE(*first == 1);
+  auto second = generator.next_id(db);
+  REQUIRE(second.is_ok());
+  REQUIRE(*second == 2);
+  auto current = generator.current_id(db);
+  REQUIRE(current.is_ok());
+  REQUIRE(*current == 3);
+  table_pk_generator missing("test_sequence_table", "missing");
+  REQUIRE_FALSE(missing.next_id(db).is_ok());
 }
 
 TEST_CASE_METHOD(QueryFixture, "Execute insert statement", "[query][insert]") {

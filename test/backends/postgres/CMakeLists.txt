@@ -10,18 +10,22 @@ if(NOT POSTGRES_CONNECTION_STRING)
 endif()
 
 set(TEST_SOURCES
-  ../tests/ConnectionTest.cpp
+  ../../query/utils/RecordPrinter.cpp
   ../tests/ColorEnumTraits.cpp
-  ../tests/QueryTest.cpp
+  ../tests/ConnectionTest.cpp
   ../tests/QueryBasicTest.cpp
   ../tests/QueryRecordTest.cpp
   ../tests/QueryStatementTests.cpp
+  ../tests/QueryTest.cpp
   ../tests/SchemaManagerTest.cpp
+  ../tests/SessionInsertBelongsTo.cpp
+  ../tests/SessionInsertHasMany.cpp
+  ../tests/SessionInsertHasManyToManyTest.cpp
+  ../tests/SessionInsertHasOne.cpp
   ../tests/SessionTest.cpp
   ../tests/fixtures/QueryFixture.cpp
   ../tests/fixtures/SchemaFixture.cpp
   ../tests/fixtures/SessionFixture.cpp
-  ../../query/utils/RecordPrinter.cpp
 
   # Backend-agnostic tests from ../ can be added here, e.g. ../ColorEnumTraits.cpp
 )

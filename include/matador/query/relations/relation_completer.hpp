@@ -347,7 +347,7 @@ void relation_completer<Type, Observers...>::resolve_value_has_many(std::string 
 
   auto observers = internal::observer_list_copy_creator<Type, relation_value_type, Observers...>::copy_create(observers_);
 
-  auto node = schema_node::make_node<relation_value_type>(repo_, id, [join_column] {
+  auto node = schema_node::make_relation_node<relation_value_type>(repo_, id, join_column, "value", [join_column] {
     return std::make_unique<relation_value_type>(join_column, "value");
   }, std::move(observers));
   auto result = repo_.attach_node(std::move(node), "");

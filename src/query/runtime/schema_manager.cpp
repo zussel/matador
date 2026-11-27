@@ -78,7 +78,7 @@ query_context build_drop_constraint_context(const schema_node &node,
 
 result<void, error> create_tables(const basic_schema &repo, const connection &conn) {
   for (const auto &node: repo) {
-    auto ctx = query::create()
+    auto ctx = create()
         .table(node.name())
         .columns(node.info().columns())
         .compile(conn.dialect());
@@ -162,12 +162,19 @@ result<void, error> setup_primary_key_generator(const basic_schema &scm, const c
 
 result<void, error> drop_tables(const basic_schema& repo, const connection& conn) {
   for (const auto &node: repo) {
-    auto ctx = query::drop()
+    const auto result = conn.exists(node.name());
+    if (!result) {
+      return failure(result.err());
+    }
+    if (!result.value()) {
+      continue;
+    }
+    auto ctx = drop()
         .table(node.name())
         .compile(conn.dialect());
 
-    if (auto result = conn.execute(ctx); !result) {
-      return failure(result.err());
+    if (auto exec_result = conn.execute(ctx); !exec_result) {
+      return failure(exec_result.err());
     }
   }
 

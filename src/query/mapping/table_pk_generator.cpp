@@ -10,7 +10,7 @@ table_pk_generator::table_pk_generator(const std::string& table_name, const std:
 , next_id_query_(query::update(table{table_name})
   .set("next_id"_col, "next_id"_col + 1)
   .where("name"_col == sequence_name)
-  .returning(("next_id"_col - 1).as("id")))
+  .returning("next_id"_col))
 , current_id_query_(query::select({"next_id"_col})
   .from(table{table_name})
   .where("name"_col == sequence_name)
@@ -21,7 +21,7 @@ result<int64_t, error> table_pk_generator::next_id(const executor &exec) {
         if (!id) {
             return failure(error(error_code::RetrieveDataFailed, "Sequence returned no value"));
         }
-        return ok(*id);
+        return ok(*id - 1);
     });
 }
 
