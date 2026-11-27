@@ -15,36 +15,22 @@ class resolver_producer_registry;
 class abstract_object_resolver_producer {
 public:
   virtual ~abstract_object_resolver_producer() = default;
+
   virtual void create_relation_producers(resolver_producer_registry &registry) const = 0;
   virtual result<query_context, error> build_query(const dialect& d) = 0;
   virtual std::shared_ptr<abstract_resolver> produce(statement&& stmt) const = 0;
 
   [[nodiscard]] const std::type_index& type() const;
-
-protected:
-  explicit abstract_object_resolver_producer(const std::type_index &type);
-
-private:
-  std::type_index type_;
-};
-
-class abstract_joined_object_resolver_producer {
-public:
-  virtual ~abstract_joined_object_resolver_producer() = default;
-  virtual result<query_context, error> build_query(const dialect& d) = 0;
-  virtual std::shared_ptr<abstract_resolver> produce(statement&& stmt) const = 0;
-
+  [[nodiscard]] const std::string& where_column() const;
   [[nodiscard]] const std::type_index& root_type() const;
-  [[nodiscard]] const std::type_index& type() const;
-  [[nodiscard]] const std::string& collection_name() const;
 
 protected:
-  explicit abstract_joined_object_resolver_producer(const std::type_index &root_type, const std::type_index &type, std::string collection_name);
+  explicit abstract_object_resolver_producer(const std::type_index &type, std::string where_column, const std::type_index& root_type);
 
 private:
-  std::type_index root_type_;
   std::type_index type_;
-  std::string collection_name_;
+  std::string where_column_;
+  std::type_index root_type_;
 };
 }
 #endif //MATADOR_RESOLVER_PRODUCER_HPP

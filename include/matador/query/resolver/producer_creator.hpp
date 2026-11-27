@@ -18,21 +18,17 @@ class statement;
 class resolver_producer_registry final {
 public:
   using joined_object_producer_map =
-      std::unordered_map<collection_composite_key, std::unique_ptr<abstract_joined_object_resolver_producer>,
+      std::unordered_map<collection_composite_key, std::unique_ptr<abstract_object_resolver_producer>,
                          collection_composite_key_hash>;
   using collection_producer_map =
       std::unordered_map<collection_composite_key, std::unique_ptr<joined_collection_resolver_producer>,
                          collection_composite_key_hash>;
 
-  void register_joined_object_producer(
-      const collection_composite_key &key,
-      std::unique_ptr<abstract_joined_object_resolver_producer> &&producer) {
+  void register_joined_object_producer(const collection_composite_key &key, std::unique_ptr<abstract_object_resolver_producer> &&producer) {
     joined_object_producers_[key] = std::move(producer);
   }
 
-  void register_collection_producer(
-      const collection_composite_key &key,
-      std::unique_ptr<joined_collection_resolver_producer> &&producer) {
+  void register_collection_producer(const collection_composite_key &key, std::unique_ptr<joined_collection_resolver_producer> &&producer) {
     collection_producers_[key] = std::move(producer);
   }
 
@@ -52,9 +48,11 @@ private:
 template <typename Type>
 class object_resolver_producer final : public abstract_object_resolver_producer {
 public:
-  object_resolver_producer(const basic_schema &repo, const table &tab, std::string pk_name)
-      : abstract_object_resolver_producer(typeid(Type)), repo_(repo), table_(tab),
-        pk_name_(std::move(pk_name)) {}
+  object_resolver_producer(const basic_schema &repo, const table &tab, const std::string &where_column, const std::type_index &root_type = typeid(void))
+  : abstract_object_resolver_producer(typeid(Type), where_column, root_type)
+  , repo_(repo)
+  , table_(tab) {}
+
   void create_relation_producers(resolver_producer_registry &registry) const override;
   result<query_context, error> build_query(const dialect &d) override;
 
@@ -65,27 +63,6 @@ public:
 private:
   const basic_schema &repo_;
   const table &table_;
-  std::string pk_name_;
-};
-
-template <typename Type>
-class joined_object_resolver_producer final : public abstract_joined_object_resolver_producer {
-public:
-  joined_object_resolver_producer(const basic_schema &repo, const table &tab, std::string pk_name,
-                                  const std::type_index &root_type, const std::string &join_column)
-      : abstract_joined_object_resolver_producer(root_type, typeid(Type), join_column), repo_(repo),
-        table_(tab), pk_name_(std::move(pk_name)) {}
-
-  result<query_context, error> build_query(const dialect &d) override;
-
-  std::shared_ptr<abstract_resolver> produce(statement &&stmt) const override {
-    return std::make_shared<query_object_resolver<Type>>(std::move(stmt));
-  }
-
-private:
-  const basic_schema &repo_;
-  const table &table_;
-  std::string pk_name_;
 };
 
 template<typename Type>
@@ -140,25 +117,21 @@ class foreign_key_options;
 class column_options;
 class producer_creator final {
 public:
-  producer_creator(const basic_schema &schema, const std::type_index &root_type,
-                   resolver_producer_registry &registry)
-      : schema_(schema), root_type_(root_type), registry_(registry) {}
+  producer_creator(const basic_schema &schema, const std::type_index &root_type, resolver_producer_registry &registry)
+  : schema_(schema), root_type_(root_type), registry_(registry) {}
 
   template <typename BaseType> static void on_base(const BaseType &) {}
   template <typename ValueType>
-  static void on_primary_key(const char * /*id*/, ValueType & /*value*/,
-                             const primary_key_options & /*attr*/) {}
+  static void on_primary_key(const char * /*id*/, ValueType & /*value*/, const primary_key_options & /*attr*/) {}
   static void on_revision(const char * /*id*/, uint64_t & /*rev*/) {}
   template <class Type>
-  static void on_attribute(const char * /*id*/, Type & /*value*/, const column_options & /*attr*/) {
-  }
+  static void on_attribute(const char * /*id*/, Type & /*value*/, const column_options & /*attr*/) {}
   template <class Pointer>
-  static void on_belongs_to(const char * /*id*/, Pointer & /*x*/,
-                            const foreign_key_options & /*attr*/) {}
-  template <class Pointer>
-  void on_has_one(const char * /*id*/, Pointer & /*x*/, const char *join_column,
-                  const foreign_key_options & /*attr*/) {
-    const auto it = schema_.find(typeid(typename Pointer::value_type));
+  static void on_belongs_to(const char * /*id*/, Pointer & /*x*/, const foreign_key_options & /*attr*/) {}
+
+  template <class PointerType>
+  void on_has_one(const char * /*id*/, PointerType & /*x*/, const char *join_column, const foreign_key_options & /*attr*/) {
+    const auto it = schema_.find(typeid(typename PointerType::value_type));
     if (it == schema_.end()) {
       throw error_exception{error_code::UnknownType, "Unknown type"};
     }
@@ -166,10 +139,10 @@ public:
       throw error_exception{error_code::MissingPrimaryKey, "Missing primary key"};
     }
 
-    auto producer = std::make_unique<joined_object_resolver_producer<typename Pointer::value_type>>(
-        schema_, *it->info().table(), it->info().primary_key_attribute()->name(), root_type_,
-        join_column);
-    const collection_composite_key key{root_type_, typeid(Pointer), join_column};
+    auto producer = std::make_unique<object_resolver_producer<typename PointerType::value_type>>(
+        schema_, *it->info().table(), join_column, root_type_);
+
+    const collection_composite_key key{root_type_, typeid(PointerType::value_type), join_column};
     registry_.register_joined_object_producer(key, std::move(producer));
   }
 
@@ -213,8 +186,7 @@ public:
   }
 
   template <class CollectionType>
-  void on_has_many_to_many(const char *id, CollectionType &, const char *join_column,
-                           const char *inverse_join_column, const foreign_key_options & /*attr*/) {
+  void on_has_many_to_many(const char *id, CollectionType &, const char *join_column, const char *inverse_join_column, const foreign_key_options & /*attr*/) {
     const auto it = schema_.find(id);
     if (it == schema_.end()) {
       throw error_exception{error_code::UnknownType, "Unknown type"};
@@ -261,23 +233,10 @@ void object_resolver_producer<Type>::create_relation_producers(resolver_producer
 
 template <typename Type>
 result<query_context, error> object_resolver_producer<Type>::build_query(const dialect &d) {
-  const auto *pk_column = table_[pk_name_];
+  const auto *pk_column = table_[where_column()];
   select_query_builder qb(repo_);
 
   const auto result = qb.build<Type>(*pk_column == _);
-  if (!result) {
-    return failure(result.err());
-  }
-
-  return ok(result->compile(d));
-}
-
-template <typename Type>
-result<query_context, error> joined_object_resolver_producer<Type>::build_query(const dialect &d) {
-  const auto *join_column = table_[collection_name()];
-  select_query_builder qb(repo_);
-
-  const auto result = qb.build<Type>(*join_column == _);
   if (!result) {
     return failure(result.err());
   }
@@ -290,9 +249,12 @@ result<query_context, error> query_joined_collection_resolver_producer<Type>::bu
   const auto *pk_column = table_[pk_name_];
   const auto *join_column = table_[join_column_name()];
 
-  const auto stmt = select({*pk_column}).from(table_).where(*join_column == _).compile(d);
+  const auto ctx = select({*pk_column})
+    .from(table_)
+    .where(*join_column == _)
+    .compile(d);
 
-  return ok(stmt);
+  return ok(ctx);
 }
 
 template <typename Type>
@@ -300,9 +262,12 @@ result<query_context, error> query_joined_collection_primitive_resolver_producer
   const auto *value_column = table_[value_name_];
   const auto *join_column = table_[join_column_name()];
 
-  const auto stmt = select({*value_column}).from(table_).where(*join_column == _).compile(d);
+  const auto ctx = select({*value_column})
+    .from(table_)
+    .where(*join_column == _)
+    .compile(d);
 
-  return ok(stmt);
+  return ok(ctx);
 }
 } // namespace matador::query
 #endif // MATADOR_PRODUCER_CREATOR_HPP

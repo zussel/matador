@@ -111,7 +111,7 @@ public:
 
   [[nodiscard]] const std::unordered_map<std::type_index, std::unique_ptr<abstract_object_resolver_producer>>& resolver_producers() const;
   [[nodiscard]] const std::unordered_map<collection_composite_key, std::unique_ptr<joined_collection_resolver_producer>, collection_composite_key_hash>& collection_resolver_producers() const;
-  [[nodiscard]] const std::unordered_map<collection_composite_key, std::unique_ptr<abstract_joined_object_resolver_producer>, collection_composite_key_hash>& joined_object_resolver_producers() const;
+  [[nodiscard]] const std::unordered_map<collection_composite_key, std::unique_ptr<abstract_object_resolver_producer>, collection_composite_key_hash>& joined_object_resolver_producers() const;
 
 protected:
   using t_node_map = std::unordered_map<std::string, schema_node*>;
@@ -170,7 +170,7 @@ protected:
 
   std::unordered_map<std::type_index, std::unique_ptr<abstract_object_resolver_producer>> resolver_producers_;
   std::unordered_map<collection_composite_key, std::unique_ptr<joined_collection_resolver_producer>, collection_composite_key_hash> collection_resolver_producers_;
-  std::unordered_map<collection_composite_key, std::unique_ptr<abstract_joined_object_resolver_producer>, collection_composite_key_hash> joined_object_resolver_producers_;
+  std::unordered_map<collection_composite_key, std::unique_ptr<abstract_object_resolver_producer>, collection_composite_key_hash> joined_object_resolver_producers_;
 
 };
 }

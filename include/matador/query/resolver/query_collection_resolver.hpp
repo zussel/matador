@@ -44,34 +44,15 @@ public:
   : collection_resolver<Type>(root_type, std::move(join_column))
   , stmt_(std::move(stmt)) {}
 
-  std::vector<value_type> resolve(const identifier &id) override {
-    std::lock_guard lock(mutex_);
-    identifier_statement_binder binder(stmt_);
-    binder.bind(id);
+  std::vector<value_type> resolve(const identifier &id) override;
 
-    auto result = stmt_.fetch();
-    if (!result) {
-      throw error_exception(result.release_error());
-    }
-    std::vector<Type> out;
-    for (auto &r : *result) {
-      if (r.size() != 1) {
-        continue;
-      }
-      auto val = r.at<Type>(0);
-      if (val.has_value()) {
-        out.push_back(*val);
-      }
-    }
-    return out;
-  }
 protected:
   statement stmt_;
   std::mutex mutex_;
   std::type_index index{typeid(Type)};
 };
 
-struct value_to_identifier{
+struct value_to_identifier {
   void operator()(const int8_t &x) { assign(x); }
   void operator()(const int16_t &x) { assign(x); }
   void operator()(const int32_t &x) { assign(x); }
@@ -113,19 +94,42 @@ std::vector<typename query_collection_resolver<Type>::value_type> query_collecti
   if (!result) {
     throw error_exception(result.release_error());
   }
-  std::vector<value_type> out;
-  for (auto &r : *result) {
-    if (r.size() != 1) {
+  std::vector<value_type> objects;
+  identifier_creator creator;
+  for (auto &item : *result) {
+    if (item.size() != 1) {
       continue;
     }
-    identifier_creator creator;
-    r.at(0).process(creator);
+    item.at(0).process(creator);
     const auto op = std::make_shared<object_proxy<typename Type::value_type>>(resolver_, creator.visitor.id_);
-    out.emplace_back(op);
-    // out.emplace_back({this->owner_, op});
+    objects.emplace_back(op);
   }
-  return out;
+  return objects;
 }
+
+template <typename Type>
+std::vector<typename query_collection_primitive_resolver<Type>::value_type>
+query_collection_primitive_resolver<Type>::resolve(const identifier &id) {
+  std::lock_guard lock(mutex_);
+  identifier_statement_binder binder(stmt_);
+  binder.bind(id);
+
+  auto result = stmt_.fetch();
+  if (!result) {
+    throw error_exception(result.release_error());
+  }
+  std::vector<Type> objects;
+  for (auto &item : *result) {
+    if (item.size() != 1) {
+      continue;
+    }
+    auto val = item.at<Type>(0);
+    if (val.has_value()) {
+      objects.push_back(*val);
+    }
+  }
+  return objects;
 }
+} // namespace matador::query
 
 #endif //MATADOR_QUERY_CONTAINER_RESOLVER_HPP

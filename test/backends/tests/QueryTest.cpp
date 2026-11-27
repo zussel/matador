@@ -57,7 +57,7 @@ static void initialize_resolver(const basic_schema& repo, connection& db) {
                    .and_then([&pair, &db](statement &&stmt) -> result<void, error> {
                      db.resolver()->register_joined_object_resolver(
                          pair.second->produce(std::move(stmt)), pair.second->root_type(),
-                         pair.second->collection_name());
+                         pair.second->where_column());
 
                      return ok<void>();
                    })

@@ -337,7 +337,7 @@ const std::unordered_map<collection_composite_key, std::unique_ptr<joined_collec
   return collection_resolver_producers_;
 }
 
-const std::unordered_map<collection_composite_key, std::unique_ptr<abstract_joined_object_resolver_producer>, collection_composite_key_hash>& basic_schema::joined_object_resolver_producers() const {
+const std::unordered_map<collection_composite_key, std::unique_ptr<abstract_object_resolver_producer>, collection_composite_key_hash>& basic_schema::joined_object_resolver_producers() const {
   return joined_object_resolver_producers_;
 }
 

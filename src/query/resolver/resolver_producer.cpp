@@ -5,25 +5,16 @@ const std::type_index &abstract_object_resolver_producer::type() const {
   return type_;
 }
 
-abstract_object_resolver_producer::abstract_object_resolver_producer(const std::type_index &type)
-: type_(type) {}
+const std::string &abstract_object_resolver_producer::where_column() const {
+  return where_column_;
+}
 
-const std::type_index &abstract_joined_object_resolver_producer::root_type() const {
+const std::type_index &abstract_object_resolver_producer::root_type() const {
   return root_type_;
 }
 
-const std::type_index &abstract_joined_object_resolver_producer::type() const {
-  return type_;
-}
-
-const std::string &abstract_joined_object_resolver_producer::collection_name() const {
-  return collection_name_;
-}
-
-abstract_joined_object_resolver_producer::abstract_joined_object_resolver_producer(const std::type_index &root_type,
-                                                                 const std::type_index &type,
-                                                                 std::string collection_name)
-: root_type_(root_type)
-, type_(type)
-, collection_name_(std::move(collection_name)) {}
+abstract_object_resolver_producer::abstract_object_resolver_producer(const std::type_index &type, std::string where_column, const std::type_index& root_type)
+: type_(type)
+, where_column_(std::move(where_column))
+, root_type_(root_type) {}
 }

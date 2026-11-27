@@ -16,5 +16,17 @@ protected:
 public:
   const std::type_index type_;
 };
+
+// class identifier;
+//
+// template < typename Type >
+// class typed_resolver : public abstract_resolver {
+// public:
+//   typed_resolver() : abstract_resolver(typeid(Type)) {}
+//
+//   virtual Type resolve(const identifier& id) = 0;
+// };
+
+
 }
 #endif //MATADOR_ABSTRACT_TYPE_RESOLVER_HPP
