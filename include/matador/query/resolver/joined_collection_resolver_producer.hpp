@@ -22,15 +22,17 @@ public:
 
   [[nodiscard]] const std::type_index& root_type() const;
   [[nodiscard]] const std::type_index& type() const;
-  [[nodiscard]] const std::string& join_column_name() const;
+  [[nodiscard]] const std::string& where_column() const;
+  [[nodiscard]] const std::string& join_column() const;
 
 protected:
-  explicit joined_collection_resolver_producer(const std::type_index &root_type, const std::type_index &type, std::string join_column_name);
+  explicit joined_collection_resolver_producer(const std::type_index &root_type, const std::type_index &type, std::string where_column, std::string join_column);
 
 private:
   std::type_index root_type_;
   std::type_index type_;
-  std::string join_column_name_;
+  std::string where_column_;
+  std::string join_column_;
 };
 }
 #endif  // MATADOR_COLLECTION_RESOLVER_PRODUCER_HPP

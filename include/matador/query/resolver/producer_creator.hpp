@@ -69,47 +69,21 @@ template<typename Type>
 class query_joined_collection_resolver_producer : public joined_collection_resolver_producer {
 public:
   query_joined_collection_resolver_producer() = default;
-  query_joined_collection_resolver_producer(const basic_schema& repo, const table& tab, std::string pk_name, const std::type_index& root_type, std::string join_column)
-  : joined_collection_resolver_producer(root_type, typeid(Type), std::move(join_column))
+  query_joined_collection_resolver_producer(const basic_schema& repo, const table& tab, const std::string& where_column,
+                                            const std::string &join_column, const std::type_index& root_type)
+  : joined_collection_resolver_producer(root_type, typeid(Type), where_column, join_column)
   , repo_(repo)
-  , table_(tab)
-  , pk_name_(std::move(pk_name))
-  {}
+  , table_(tab) {}
 
   result<query_context, error> build_query(const dialect& d) override;
 
   std::shared_ptr<abstract_joined_resolver> produce(statement&& stmt, const resolver_service& rs) const override {
-    return std::make_shared<query_collection_resolver<Type>>(std::move(stmt), root_type(), join_column_name(), rs.resolver<typename Type::value_type>());
+    return std::make_shared<query_collection_resolver<Type>>(std::move(stmt), root_type(), join_column(), rs.resolver<typename Type::value_type>());
   }
 
 private:
   const basic_schema& repo_;
   const table& table_;
-  std::string pk_name_;
-};
-
-template<typename Type>
-class query_joined_collection_primitive_resolver_producer : public joined_collection_resolver_producer {
-public:
-  query_joined_collection_primitive_resolver_producer() = default;
-  query_joined_collection_primitive_resolver_producer(const basic_schema& repo, const table& tab, std::string value_name, const std::type_index& root_type, std::string join_column)
-  : joined_collection_resolver_producer(root_type, typeid(Type), std::move(join_column))
-  , repo_(repo)
-  , table_(tab)
-  , value_name_(std::move(value_name))
-  {}
-
-  result<query_context, error> build_query(const dialect& d) override;
-
-  std::shared_ptr<abstract_joined_resolver> produce(statement&& stmt, const resolver_service& /*rs*/) const override {
-    return std::make_shared<query_collection_primitive_resolver<Type>>(
-        std::move(stmt), root_type(), join_column_name());
-  }
-
-private:
-  const basic_schema& repo_;
-  const table& table_;
-  std::string value_name_;
 };
 
 class primary_key_options;
@@ -159,12 +133,11 @@ public:
       throw error_exception{error_code::MissingPrimaryKey, "Missing primary key"};
     }
 
-    auto producer = std::make_unique<
-        query_joined_collection_resolver_producer<typename CollectionType::value_type>>(
-        schema_, *it->info().table(), it->info().primary_key_attribute()->column_name(), root_type_,
-        join_column);
-    const collection_composite_key key{root_type_, typeid(typename CollectionType::value_type),
-                                       join_column};
+    auto producer = std::make_unique<query_joined_collection_resolver_producer<typename CollectionType::value_type>>(
+      schema_, *it->info().table(), it->info().primary_key_attribute()->column_name(), join_column, root_type_
+    );
+
+    const collection_composite_key key{root_type_, typeid(typename CollectionType::value_type), join_column};
     registry_.register_collection_producer(key, std::move(producer));
   }
 
@@ -178,8 +151,9 @@ public:
       throw error_exception{error_code::UnknownType, "Unknown type" + std::string{id}};
     }
     auto producer = std::make_unique<
-        query_joined_collection_primitive_resolver_producer<typename CollectionType::value_type>>(
-        schema_, *it->info().table(), "value", root_type_, join_column);
+        query_joined_collection_resolver_producer<typename CollectionType::value_type>>(
+        schema_, *it->info().table(), "value", join_column, root_type_);
+
     const collection_composite_key key{root_type_, typeid(typename CollectionType::value_type),
                                        join_column};
     registry_.register_collection_producer(key, std::move(producer));
@@ -194,7 +168,7 @@ public:
 
     auto producer = std::make_unique<
         query_joined_collection_resolver_producer<typename CollectionType::value_type>>(
-        schema_, *it->info().table(), inverse_join_column, root_type_, join_column);
+        schema_, *it->info().table(), inverse_join_column, join_column, root_type_);
     const collection_composite_key key{root_type_, typeid(typename CollectionType::value_type),
                                        inverse_join_column};
     registry_.register_collection_producer(key, std::move(producer));
@@ -212,7 +186,7 @@ public:
 
     auto producer = std::make_unique<
         query_joined_collection_resolver_producer<typename CollectionType::value_type>>(
-        schema_, *it->info().table(), jc.join_column, root_type_, jc.inverse_join_column);
+        schema_, *it->info().table(), jc.join_column, jc.inverse_join_column, root_type_);
     const collection_composite_key key{root_type_, typeid(typename CollectionType::value_type),
                                        jc.join_column};
     registry_.register_collection_producer(key, std::move(producer));
@@ -246,23 +220,10 @@ result<query_context, error> object_resolver_producer<Type>::build_query(const d
 
 template <typename Type>
 result<query_context, error> query_joined_collection_resolver_producer<Type>::build_query(const dialect &d) {
-  const auto *pk_column = table_[pk_name_];
-  const auto *join_column = table_[join_column_name()];
+  const auto *pk_column = table_[where_column()];
+  const auto *join_column = table_[this->join_column()];
 
   const auto ctx = select({*pk_column})
-    .from(table_)
-    .where(*join_column == _)
-    .compile(d);
-
-  return ok(ctx);
-}
-
-template <typename Type>
-result<query_context, error> query_joined_collection_primitive_resolver_producer<Type>::build_query(const dialect &d) {
-  const auto *value_column = table_[value_name_];
-  const auto *join_column = table_[join_column_name()];
-
-  const auto ctx = select({*value_column})
     .from(table_)
     .where(*join_column == _)
     .compile(d);
